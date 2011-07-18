@@ -6,7 +6,7 @@ namespace FusionTweaker
 {
 	public partial class ServiceDialog : Form
 	{
-		private PState[] _pStates = new PState[5];
+		private PState[] _pStates = new PState[10];
 
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace FusionTweaker
 			if (key == null)
 				return;
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				string text = (string)key.GetValue("P" + i);
 				_pStates[i] = PState.Decode(text,i);
@@ -76,7 +76,7 @@ namespace FusionTweaker
 		{
 			var sb = new System.Text.StringBuilder();
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				if (_pStates[i] == null)
 					continue;
@@ -93,15 +93,15 @@ namespace FusionTweaker
 
 		private void updateButton_Click(object sender, EventArgs e)
 		{
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 10; i++)
 			{
 				_pStates[i] = PState.Load(i);
 
 				// disable the current P-state and all following ones in case the
 				// first core's CPU VID is > than the previous P-state's
-				if ((i > 0 && _pStates[i].Msrs[0].Vid > _pStates[i - 1].Msrs[0].Vid) && (i < 3)) //ignore Vids from NB in comprison
+				if ((i > 0 && _pStates[i].Msrs[0].Vid > _pStates[i - 1].Msrs[0].Vid) && (i < 8)) //ignore Vids from NB in comparison
 				{
-					for (int j = i; j < 5; j++)
+					for (int j = i; j < 8; j++)
 						_pStates[j] = null;
 
 					break;
@@ -119,7 +119,7 @@ namespace FusionTweaker
 
 			if (makePermanentCheckBox.Checked)
 			{
-				for (int i = 0; i < 5; i++)
+				for (int i = 0; i < 10; i++)
 				{
 					string valueName = "P" + i;
 
