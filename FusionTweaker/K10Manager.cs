@@ -342,7 +342,7 @@ namespace FusionTweaker
             ulong msr = Program.Ols.ReadMsr(0xC0010071u);
 			int maxCOF = (int)(msr >> 49) & 0x3F;
 
-            return (maxCOF == 0 ? 31.5 : maxCOF);
+            return (maxCOF == 0 ? 48 : maxCOF);
 		}
 
 		/// <summary>

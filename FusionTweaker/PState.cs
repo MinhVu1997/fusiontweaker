@@ -28,12 +28,12 @@ namespace FusionTweaker
 
 
 		/// <summary>
-		/// Loads the specified P-state from the cores' MSRs.
+		/// Loads the specified P-state from the cores' and NB MSRs.
 		/// </summary>
-		/// <param name="index">Index of the hardware P-state (0-4) to be loaded.</param>
+		/// <param name="index">Index of the hardware P-state (0-7) to be loaded. Adding NB P-state (8,9)</param>
 		public static PState Load(int index)
 		{
-			if (index < 0 || index > 4)
+			if (index < 0 || index > 9)
 				throw new ArgumentOutOfRangeException("index");
 
 			var r = new PState();
@@ -45,15 +45,15 @@ namespace FusionTweaker
 		}
 
 		/// <summary>
-		/// Saves the P-state to the cores' MSRs.
+		/// Saves the P-state to the cores' and NB MSRs.
 		/// </summary>
-		/// <param name="index">Index of the hardware P-state (0-4) to be modified.</param>
+        /// <param name="index">Index of the hardware P-state (0-4) to be modified. Adding NB P-state (8,9)</param>
 		public void Save(int index)
 		{
-			if (index < 0 || index > 4)
+			if (index < 0 || index > 9)
 				throw new ArgumentOutOfRangeException("index");
 
-            if (index < 3) //dealing with CPU P-States
+            if (index < 8) //dealing with CPU P-States
             {
                 uint msrIndex = 0xC0010064u + (uint)index;
 
@@ -93,7 +93,7 @@ namespace FusionTweaker
                 Thread.Sleep(3); // let transitions complete
 
                 Thread.CurrentThread.Priority = previousPriority;
-            } else if (index == 3 || index == 4) //dealing with NB P-State 0
+            } else if (index == 8 || index == 9) //dealing with NB P-State 0
             {
                 // switch temporarily to the highest thread priority
                 // (we try not to interfere with any kind of C&Q)
@@ -101,7 +101,7 @@ namespace FusionTweaker
                 //Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 //check, if current NB P-State is the one, which is going to be modified
-                index = index - 3;
+                index = index - 8;
                 int curNbstate = K10Manager.GetNbPState();
                 int changedNbstate = curNbstate;
                 bool applyImmediately = (curNbstate != index);
@@ -133,10 +133,10 @@ namespace FusionTweaker
                     uint config = Program.Ols.ReadPciConfig(0xC3, 0xDC);
                     //const uint mask = 0x07F7F000; //enable overwrite of Vid and Div
                     const uint mask = 0x0007F000; //enable overwrite of Vid only
-                    config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
+                    config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                     uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
                     const uint maskvolt = 0x00007F00;
-                    uint check = _msrs[0].Encode(index + 3) >> 12 & 0x7F;
+                    uint check = _msrs[0].Encode(index + 8) >> 12 & 0x7F;
                     voltage = (voltage & ~maskvolt) | ((check << 8) & maskvolt);
 
                     Program.Ols.WritePciConfig(0xC3, 0xDC, config);
@@ -149,10 +149,10 @@ namespace FusionTweaker
                     uint config = Program.Ols.ReadPciConfig(0xC6, 0x90);
                     //const uint mask = 0x00007F7F; //enable DID and VID modification
                     const uint mask = 0x00007F00; //enable VID modification only
-                    config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
+                    config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                     uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
                     const uint maskvolt = 0x0000007F;
-                    uint check = _msrs[0].Encode(index + 3) >> 8;
+                    uint check = _msrs[0].Encode(index + 8) >> 8;
                     voltage = (voltage & ~maskvolt) | (check & maskvolt);
 
                     Program.Ols.WritePciConfig(0xC6, 0x90, config);
@@ -260,7 +260,7 @@ namespace FusionTweaker
             int maxPLL = 0;
 			for (int i = 0; i < _msrs.Length; i++)
 			{
-				sb.Append(_msrs[i].Divider);
+				sb.Append(_msrs[i].CPUMultNBDivider);
 				if (i < _numCores - 1)
 					sb.Append('|');
 
