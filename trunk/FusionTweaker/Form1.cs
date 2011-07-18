@@ -36,8 +36,13 @@ namespace FusionTweaker
 			p0StateControl.LoadFromHardware(0);
 			p1StateControl.LoadFromHardware(1);
 			p2StateControl.LoadFromHardware(2);
-			nbp0StateControl.LoadFromHardware(3);
-            nbp1StateControl.LoadFromHardware(4);
+            p3StateControl.LoadFromHardware(3);
+            p4StateControl.LoadFromHardware(4);
+            p5StateControl.LoadFromHardware(5);
+            p6StateControl.LoadFromHardware(6);
+            p7StateControl.LoadFromHardware(7);
+            nbp0StateControl.LoadFromHardware(8);
+            nbp1StateControl.LoadFromHardware(9);
             statusinfo.LoadFromHardware();
 
 			if (!_useWindowsPowerSchemes)
@@ -215,18 +220,20 @@ namespace FusionTweaker
 
 		private void applyButton_Click(object sender, EventArgs e)
 		{
-			var controls = new PStateControl[5] { p0StateControl, p1StateControl, p2StateControl, nbp0StateControl, nbp1StateControl };
+            var controls = new PStateControl[10] { p0StateControl, p1StateControl, p2StateControl, p3StateControl, p4StateControl, p5StateControl, 
+                p6StateControl, p7StateControl, nbp0StateControl, nbp1StateControl };
             var statuscontrols = new StatusControl[1] { statusinfo };
 
 			int lastModifiedControl = Array.FindLastIndex(controls, (c) => { return c.IsModified; } );
 			if (lastModifiedControl < 0)
 				return; // no control is modified
 
-            if (lastModifiedControl > 2)
+            if (lastModifiedControl > 7)
             {
-                lastModifiedControl = 2; //checking CPU P-States only -> skip NB P-States
+                lastModifiedControl = 7; //checking CPU P-States only -> skip NB P-States
             }
-			for (int i = 1; i <= lastModifiedControl; i++)
+			/* temporary disabled
+              for (int i = 1; i <= lastModifiedControl; i++)
 			{
 				// make sure the neighboring P-state on the left specifies a >= VID
 				if (controls[i - 1].Vid < controls[i].Vid)
@@ -236,7 +243,7 @@ namespace FusionTweaker
 					return;
 				}
             }
-
+            */
 			timer1.Enabled = false;
 
 			// try to temporarily set the number of boosted (Turbo) P-states to 0
@@ -246,14 +253,14 @@ namespace FusionTweaker
 			if (boostedStates != 0)
 				K10Manager.SetTurbo(false);
 
-			for (int i = 0; i < 5; i++)
+			for (int i = 0; i < 10; i++)
 				controls[i].Save();
 
 			if (turboEnabled)
 				K10Manager.SetTurbo(true);
 
 			// refresh the P-states
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
                 controls[i].LoadFromHardware(i);
 
             statuscontrols[0].LoadFromHardware();
@@ -273,8 +280,13 @@ namespace FusionTweaker
 					p0StateControl.LoadFromHardware(0);
 					p1StateControl.LoadFromHardware(1);
 					p2StateControl.LoadFromHardware(2);
-					nbp0StateControl.LoadFromHardware(3);
-					nbp1StateControl.LoadFromHardware(4);
+                    p3StateControl.LoadFromHardware(3);
+                    p4StateControl.LoadFromHardware(4);
+                    p5StateControl.LoadFromHardware(5);
+                    p6StateControl.LoadFromHardware(6);
+                    p7StateControl.LoadFromHardware(7);
+                    nbp0StateControl.LoadFromHardware(8);
+					nbp1StateControl.LoadFromHardware(9);
                     statusinfo.LoadFromHardware();
 				}
 			}
@@ -287,11 +299,11 @@ namespace FusionTweaker
             int currentNbPState = K10Manager.GetNbPState();
 
 			tabControl1.SuspendLayout();
-			for (int i = 0; i < 3; i++)
+			for (int i = 0; i < 8; i++)
 				tabControl1.TabPages[i].Text = "P" + i + (i == currentPState ? "*" : string.Empty);
 
-            for (int i = 3; i < 5; i++)
-                tabControl1.TabPages[i].Text = "NB P" + (i - 3) + ((i - 3) == currentNbPState ? "*" : string.Empty);
+            for (int i = 8; i < 10; i++)
+                tabControl1.TabPages[i].Text = "NB P" + (i - 8) + ((i - 8) == currentNbPState ? "*" : string.Empty);
 			
             tabControl1.ResumeLayout();
 		}

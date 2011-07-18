@@ -41,7 +41,17 @@
 			this.p1StateControl = new FusionTweaker.PStateControl();
 			this.tabPageP2 = new System.Windows.Forms.TabPage();
 			this.p2StateControl = new FusionTweaker.PStateControl();
-			this.tabPageNbP0 = new System.Windows.Forms.TabPage();
+            this.tabPageP3 = new System.Windows.Forms.TabPage();
+            this.p3StateControl = new FusionTweaker.PStateControl();
+            this.tabPageP4 = new System.Windows.Forms.TabPage();
+            this.p4StateControl = new FusionTweaker.PStateControl();
+            this.tabPageP5 = new System.Windows.Forms.TabPage();
+            this.p5StateControl = new FusionTweaker.PStateControl();
+            this.tabPageP6 = new System.Windows.Forms.TabPage();
+            this.p6StateControl = new FusionTweaker.PStateControl();
+            this.tabPageP7 = new System.Windows.Forms.TabPage();
+            this.p7StateControl = new FusionTweaker.PStateControl();
+            this.tabPageNbP0 = new System.Windows.Forms.TabPage();
 			this.nbp0StateControl = new FusionTweaker.PStateControl();
 			this.tabPageNbP1 = new System.Windows.Forms.TabPage();
 			this.nbp1StateControl = new FusionTweaker.PStateControl();
@@ -53,7 +63,12 @@
 			this.tabPageP0.SuspendLayout();
 			this.tabPageP1.SuspendLayout();
 			this.tabPageP2.SuspendLayout();
-			this.tabPageNbP0.SuspendLayout();
+            this.tabPageP3.SuspendLayout();
+            this.tabPageP4.SuspendLayout();
+            this.tabPageP5.SuspendLayout();
+            this.tabPageP6.SuspendLayout();
+            this.tabPageP7.SuspendLayout();
+            this.tabPageNbP0.SuspendLayout();
 			this.tabPageNbP1.SuspendLayout();
             this.tabPageStatus.SuspendLayout();
             this.SuspendLayout();
@@ -114,7 +129,12 @@
 			this.tabControl1.Controls.Add(this.tabPageP0);
 			this.tabControl1.Controls.Add(this.tabPageP1);
 			this.tabControl1.Controls.Add(this.tabPageP2);
-			this.tabControl1.Controls.Add(this.tabPageNbP0);
+            this.tabControl1.Controls.Add(this.tabPageP3);
+            this.tabControl1.Controls.Add(this.tabPageP4);
+            this.tabControl1.Controls.Add(this.tabPageP5);
+            this.tabControl1.Controls.Add(this.tabPageP6);
+            this.tabControl1.Controls.Add(this.tabPageP7);
+            this.tabControl1.Controls.Add(this.tabPageNbP0);
 			this.tabControl1.Controls.Add(this.tabPageNbP1);
             this.tabControl1.Controls.Add(this.tabPageStatus);
 			this.tabControl1.Location = new System.Drawing.Point(16, 15);
@@ -171,7 +191,7 @@
 			this.p1StateControl.Name = "p1StateControl";
 			this.p1StateControl.PStateIndex = 1;
 			this.p1StateControl.Size = new System.Drawing.Size(437, 101);
-			this.p1StateControl.TabIndex = 0;
+			this.p1StateControl.TabIndex = 1;
 			// 
 			// tabPageP2
 			// 
@@ -195,8 +215,128 @@
 			this.p2StateControl.Name = "p2StateControl";
 			this.p2StateControl.PStateIndex = 2;
 			this.p2StateControl.Size = new System.Drawing.Size(437, 101);
-			this.p2StateControl.TabIndex = 0;
-			// 
+			this.p2StateControl.TabIndex = 2;
+            // 
+            // tabPageP3
+            // 
+            this.tabPageP3.Controls.Add(this.p3StateControl);
+            this.tabPageP3.Location = new System.Drawing.Point(4, 25);
+            this.tabPageP3.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageP3.Name = "tabPageP3";
+            this.tabPageP3.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageP3.Size = new System.Drawing.Size(445, 109);
+            this.tabPageP3.TabIndex = 3;
+            this.tabPageP3.Text = "P3";
+            this.tabPageP3.UseVisualStyleBackColor = true;
+            // 
+            // p3StateControl
+            // 
+            this.p3StateControl.AutoSize = true;
+            this.p3StateControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.p3StateControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p3StateControl.Location = new System.Drawing.Point(4, 4);
+            this.p3StateControl.Margin = new System.Windows.Forms.Padding(5);
+            this.p3StateControl.Name = "p3StateControl";
+            this.p3StateControl.PStateIndex = 3;
+            this.p3StateControl.Size = new System.Drawing.Size(437, 101);
+            this.p3StateControl.TabIndex = 3;
+            // 
+            // tabPageP4
+            // 
+            this.tabPageP4.Controls.Add(this.p4StateControl);
+            this.tabPageP4.Location = new System.Drawing.Point(4, 25);
+            this.tabPageP4.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageP4.Name = "tabPageP4";
+            this.tabPageP4.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageP4.Size = new System.Drawing.Size(445, 109);
+            this.tabPageP4.TabIndex = 4;
+            this.tabPageP4.Text = "P4";
+            this.tabPageP4.UseVisualStyleBackColor = true;
+            // 
+            // p4StateControl
+            // 
+            this.p4StateControl.AutoSize = true;
+            this.p4StateControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.p4StateControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p4StateControl.Location = new System.Drawing.Point(4, 4);
+            this.p4StateControl.Margin = new System.Windows.Forms.Padding(5);
+            this.p4StateControl.Name = "p4StateControl";
+            this.p4StateControl.PStateIndex = 4;
+            this.p4StateControl.Size = new System.Drawing.Size(437, 101);
+            this.p4StateControl.TabIndex = 4;
+            // 
+            // tabPageP5
+            // 
+            this.tabPageP5.Controls.Add(this.p5StateControl);
+            this.tabPageP5.Location = new System.Drawing.Point(4, 25);
+            this.tabPageP5.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageP5.Name = "tabPageP5";
+            this.tabPageP5.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageP5.Size = new System.Drawing.Size(445, 109);
+            this.tabPageP5.TabIndex = 5;
+            this.tabPageP5.Text = "P5";
+            this.tabPageP5.UseVisualStyleBackColor = true;
+            // 
+            // p5StateControl
+            // 
+            this.p5StateControl.AutoSize = true;
+            this.p5StateControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.p5StateControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p5StateControl.Location = new System.Drawing.Point(4, 4);
+            this.p5StateControl.Margin = new System.Windows.Forms.Padding(5);
+            this.p5StateControl.Name = "p5StateControl";
+            this.p5StateControl.PStateIndex = 5;
+            this.p5StateControl.Size = new System.Drawing.Size(437, 101);
+            this.p5StateControl.TabIndex = 5;
+            // 
+            // tabPageP6
+            // 
+            this.tabPageP6.Controls.Add(this.p6StateControl);
+            this.tabPageP6.Location = new System.Drawing.Point(4, 25);
+            this.tabPageP6.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageP6.Name = "tabPageP6";
+            this.tabPageP6.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageP6.Size = new System.Drawing.Size(445, 109);
+            this.tabPageP6.TabIndex = 6;
+            this.tabPageP6.Text = "P6";
+            this.tabPageP6.UseVisualStyleBackColor = true;
+            // 
+            // p6StateControl
+            // 
+            this.p6StateControl.AutoSize = true;
+            this.p6StateControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.p6StateControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p6StateControl.Location = new System.Drawing.Point(4, 4);
+            this.p6StateControl.Margin = new System.Windows.Forms.Padding(5);
+            this.p6StateControl.Name = "p6StateControl";
+            this.p6StateControl.PStateIndex = 6;
+            this.p6StateControl.Size = new System.Drawing.Size(437, 101);
+            this.p6StateControl.TabIndex = 6;
+            // 
+            // tabPageP7
+            // 
+            this.tabPageP7.Controls.Add(this.p7StateControl);
+            this.tabPageP7.Location = new System.Drawing.Point(4, 25);
+            this.tabPageP7.Margin = new System.Windows.Forms.Padding(4);
+            this.tabPageP7.Name = "tabPageP7";
+            this.tabPageP7.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPageP7.Size = new System.Drawing.Size(445, 109);
+            this.tabPageP7.TabIndex = 7;
+            this.tabPageP7.Text = "P7";
+            this.tabPageP7.UseVisualStyleBackColor = true;
+            // 
+            // p7StateControl
+            // 
+            this.p7StateControl.AutoSize = true;
+            this.p7StateControl.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.p7StateControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.p7StateControl.Location = new System.Drawing.Point(4, 4);
+            this.p7StateControl.Margin = new System.Windows.Forms.Padding(5);
+            this.p7StateControl.Name = "p7StateControl";
+            this.p7StateControl.PStateIndex = 7;
+            this.p7StateControl.Size = new System.Drawing.Size(437, 101);
+            this.p7StateControl.TabIndex = 7;
+            // 
 			// tabPageNbP0
 			// 
 			this.tabPageNbP0.Controls.Add(this.nbp0StateControl);
@@ -294,7 +434,7 @@
 			this.MaximizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(341, 252);
 			this.Name = "Form1";
-			this.Text = "FusionTweaker V1.0.3";
+			this.Text = "FusionTweaker V1.0.1";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPageP0.ResumeLayout(false);
@@ -329,7 +469,17 @@
 		private PStateControl p1StateControl;
 		private System.Windows.Forms.TabPage tabPageP2;
 		private PStateControl p2StateControl;
-		private System.Windows.Forms.TabPage tabPageNbP0;
+        private System.Windows.Forms.TabPage tabPageP3;
+        private PStateControl p3StateControl;
+        private System.Windows.Forms.TabPage tabPageP4;
+        private PStateControl p4StateControl;
+        private System.Windows.Forms.TabPage tabPageP5;
+        private PStateControl p5StateControl;
+        private System.Windows.Forms.TabPage tabPageP6;
+        private PStateControl p6StateControl;
+        private System.Windows.Forms.TabPage tabPageP7;
+        private PStateControl p7StateControl;
+        private System.Windows.Forms.TabPage tabPageNbP0;
 		private PStateControl nbp0StateControl;
 		private System.Windows.Forms.TabPage tabPageNbP1;
 		private PStateControl nbp1StateControl;
