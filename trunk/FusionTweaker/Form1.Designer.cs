@@ -434,7 +434,7 @@
 			this.MaximizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(341, 252);
 			this.Name = "Form1";
-			this.Text = "FusionTweaker V1.0.1";
+			this.Text = "FusionTweaker V1.0.2";
 			this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
 			this.tabControl1.ResumeLayout(false);
 			this.tabPageP0.ResumeLayout(false);
@@ -443,7 +443,17 @@
 			this.tabPageP1.PerformLayout();
 			this.tabPageP2.ResumeLayout(false);
 			this.tabPageP2.PerformLayout();
-			this.tabPageNbP0.ResumeLayout(false);
+            this.tabPageP3.ResumeLayout(false);
+            this.tabPageP3.PerformLayout();
+            this.tabPageP4.ResumeLayout(false);
+            this.tabPageP4.PerformLayout();
+            this.tabPageP5.ResumeLayout(false);
+            this.tabPageP5.PerformLayout();
+            this.tabPageP6.ResumeLayout(false);
+            this.tabPageP6.PerformLayout();
+            this.tabPageP7.ResumeLayout(false);
+            this.tabPageP7.PerformLayout();
+            this.tabPageNbP0.ResumeLayout(false);
 			this.tabPageNbP0.PerformLayout();
 			this.tabPageNbP1.ResumeLayout(false);
 			this.tabPageNbP1.PerformLayout();

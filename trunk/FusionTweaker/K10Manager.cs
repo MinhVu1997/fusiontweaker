@@ -22,7 +22,7 @@ namespace FusionTweaker
 		/// </summary>
 		public static void SwitchToPState(int pStateIndex, int coreIndex)
 		{
-			if (pStateIndex < 0 || pStateIndex > 4)
+			if (pStateIndex < 0 || pStateIndex > 7)
 				throw new ArgumentOutOfRangeException("pStateIndex");
 
 			Program.Ols.WriteMsr(0xC0010062u, (ulong)pStateIndex, coreIndex);
@@ -293,7 +293,7 @@ namespace FusionTweaker
             //D0 Device F0 -> 00
             //10,20,30,40,50,60 -> no device
             // value of interest: D18F3xDC
-            if (maxIndex < 0 || maxIndex > 4)
+            if (maxIndex < 0 || maxIndex > 7)
 				throw new ArgumentOutOfRangeException("maxIndex");
 
 			uint reference = Program.Ols.ReadPciConfig(0xC3, 0xDC);

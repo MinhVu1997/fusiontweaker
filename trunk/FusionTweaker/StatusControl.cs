@@ -19,14 +19,14 @@ namespace FusionTweaker
         private int _index = 0; // 0
 
         /// <summary>
-        /// Gets or sets the associated hardware P-state index (0-4).
+        /// Gets or sets the associated hardware P-state index (0-9).
         /// </summary>
         public int StatusIndex
         {
             get { return _index; }
             set
             {
-                if (value < 0 || value > 5)
+                if (value < 0 || value > 9)
                     throw new ArgumentOutOfRangeException("StatusIndex");
 
                 _index = value;
