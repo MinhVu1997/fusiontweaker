@@ -58,6 +58,7 @@ namespace FusionTweaker
                 uint msrIndex = 0xC0010064u + (uint)index;
 
                 int boostedStates = K10Manager.GetNumBoostedStates();
+                //int boostedStates = 0;
                 int indexSw = Math.Max(0, index - boostedStates);
 
                 int tempPStateHw = (index <= boostedStates ? K10Manager.GetHighestPState() : 0);
@@ -97,12 +98,15 @@ namespace FusionTweaker
             {
                 // switch temporarily to the highest thread priority
                 // (we try not to interfere with any kind of C&Q)
-                //var previousPriority = Thread.CurrentThread.Priority;
-                //Thread.CurrentThread.Priority = ThreadPriority.Highest;
+                var previousPriority = Thread.CurrentThread.Priority;
+                Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 //check, if current NB P-State is the one, which is going to be modified
                 index = index - 8;
                 int curNbstate = K10Manager.GetNbPState();
+
+                string message = "Start: " + curNbstate;
+
                 int changedNbstate = curNbstate;
                 bool applyImmediately = (curNbstate != index);
 
@@ -114,11 +118,15 @@ namespace FusionTweaker
                 if (applyImmediately)
                 {
                     K10Manager.SwitchToNbPState(index);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 10; i++)
                     {
+                        Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
-                        Thread.Sleep(3); // let transitions complete
-                        if (changedNbstate == index) i = 1000;
+                        if (changedNbstate == index)
+                        {
+                            message += " Time_init_switch: " + i;
+                            i = 10;
+                        }
                     }
                 }
                 
@@ -162,35 +170,51 @@ namespace FusionTweaker
                 if (curNbstate == 0)
                 {
                     K10Manager.SwitchToNbPState(1);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 10; i++)
                     {
+                        Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
-                        Thread.Sleep(3); // let transitions complete
-                        if (changedNbstate == 1) i = 1000;
+                        if (changedNbstate == 1)
+                        {
+                            message += " Time_P0_P1: " + i;
+                            i = 10;
+                        }
                     }
                     K10Manager.SwitchToNbPState(0);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 10; i++)
                     {
+                        Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
-                        Thread.Sleep(3); // let transitions complete
-                        if (changedNbstate == 0) i = 1000;
+                        if (changedNbstate == 0)
+                        {
+                            message += " Time_P1_P0: " + i;
+                            i = 10;
+                        }
                     }
                 }
                 else if (curNbstate == 1)
                 {
                     K10Manager.SwitchToNbPState(0);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 10; i++)
                     {
+                        Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
-                        Thread.Sleep(3); // let transitions complete
-                        if (changedNbstate == 0) i = 1000;
+                        if (changedNbstate == 0)
+                        {
+                            message += " Time_P1_P0: " + i;
+                            i = 10;
+                        }
                     }
                     K10Manager.SwitchToNbPState(1);
-                    for (int i = 0; i < 1000; i++)
+                    for (int i = 0; i < 10; i++)
                     {
+                        Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
-                        Thread.Sleep(3); // let transitions complete
-                        if (changedNbstate == 1) i = 1000;
+                        if (changedNbstate == 1)
+                        {
+                            message += " Time_P0_P1: " + i;
+                            i = 10;
+                        }
                     }
                 }
 
@@ -198,8 +222,8 @@ namespace FusionTweaker
                 //K10Manager.EnDllShutDown();
                     
                 K10Manager.DisableNBPstateSwitching();
-                
-                //Thread.CurrentThread.Priority = previousPriority;
+                //MessageBox.Show(message);
+                Thread.CurrentThread.Priority = previousPriority;
             }
 		}
 
@@ -256,7 +280,7 @@ namespace FusionTweaker
 		{
 			var sb = new System.Text.StringBuilder();
 
-            double maxVid = 0, maxFSB = 0;
+            double maxVid = 0, maxCLK = 0;
             int maxPLL = 0;
 			for (int i = 0; i < _msrs.Length; i++)
 			{
@@ -265,11 +289,11 @@ namespace FusionTweaker
 					sb.Append('|');
 
                 maxVid = Math.Max(maxVid, _msrs[i].Vid);
-                maxFSB = Math.Max(maxFSB, _msrs[i].FSB);
-                maxPLL = (int)Math.Max(maxFSB, _msrs[i].PLL);
+                maxCLK = Math.Max(maxCLK, _msrs[i].CLK);
+                maxPLL = (int)Math.Max(maxCLK, _msrs[i].PLL);
 			}
 
-            sb.AppendFormat(" @ {0}V/{1}MHz/{2}MHz", maxVid, maxFSB, maxPLL);
+            sb.AppendFormat(" @ {0}V/{1}MHz/{2}MHz", maxVid, maxCLK, maxPLL);
 
 			return sb.ToString();
 		}
