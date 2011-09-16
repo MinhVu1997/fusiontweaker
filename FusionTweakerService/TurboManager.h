@@ -49,21 +49,16 @@ public:
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return false;
 
-		const bool isLocked = ((lower & 0x80000000u) != 0);
+		DWORD newLower = (lower & 0xFFFFFFFEu) | (enable ? 1 : 0);
 
-		DWORD newLower = (lower & 0xFFFFFFFCu) | (enable ? 3 : 0);
-		// set the number of boosted states if unlocked
-		if (!isLocked)
-			newLower = (newLower & 0xFFFFFFFBu) | (enable ? 1 << 2 : 0);
-
-		return (newLower == lower || WritePciConfigDwordEx(0xC4, 0x15C, newLower));
+		return WritePciConfigDwordEx(0xC4, 0x15C, newLower);
 	}
 
 	/// <summary>
 	/// Tries to set the number of idle cores (in C1) for the Turbo to kick in and
 	/// returns true if successful.
 	/// </summary>
-	static bool SetNumIdleCores(unsigned int num)
+	/*static bool SetNumIdleCores(unsigned int num)
 	{
 		if (!IsSupported())
 			return false;
@@ -83,9 +78,9 @@ public:
 
 		return (newLower == lower || WritePciConfigDwordEx(0xC4, 0x16C, newLower));
 	}
+	*/
 
-
-	/// <summary>Returns true if the Turbo is enabled and if there are boosted P-states.</summary>
+	/// <summary>Returns true if the Turbo is enabled</summary>
 	static bool IsEnabled()
 	{
 		if (!IsSupported())
@@ -95,8 +90,8 @@ public:
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return true; // assume it's enabled by default if supported
 
-		return ((lower & 7) == 7); // check if enabled and if there is a boosted state
-	}
+		return ((lower & 1) == 1); // check if enabled 
+	} 
 
 	/// <summary>Returns the number of boosted (Turbo) P-states.</summary>
 	static int GetNumBoostedStates()
@@ -108,6 +103,6 @@ public:
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return 1; // assume it's enabled by default if supported
 
-		return (lower >> 2) & 1;
+		return (lower >> 2) & 3;
 	}
 };
