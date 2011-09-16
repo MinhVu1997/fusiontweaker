@@ -18,6 +18,42 @@ namespace FusionTweaker
 
         private int _index = 0; // 0
 
+        SMBIOS smbios = new SMBIOS();
+
+        public string GetVendor()
+        {
+            string vendor = "Unknown";
+            if (smbios.Board != null)
+            {
+                vendor = smbios.BIOS.Vendor.ToString();
+            }
+            return vendor;
+        }
+
+        public string GetMobo()
+        {
+            string mobo = "Unknown";
+            if (smbios.Board != null)
+            {
+                mobo = smbios.Board.ProductName.ToString();
+            }
+            return mobo;
+        }
+
+        public string GetReport()
+        {
+            StringBuilder output = new StringBuilder();
+            if (smbios.Board != null)
+            {
+                output.AppendLine(smbios.BIOS.Vendor.ToString());
+                output.AppendLine(smbios.BIOS.Version.ToString());
+                output.AppendLine(smbios.Board.Manufacturer.ToString());
+                output.AppendLine(smbios.Board.ProductName.ToString());
+            }
+            return output.ToString();
+            //return test;
+        }
+
         /// <summary>
         /// Gets or sets the associated hardware P-state index (0-9).
         /// </summary>
@@ -209,7 +245,90 @@ namespace FusionTweaker
             text += "";
             return text;
         }
-        
+
+        public string COFVidStringConv()
+        {
+            string text = "";
+            ulong msr = Program.Ols.ReadMsr(0xC0010071u);
+            text += "MainPllOpFreqIdMax: " + ((msr >> 49) & 0x3F)
+                    + " StartupPstate: " + ((msr >> 32) & 0x7)
+                    + " MinVid(V): " + (1.55 - ((msr >> 42) & 0x7F) * 0.0125) 
+                    + " MaxVid(V): " + (1.55 - ((msr >> 35) & 0x7F) * 0.0125) + "\n"
+                    + " CurPstateLimit: " + ((msr >> 56) & 0x7) 
+                    + " CurPstate: " + ((msr >> 16) & 0x7)
+                    + " PstateInProgress: " + ((msr >> 20) & 0x1) + "\n"
+                    + " CurCpuVid(V): " + (1.55 - ((msr >> 9) & 0x7F) * 0.0125)
+                    + " CurNbVid(V): " + (1.55 - ((msr >> 25) & 0x7F) * 0.0125) + "\n"
+                    + " CurCpuFid: " + ((msr >> 4) & 0x1F)
+                    + " CurCpuDid: " + (msr & 0xF);
+            return text;
+        }
+
+        public string CPUPstateConv()
+        {
+            string text = "";
+            ulong[] msr = new ulong[8];
+            msr[0] = Program.Ols.ReadMsr(0xC0010064u);
+            msr[1] = Program.Ols.ReadMsr(0xC0010065u);
+            msr[2]= Program.Ols.ReadMsr(0xC0010066u);
+            msr[3] = Program.Ols.ReadMsr(0xC0010067u);
+            msr[4] = Program.Ols.ReadMsr(0xC0010068u);
+            msr[5] = Program.Ols.ReadMsr(0xC0010069u);
+            msr[6] = Program.Ols.ReadMsr(0xC001006Au);
+            msr[7] = Program.Ols.ReadMsr(0xC001006Bu);
+
+            for (int i = 0; i < 8; i++)
+            {
+                text += "Pstate: P" + i + " PStateEn: " + ((msr[i] >> 63) & 0x1)
+                    + " IddDiv: " + ((msr[i] >> 41) & 0x1) + ((msr[i] >> 40) & 0x1)
+                    + " IddValue: " + ((msr[i] >> 32) & 0xFF) + "\n"
+                    + "CpuVid(V): " + (1.55 - ((msr[i] >> 9) & 0x7F) * 0.0125)
+                    + " CpuFid: " + ((msr[i] >> 4) & 0x1F)
+                    + " CpuDid: " + (msr[i] & 0xF) + "\n";
+            }
+
+            uint eax = 0, ebx = 0, ecx = 0, edx = 0;
+            Program.Ols.Cpuid(0x80000007u, ref eax, ref ebx, ref ecx, ref edx);
+            text += "CPB: " + ((edx >> 9) & 0x1) + " HwPstate: " + ((edx >> 7) & 0x1) + "\n";
+            return text;
+        }
+
+        public string CorePerfBoostControl()
+        {
+            string text = "";
+            uint settings = Program.Ols.ReadPciConfig(0xC3, 0x15C);
+            for (int i = 0; i < 32; i++)
+            {
+                text += (settings >> (31 - i) & 0x1).ToString();
+                if ((i + 1) % 4 == 0) text += " ";
+            }
+            text += "";
+            return text;
+        }
+
+        public string CorePerfBoostControlConv()
+        {
+            string text = "";
+            uint settings = Program.Ols.ReadPciConfig(0xC3, 0x15C);
+            text += "BoostEnAllCore: " + ((settings >> 29) & 0x1) + " IgnoreBoostThresh: " + ((settings >> 28) & 0x1)
+                + " NumBoostStates: " + ((settings >> 2) & 0x3) + " BoostSrc: " + ((settings >> 1) & 0x1) + ((settings >> 0) & 0x1);
+            return text;
+        }
+
+        public string APMI()
+        {
+            string text = "";
+            uint eax = 0, ebx = 0, ecx = 0, edx = 0;
+            Program.Ols.Cpuid(0x80000007u, ref eax, ref ebx, ref ecx, ref edx);
+            for (int i = 0; i < 32; i++)
+            {
+                text += (edx >> (31 - i) & 0x1).ToString();
+                if ((i + 1) % 4 == 0) text += " ";
+            }
+            text += "";
+            return text;
+        }
+
         public string CPUPstate0()
         {
             string text = "";
