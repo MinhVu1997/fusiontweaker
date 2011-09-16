@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace FusionTweaker
 {
@@ -33,9 +34,9 @@ namespace FusionTweaker
 		#region Functions affecting all cores.
 
 		/// <summary>
-		/// Returns the highest allowed hardware P-state index.
+		/// Returns the currently highest allowed hardware P-state index.
 		/// </summary>
-		public static int GetHighestPState()
+		public static int GetCurHighestPState()
 		{
             //D18 Device F0 -> C0
             //D0 Device F0 -> 00
@@ -43,6 +44,14 @@ namespace FusionTweaker
             // value of interest: D18F3xDC[PstateMaxVal]
 			uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
 			return (int)((settings >> 8) & 0x7);
+		}
+
+        /// <summary>
+        /// Returns the highest allowed hardware P-state index (read-only).
+        /// </summary>
+        public static int GetHighestPState()
+        {
+			return (int)((Program.Ols.ReadMsr(0xC0010061u, 0) >> 4) & 0x7);
 		}
 
         /// <summary>
@@ -359,6 +368,24 @@ namespace FusionTweaker
 			max = (maxValue == 0 ? 1.55   : 1.55 - maxValue * 0.0125);
 		}
 
+        /// <summary>
+        /// Returns the family in hex.
+        /// </summary>
+        public static int GetFamily()
+        {
+            uint eax = 0, ebx = 0, ecx = 0, edx = 0;
+            int baseFamily, extFamily, family;
+            if (Program.Ols.Cpuid(0x80000001u, ref eax, ref ebx, ref ecx, ref edx) == 0)
+                throw new NotSupportedException("Cpuid()");
+
+            baseFamily = (int)((eax >> 8) & 0xF);
+            extFamily = (int)((eax >> 20) & 0xF);
+            family = baseFamily + extFamily;
+            int tmp1 = family % 16;
+            int tmp10 = (int)(family / 16);
+            family = tmp10 * 10 + tmp1;
+            return family;
+        }
 
 		/// <summary>
 		/// Returns the number of (enabled) CPU cores.
@@ -396,16 +423,17 @@ namespace FusionTweaker
 		}
 
 		/// <summary>
-		/// Returns true if the Turbo is not supported or locked
-		/// (number of boosted states and Turbo cores).
+		/// Returns true if the Turbo is enabled
+		/// (number of boosted states == 0 or battery powered (?)).
 		/// </summary>
-		public static bool IsTurboLocked()
+		public static bool IsTurboEnabled()
 		{
 			if (!IsTurboSupported())
-				return true;
+				return false;
 
 			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
-			return ((lower & 0x80000000u) != 0);
+            //MessageBox.Show((lower & 0x3u).ToString());
+			return ((lower & 0x1u) == 1); //returns true, if Turbo is enabled / Bit 1 behaves odd, will disregard it 
 		}
 
 		/// <summary>
@@ -418,48 +446,34 @@ namespace FusionTweaker
 				return false;
 
 			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
-			bool isLocked = ((lower & 0x80000000u) != 0);
-
-			uint newLower = (lower & 0xFFFFFFFCu) | (enable ? 3u : 0u);
-			// set the number of boosted states if unlocked
-			if (!isLocked)
-				newLower = (newLower & 0xFFFFFFFBu) | (enable ? 1u << 2 : 0u);
-
+            
+            uint newLower = (lower & 0xFFFFFFFEu) | (enable ? 1u : 0u); //deleting bit 0 and setting it (BoostSrc page 339)
+			                                                            // Bit 1 behaves odd, will be ignored
 			if (newLower != lower)
 				Program.Ols.WritePciConfig(0xC4, 0x15C, newLower);
 
+            //MessageBox.Show((lower & 0x3u).ToString() + " " + (newLower & 0x3u).ToString());
 			return true;
 		}
 
 		/// <summary>
-		/// Tries to set the maximum number of cores in the Turbo state at a time and
-		/// returns true if successful.
+		/// sets handling of requirements for a given core to enter boosted PState, when no others are boosted
+		/// true => All cores power consuption must be below limit
+        /// false => A given cores's power consumption must be below limt
 		/// </summary>
-		public static bool SetNumTurboCores(int num)
+		public static bool SetBoostEnAllCores(bool enable)
 		{
-			if (IsTurboLocked())
+            if (!IsTurboEnabled())
 				return false;
 
-			uint numIdleCores = (uint)(GetNumCores() - num);
+            uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
 
-			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x16C);
-			uint newLower = (lower & 0xFFFFF1FFu) | ((numIdleCores & 7) << 9);
+            uint newLower = (lower & 0xDFFFFFFFu) | (enable ? 20000000u : 0u); //deleting bit 29 and setting them (page 339)
 
-			if (newLower != lower)
-				Program.Ols.WritePciConfig(0xC4, 0x16C, newLower);
+            if (newLower != lower)
+                Program.Ols.WritePciConfig(0xC4, 0x15C, newLower);
 
-			return true;
-		}
-
-		/// <summary>Returns true if the Turbo is enabled and if there are boosted P-states.</summary>
-		public static bool IsTurboEnabled()
-		{
-			if (!IsTurboSupported())
-				return false;
-
-			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
-
-			return ((lower & 7) == 7); // check if enabled and if there is a boosted state
+            return true;
 		}
 
 		/// <summary>Returns the number of boosted (Turbo) P-states.</summary>
@@ -470,21 +484,7 @@ namespace FusionTweaker
 
 			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
 
-			return ((int)lower >> 2) & 1;
-		}
-
-		/// <summary>
-		/// Returns the maximum number of cores in the Turbo state at a time.
-		/// </summary>
-		public static int GetNumTurboCores()
-		{
-			if (!IsTurboSupported())
-				return 0;
-
-			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x16C);
-			uint numIdleCores = (lower >> 9) & 7;
-
-			return GetNumCores() - (int)numIdleCores;
+			return ((int)lower >> 2) & 3;
 		}
 
 		#endregion
