@@ -263,7 +263,7 @@
 			this.maxPStateNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.maxPStateNumericUpDown.Location = new System.Drawing.Point(240, 52);
 			this.maxPStateNumericUpDown.Maximum = new decimal(new int[] {
-            4,
+            8,
             0,
             0,
             0});
@@ -274,17 +274,17 @@
 					"ith fewer P-states, you need to\r\npermanently customize the additional P-states t" +
 					"o unlock them.");
 			this.maxPStateNumericUpDown.Value = new decimal(new int[] {
-            4,
+            8,
             0,
             0,
             0});
 			// 
-			// FSBlabel
+			// CLKlabel
 			// 
 			this.label3.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.label3.AutoSize = true;
 			this.label3.Location = new System.Drawing.Point(3, 55);
-			this.label3.Name = "FSBlabel";
+			this.label3.Name = "CLKlabel";
 			this.label3.Size = new System.Drawing.Size(81, 13);
 			this.label3.TabIndex = 4;
 			this.label3.Text = "P-state bounds:";
@@ -294,7 +294,7 @@
 			this.minPStateNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
 			this.minPStateNumericUpDown.Location = new System.Drawing.Point(154, 52);
 			this.minPStateNumericUpDown.Maximum = new decimal(new int[] {
-            4,
+            8,
             0,
             0,
             0});
