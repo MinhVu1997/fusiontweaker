@@ -20,15 +20,14 @@ namespace FusionTweaker
 		/// <summary>
 		/// Bus speed (0 ... 200MHz).
 		/// </summary>
-		public double FSB { get; set; }
+		public double CLK { get; set; }
 
         /// <summary>
         /// Core / GPU frequency.
         /// </summary>
         public double PLL { get; set; }
 
-
-		/// <summary>
+        /// <summary>
 		/// Loads a core's P-state.
 		/// </summary>
 		public static PStateMsr Load(int pStateIndex, int coreIndex)
@@ -59,7 +58,7 @@ namespace FusionTweaker
 		{
             //uint maxDiv = (uint)K10Manager.MaxCOF();
             uint maxDiv = (uint)K10Manager.CurrCOF();
-            uint fsb = (uint)K10Manager.GetBIOSBusSpeed();
+            uint clk = (uint)K10Manager.GetBIOSBusSpeed();
                 
             if (pstate < 8)
             {
@@ -105,8 +104,8 @@ namespace FusionTweaker
                 {
                     CPUMultNBDivider = Mult,
                     Vid = 1.55 - 0.0125 * cpuVid,
-                    FSB = fsb,
-                    PLL = Mult * fsb
+                    CLK = clk,
+                    PLL = Mult * clk
                 };
                 return msr;
             }
@@ -124,8 +123,8 @@ namespace FusionTweaker
                 {
                     CPUMultNBDivider = nclkdiv,
                     Vid = 1.55 - 0.0125 * nbVid,
-                    FSB = fsb,
-                    PLL = (16 + maxDiv) / nclkdiv * fsb
+                    CLK = clk,
+                    PLL = (16 + maxDiv) / nclkdiv * clk
                 };
                 return msr;
             }
@@ -143,8 +142,8 @@ namespace FusionTweaker
                 {
                     CPUMultNBDivider = nclkdiv,
                     Vid = 1.55 - 0.0125 * nbVid,
-                    FSB = fsb,
-                    PLL = (16 + maxDiv) / nclkdiv * fsb
+                    CLK = clk,
+                    PLL = (16 + maxDiv) / nclkdiv * clk
                 };
                 return msr;
             }
@@ -154,7 +153,7 @@ namespace FusionTweaker
                 {
                     CPUMultNBDivider = 0,
                     Vid = 1,
-                    FSB = 100,
+                    CLK = 100,
                     PLL = 1600
                 };
                 return msr;
@@ -170,7 +169,7 @@ namespace FusionTweaker
             {
                 if (CPUMultNBDivider < 4 || CPUMultNBDivider > 48) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                 if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
-                if (FSB <= 0 || FSB > 200) throw new ArgumentOutOfRangeException("FSB");
+                if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
 
                 uint cpuFid, cpuDid;
                 if (CPUMultNBDivider >= 19)
@@ -265,7 +264,7 @@ namespace FusionTweaker
             }
             else if (pstate == 8)
             {
-                //K10Manager.SetBIOSBusSpeed((uint)FSB);
+                //K10Manager.SetBIOSBusSpeed((uint)CLK);
                 uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
                 //CPUMultNBDivider
                 //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
@@ -275,7 +274,7 @@ namespace FusionTweaker
             }
             else if (pstate == 9)
             {
-                //K10Manager.SetBIOSBusSpeed((uint)FSB);
+                //K10Manager.SetBIOSBusSpeed((uint)CLK);
                 uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
                 //CPUMultNBDivider
                 //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
