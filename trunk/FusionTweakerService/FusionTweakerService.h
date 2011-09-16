@@ -142,14 +142,15 @@ private:
 		if (_params.EnableCustomPStates)
 		{
 			ApplyCustomPStates();
-			UnlockPStates();
+			//UnlockPStates();
 
 			// the service needs to be kept alive to re-apply custom P-states when
 			// the system resumes from standby
 			result = true;
 		}
 
-		if (_params.TurboCores >= 0)
+		//family 12h doesn't support setting the turbo per core that way
+		/*if (_params.TurboCores >= 0)
 		{
 			if (_params.TurboCores == 0)
 				TurboManager::Set(false);
@@ -167,7 +168,7 @@ private:
 			}
 
 			result = true;
-		}
+		}*/
 
 		if (_params.EnableCustomCnQ)
 		{
@@ -201,8 +202,8 @@ private:
 	/// </summary>
 	void ApplyCustomPStates()
 	{
-		bool customized[5];
-		for (int i = 0; i < 5; i++)
+		bool customized[10];
+		for (int i = 0; i < 10; i++)
 			customized[i] = !_params.Msrs[i].empty();
 
 		// try to temporarily set the number of boosted (Turbo) P-states to 0
@@ -238,7 +239,7 @@ private:
 			currentHwPState = (lower >> 16) & 7;
 
 			// customize all hardware P-states except the currently active one
-			for (int state = 0; state < 5; state++)
+			for (int state = 0; state < 8; state++)
 			{
 				if (customized[state] && state != currentHwPState)
 					SavePState(state, _params.Msrs[state][i], i);
@@ -277,8 +278,14 @@ private:
 		delete[] currentHwPStates;
 		Sleep(3); // let transitions complete
 
-		SetThreadPriority(currentThread, previousPriority);
+		// customize all hardware NB P-states
+		for (int state = 8; state < 10; state++)
+		{
+			SavePState(state, _params.Msrs[state][0], 0);
+		}
 
+		SetThreadPriority(currentThread, previousPriority);
+		
 		// re-enable the Turbo
 		if (turboEnabled)
 			TurboManager::Set(true);
@@ -346,7 +353,7 @@ private:
 	/// </summary>
 	static void SavePState(unsigned int index, unsigned int lowMsr, unsigned int core)
 	{
-		if (index < 3) { //this is, what we need to do for the CPU
+		if (index < 8) { //this is, what we need to do for the CPU
 			const unsigned int msrIndex = 0xC0010064u + index;
 			const DWORD_PTR affinityMask = (DWORD_PTR)1 << core;
 
@@ -357,8 +364,8 @@ private:
 			lower = (lower & ~lowMsrMask) | (lowMsr & lowMsrMask);
 
 			WrmsrTx(msrIndex, lower, higher, affinityMask);
-		} else if ((index == 3 || index == 4) && (core == 1)) { //we will handle NB P0/1 settings here
-			index = index - 3;
+		} else if ((index == 8 || index == 9) && (core == 0)) { //we will handle NB P0/1 settings here
+			index = index - 8;
 			EnableNBPstateSwitching();
 			unsigned int curNbstate = GetNbPState();
 			unsigned int changedNbstate = curNbstate;
@@ -366,11 +373,11 @@ private:
 			if (applyImmediately)
             {
 				SwitchToNbPState(index);
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 10; i++)
                 {
+					Sleep(20);
 					changedNbstate = GetNbPState();
-					Sleep(3);
-					if (changedNbstate == index) i = 1000;
+					if (changedNbstate == index) i = 10;
                 }
             }
 			curNbstate = GetNbPState();
@@ -411,35 +418,35 @@ private:
 			if (curNbstate == 0)
             {
                 SwitchToNbPState(1);
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
-                    Sleep(3); // let transitions complete
-                    if (changedNbstate == 1) i = 1000;
+                    if (changedNbstate == 1) i = 10;
                 }
                 SwitchToNbPState(0);
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
-                    Sleep(3); // let transitions complete
-                    if (changedNbstate == 0) i = 1000;
+                    if (changedNbstate == 0) i = 10;
                 }
             }
             else if (curNbstate == 1)
             {
                 SwitchToNbPState(0);
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
-                    Sleep(3); // let transitions complete
-                    if (changedNbstate == 0) i = 1000;
+                    if (changedNbstate == 0) i = 10;
                 }
                 SwitchToNbPState(1);
-                for (int i = 0; i < 1000; i++)
+                for (int i = 0; i < 10; i++)
                 {
+                    Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
-                    Sleep(3); // let transitions complete
-                    if (changedNbstate == 1) i = 1000;
+                    if (changedNbstate == 1) i = 10;
                 }
             }
 
@@ -454,7 +461,7 @@ private:
 
 		// get the max enabled hardware P-state from core 0
 		int maxEnabledPState = 2;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			const unsigned int msrIndex = 0xC0010064u + i;
 			const DWORD_PTR affinityMask = 1;
@@ -469,7 +476,7 @@ private:
 		}
 
 		// make sure the profiles' P-state bounds are valid
-		for (int i = 0; i < 3; i++)
+		for (int i = 0; i < 8; i++)
 		{
 			CustomCnQProfile& profile = _params.Profiles[i];
 
@@ -497,7 +504,7 @@ private:
 
 		// custom P-states
 		_params.EnableCustomPStates = false;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 10; i++)
 		{
 			const std::string registryValue = std::string("P") + StringUtils::ToString(i);
 
@@ -563,7 +570,7 @@ private:
 		Registry::GetBool(key, "Ganged", profile.Ganged);
 
 		profile.MinPState = (profileIndex == 2 ? 1 : 0);
-		profile.MaxPState = (profileIndex == 1 ? 0 : 4);
+		profile.MaxPState = (profileIndex == 1 ? 0 : 6);
 		Registry::GetDword(key, "MinPState", profile.MinPState);
 		Registry::GetDword(key, "MaxPState", profile.MaxPState);
 
