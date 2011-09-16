@@ -23,12 +23,12 @@ struct Parameters
 {
 	bool EnableCustomPStates;
 	// lower 32 bits for each core's MSR, for all 5 P-states (P0 to P4)
-	std::vector<unsigned int> Msrs[5];
+	std::vector<unsigned int> Msrs[10];
 
 	int TurboCores; // max number of cores in the Turbo state at a time
 
 	bool EnableCustomCnQ;
-	CustomCnQProfile Profiles[3]; // Balanced, High performance, Power saver
+	CustomCnQProfile Profiles[10]; // Balanced, High performance, Power saver
 
 	bool EnableFanManagement;
 	int PwmRamp; // max step (in percent) from one interval (500 ms) to the next
