@@ -24,7 +24,6 @@ namespace FusionTweaker
 			makePermanentCheckBox.CheckedChanged += (s, e) => updateButton.Enabled = makePermanentCheckBox.Checked;
 			turboCheckBox.CheckedChanged += (s, e) =>
 			{
-				turboCoresNumericUpDown.Enabled = (turboCheckBox.Checked && !K10Manager.IsTurboLocked());
 				if (turboCheckBox.Checked)
 				{
 					enableCustomCnQCheckBox.Checked = false;
@@ -39,10 +38,7 @@ namespace FusionTweaker
 			updateButton_Click(updateButton, EventArgs.Empty);
 
 			turboCheckBox.Enabled = K10Manager.IsTurboSupported();
-			turboCheckBox.Checked = (K10Manager.IsTurboEnabled());
-			turboCoresNumericUpDown.Enabled = !K10Manager.IsTurboLocked();
-			turboCoresNumericUpDown.Value = K10Manager.GetNumTurboCores();
-			turboCoresNumericUpDown.Maximum = K10Manager.GetNumCores() - 1;
+			turboCheckBox.Checked = K10Manager.IsTurboEnabled();
 
 			balancedProfileControl.LoadFromRegistry();
 			highPerformanceProfileControl.LoadFromRegistry();
@@ -62,10 +58,8 @@ namespace FusionTweaker
 
 			makePermanentCheckBox.Checked = ((int)key.GetValue("EnableCustomPStates", 0) != 0);
 
-			int turboCores = (int)key.GetValue("TurboCores", (int)turboCoresNumericUpDown.Value);
-			turboCheckBox.Checked = (turboCores > 0);
-			turboCoresNumericUpDown.Value = turboCores;
-
+			turboCheckBox.Checked = (K10Manager.IsTurboEnabled());
+			
 			enableCustomCnQCheckBox.Checked = ((int)key.GetValue("EnableCustomCnQ", 0) != 0);
 
 			key.Close();
@@ -130,8 +124,15 @@ namespace FusionTweaker
 				}
 			}
 
-			key.SetValue("TurboCores", (turboCheckBox.Checked ? (int)turboCoresNumericUpDown.Value : 0));
-
+            if (turboCheckBox.Checked)
+            {
+                K10Manager.SetTurbo(true);
+            }
+            else
+            {
+                K10Manager.SetTurbo(false);
+            }
+            
 			key.SetValue("EnableCustomCnQ", (enableCustomCnQCheckBox.Checked ? 1 : 0));
 			key.Close();
 
@@ -164,5 +165,24 @@ namespace FusionTweaker
 					"FusionTweaker", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
 		}
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show("Do you really want to delete all your customized settings?\n"
+                + "If you want that:\n1. Click OK.\n2. Close the application without hitting \"Apply\"\n3. Restart your system.", "Reset PStates", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+            if (result == DialogResult.OK)
+            {
+                var key = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(@"Software\FusionTweaker");
+                if (key == null)
+                    return;
+                for (int i = 0; i < 10; i++)
+                {
+                    string valueName = "P" + i;
+                    key.DeleteValue(valueName, false);
+                }
+                key.SetValue("EnableCustomPStates", 0);
+                key.Close();
+            }
+        }
 	}
 }
