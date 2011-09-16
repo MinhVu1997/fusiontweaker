@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using Microsoft.Win32;
+using System.IO;
 
 namespace FusionTweaker
 {
@@ -21,28 +22,82 @@ namespace FusionTweaker
 
 		private static readonly bool _useWindowsPowerSchemes = (Environment.OSVersion.Version.Major >= 6);
 
+        private static readonly int numCores = System.Environment.ProcessorCount;
+        private static readonly int numPstates = K10Manager.GetHighestPState();
+        private static readonly int numBoostedPstates = K10Manager.GetNumBoostedStates();
+        private static readonly int family = K10Manager.GetFamily();
+        
+        private static int[] currentPStateCore = new int[numCores];
+        private static readonly int processBarSteps = numPstates + numBoostedPstates + 1;
+        private static readonly int processBarPerc = 100 / processBarSteps;
 
-		public Form1()
+        private static bool monitorPstates = false;
+        //private static bool alwaysOnTop = true;
+
+        public static int[] freq = new int[10];
+
+        public Form1()
 		{
 			InitializeComponent();
+
+            if (family != 12)
+            {
+                MessageBox.Show("Your CPU/APU from AMD family: " + family + "h is not supported!");
+            }
+
+            //needed to reduces flickering
+            SetStyle(ControlStyles.UserPaint, true);
+            SetStyle(ControlStyles.AllPaintingInWmPaint, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+
+            
+            if (numCores == 3)
+            {
+                this.Controls.Remove(this.pstateLabel4);
+                this.Controls.Remove(this.core4label);
+                this.Controls.Remove(this.cpu4Bar);
+                ShiftTable(-15);
+            }
+            else if (numCores == 2)
+            {
+                this.Controls.Remove(this.pstateLabel4);
+                this.Controls.Remove(this.core4label);
+                this.Controls.Remove(this.cpu4Bar);
+                this.Controls.Remove(this.pstateLabel3);
+                this.Controls.Remove(this.core3label);
+                this.Controls.Remove(this.cpu3Bar);
+                ShiftTable(-30);
+            }
+            else if (numCores == 1)
+            {
+                this.Controls.Remove(this.pstateLabel4);
+                this.Controls.Remove(this.core4label);
+                this.Controls.Remove(this.cpu4Bar);
+                this.Controls.Remove(this.pstateLabel3);
+                this.Controls.Remove(this.core3label);
+                this.Controls.Remove(this.cpu3Bar); 
+                this.Controls.Remove(this.pstateLabel2);
+                this.Controls.Remove(this.core2label);
+                this.Controls.Remove(this.cpu2Bar);
+                ShiftTable(-50);
+            }
 
 			notifyIcon.Icon = this.Icon;
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
-			this.Width += p0StateControl.GetDeltaOptimalWidth();
-            this.Height = 230;
-
-			p0StateControl.LoadFromHardware(0);
-			p1StateControl.LoadFromHardware(1);
-			p2StateControl.LoadFromHardware(2);
-            p3StateControl.LoadFromHardware(3);
-            p4StateControl.LoadFromHardware(4);
-            p5StateControl.LoadFromHardware(5);
-            p6StateControl.LoadFromHardware(6);
-            p7StateControl.LoadFromHardware(7);
-            nbp0StateControl.LoadFromHardware(8);
-            nbp1StateControl.LoadFromHardware(9);
+			//this.Width += p0StateControl.GetDeltaOptimalWidth();
+            
+			p0StateControl.LoadFromHardware();
+			p1StateControl.LoadFromHardware();
+			p2StateControl.LoadFromHardware();
+            p3StateControl.LoadFromHardware();
+            p4StateControl.LoadFromHardware();
+            p5StateControl.LoadFromHardware();
+            p6StateControl.LoadFromHardware();
+            p7StateControl.LoadFromHardware();
+            nbp0StateControl.LoadFromHardware();
+            nbp1StateControl.LoadFromHardware();
             statusinfo.LoadFromHardware();
 
 			if (!_useWindowsPowerSchemes)
@@ -232,7 +287,7 @@ namespace FusionTweaker
             {
                 lastModifiedControl = 7; //checking CPU P-States only -> skip NB P-States
             }
-			/* temporary disabled
+			// temporary disabled
               for (int i = 1; i <= lastModifiedControl; i++)
 			{
 				// make sure the neighboring P-state on the left specifies a >= VID
@@ -243,11 +298,9 @@ namespace FusionTweaker
 					return;
 				}
             }
-            */
 			timer1.Enabled = false;
 
 			// try to temporarily set the number of boosted (Turbo) P-states to 0
-			// this should suspend the restriction of software P-state multis by F3x1F0[MaxSwPstateCpuCof]
 			bool turboEnabled = K10Manager.IsTurboEnabled();
 			int boostedStates = K10Manager.GetNumBoostedStates();
 			if (boostedStates != 0)
@@ -261,7 +314,7 @@ namespace FusionTweaker
 
 			// refresh the P-states
             for (int i = 0; i < 10; i++)
-                controls[i].LoadFromHardware(i);
+                controls[i].LoadFromHardware();
 
             statuscontrols[0].LoadFromHardware();
 
@@ -277,35 +330,60 @@ namespace FusionTweaker
 				// refresh the P-states
 				if (dialog.Applied)
 				{
-					p0StateControl.LoadFromHardware(0);
-					p1StateControl.LoadFromHardware(1);
-					p2StateControl.LoadFromHardware(2);
-                    p3StateControl.LoadFromHardware(3);
-                    p4StateControl.LoadFromHardware(4);
-                    p5StateControl.LoadFromHardware(5);
-                    p6StateControl.LoadFromHardware(6);
-                    p7StateControl.LoadFromHardware(7);
-                    nbp0StateControl.LoadFromHardware(8);
-					nbp1StateControl.LoadFromHardware(9);
+					p0StateControl.LoadFromHardware();
+					p1StateControl.LoadFromHardware();
+					p2StateControl.LoadFromHardware();
+                    p3StateControl.LoadFromHardware();
+                    p4StateControl.LoadFromHardware();
+                    p5StateControl.LoadFromHardware();
+                    p6StateControl.LoadFromHardware();
+                    p7StateControl.LoadFromHardware();
+                    nbp0StateControl.LoadFromHardware();
+					nbp1StateControl.LoadFromHardware();
                     statusinfo.LoadFromHardware();
 				}
 			}
 		}
 
+        private void paypal_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=KDVJC4359EN64");
+        }
+
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-			// get the current P-state of the first core
-			int currentPState = K10Manager.GetCurrentPState(0);
-            int currentNbPState = K10Manager.GetNbPState();
-
-			tabControl1.SuspendLayout();
-			for (int i = 0; i < 8; i++)
-				tabControl1.TabPages[i].Text = "P" + i + (i == currentPState ? "*" : string.Empty);
-
-            for (int i = 8; i < 10; i++)
-                tabControl1.TabPages[i].Text = "NB P" + (i - 8) + ((i - 8) == currentNbPState ? "*" : string.Empty);
-			
-            tabControl1.ResumeLayout();
+            if (!monitorPstates)
+            {
+                int currentNbPState = K10Manager.GetNbPState();
+                nbBar.Value = (2 - currentNbPState) * 50;
+                nbPstateLabel.Text = currentNbPState.ToString() + " - " + freq[currentNbPState + 8].ToString() + "MHz";
+                
+                // get the current P-state of the first core
+                for (int i = 0; i < numCores; i++)
+                {
+                    currentPStateCore[i] = K10Manager.GetCurrentPState(i);
+                    if (i == 0)
+                    {
+                        cpu1Bar.Value = (processBarSteps - currentPStateCore[i]) * (processBarPerc);
+                        pstateLabel1.Text = currentPStateCore[i].ToString() + " - " + freq[currentPStateCore[i]].ToString() + "MHz";
+                    }
+                    else if (i == 1)
+                    {
+                        cpu2Bar.Value = (processBarSteps - currentPStateCore[i]) * (processBarPerc);
+                        pstateLabel2.Text = currentPStateCore[i].ToString() + " - " + freq[currentPStateCore[i]].ToString() + "MHz";
+                    }
+                    else if (i == 2)
+                    {
+                        cpu3Bar.Value = (processBarSteps - currentPStateCore[i]) * (processBarPerc);
+                        pstateLabel3.Text = currentPStateCore[i].ToString() + " - " + freq[currentPStateCore[i]].ToString() + "MHz";
+                    }
+                    else if (i == 3)
+                    {
+                        cpu4Bar.Value = (processBarSteps - currentPStateCore[i]) * (processBarPerc);
+                        pstateLabel4.Text = currentPStateCore[i].ToString() + " - " + freq[currentPStateCore[i]].ToString() + "MHz";
+                    }
+                }
+            }
 		}
 
 		private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
@@ -330,5 +408,87 @@ namespace FusionTweaker
 		{
 			Application.Exit();
 		}
-	}
+
+        private void monitorCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (monitorCheckBox.Checked)
+            {
+                monitorPstates = true;
+            }
+            else
+            {
+                monitorPstates = false;
+                cpu1Bar.Value = 0;
+                cpu2Bar.Value = 0;
+                cpu3Bar.Value = 0;
+                cpu4Bar.Value = 0;
+                nbBar.Value = 0;
+                pstateLabel1.Text = "";
+                pstateLabel2.Text = "";
+                pstateLabel3.Text = "";
+                pstateLabel4.Text = "";
+                nbPstateLabel.Text = "Family " + family + "h";
+            }
+        }
+
+        private void ShiftTable(int shifty)
+        {
+            //this.tabControl1.Location = new System.Drawing.Point(12, 130 + shifty);
+            //this.tabControl1.Size = new System.Drawing.Size(350, 345 - shifty);
+            //this.MinimumSize = new System.Drawing.Size(225, 345 + shifty);
+        }
+
+        private void alwaysOnTopCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (alwaysOnTopCheck.Checked)
+            {
+                this.TopMost = true;
+            }
+            else
+            {
+                this.TopMost = false;
+            }
+        }
+
+        private void logButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            //create new file or just overwrite the old one
+            TextWriter htmlwrite = new StreamWriter("FusionTweaker.log", false);
+
+            htmlwrite.WriteLine("Family: " + family + "h");
+            htmlwrite.WriteLine("Bit numbering\t63   59   55   51   47   43   39   35   31   27   23   19   15   11   7    3  0\n"
+                            + "COFVID 0071\t\t" + statusinfo.COFVidString() + "\n"
+                            + "P-State0 0064\t" + statusinfo.CPUPstate0() + "\n"
+                            + "P-State0 0065\t" + statusinfo.CPUPstate1() + "\n"
+                            + "P-State0 0066\t" + statusinfo.CPUPstate2() + "\n"
+                            + "P-State0 0067\t" + statusinfo.CPUPstate3() + "\n"
+                            + "P-State0 0068\t" + statusinfo.CPUPstate4() + "\n"
+                            + "P-State0 0069\t" + statusinfo.CPUPstate5() + "\n"
+                            + "P-State0 006A\t" + statusinfo.CPUPstate6() + "\n"
+                            + "P-State0 006B\t" + statusinfo.CPUPstate7() + "\n"
+                            + statusinfo.COFVidStringConv() + "\n"
+                            + statusinfo.CPUPstateConv() + "\n"
+                            );
+
+            htmlwrite.WriteLine("Bit numbering\t\t\t31   27   23   19   15   11   7    3  0\n"
+                            + "NB P-State0 D18F3xDC\t" + statusinfo.NBPstate0() + "\n"
+                            + "NB P-State1 D18F6x90\t" + statusinfo.NBPstate1() + "\n"
+                            + "Advanced Power Mgmnt\t" + statusinfo.APMI() + "\n"
+                            + "Core Perf Boost Ctrl\t" + statusinfo.CorePerfBoostControl() + "\n"
+                            + "ClockTiming D18F3xD4\t" + statusinfo.ClockTiming() + "\n"
+                            + "BIOSClock D0F0xE4_x0130_80F1\t" + statusinfo.BIOSClock());
+            htmlwrite.WriteLine("D18F3x15C\t" + statusinfo.VoltageControl() + "\n"
+                            + statusinfo.CorePerfBoostControlConv() + "\n"
+                            + "D0 00\tD1F0 90\tSMBus A0\tD18 C0\n" + statusinfo.DebugOutput() + "\n"
+                            + "MSRC001_0061 P-State" + statusinfo.MaxPstate() + "\n"
+                            + "BIOS vendor\tBIOS version\tMoBo vendor\tMoBo name\n" + statusinfo.GetReport());
+
+            htmlwrite.Close();
+        }
+    }
 }
