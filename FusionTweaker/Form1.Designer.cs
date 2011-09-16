@@ -634,7 +634,7 @@
             this.Controls.Add(this.applyButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(225, 345);
+            this.MinimumSize = new System.Drawing.Size(350, 200);
             this.Name = "Form1";
             this.Text = "FusionTweaker V1.0.3";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
