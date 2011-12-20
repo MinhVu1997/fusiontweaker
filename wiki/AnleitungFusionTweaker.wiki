@@ -20,14 +20,14 @@ Mit dem Tool kann man jetzt die Spannung (CPU VID) für jeden dieser Zustände e
 Nach einer Änderung, drückt man auf "Apply" rechts unten. Damit werden diese Einstellungen erst einmal temporär übernommen. Überprüft werden kann das mit dem sehr guten Programm CPU-Z.
 
 Als Beispielwerte hier einmal die Einstellungen eines Samsung mit A6-3410MX APU:
-P0 - 2.3GHz - 1.15V
-P1 - 1.6GHz - 0.95V
-P2 - 1.5GHz - 0.925V
-P3 - 1.4GHz - 0.9V
-P4 - 1.3GHz - 0.875V
-P5 - 1.2GHz - 0.8375V
-P6 - 1.0GHz - 0.8V
-P7 - 0.8GHz - 0.75V
+  * P0 - 2.3GHz - 1.15V
+  * P1 - 1.6GHz - 0.95V
+  * P2 - 1.5GHz - 0.925V
+  * P3 - 1.4GHz - 0.9V
+  * P4 - 1.3GHz - 0.875V
+  * P5 - 1.2GHz - 0.8375V
+  * P6 - 1.0GHz - 0.8V
+  * P7 - 0.8GHz - 0.75V
 
 Damit habe ich einen ca. 10-15% geringeren Verbrauch bei Vollast gemessen, wobei auch die Temperaturen um ca. 5°C sanken.
 
