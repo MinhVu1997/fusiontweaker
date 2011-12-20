@@ -8,18 +8,32 @@ Bei einer schon vorhandenen Version vom FusionTweaker empfehle ich die vorherige
 == Reiter ==
 Sobald es gestartet ist, sollte man ein kleines Fenster mit 11 Reitern sehen. Die ersten 8 Reiter stehen für einen Zustand, indem sich die CPU befinden kann, die beiden Reiter mit "NB" zeigen die Einstellungen für die Northbridge/Grafikeinheit (GPU) und der 11te Reiter ist eher für Debug und weitere Informationen nützlich. 
 
+http://fusiontweaker.googlecode.com/files/FusionTweakerV105.PNG
+
 == CPU PStates ==
 Hier geht es erst einmal nur um die ersten 8 Reiter.
-Der jeweils aktive Zustand kann oben an den Balken gesehen werden. Sie werden P0 .. P7 genannt. P0 ist dabei der schnellste und P7 der langsamste. Je nach Last vom System, wird dynamisch zwischen den Zuständen hin und hergeschaltet, wobei natürlich P7 weniger Strom verbraucht, als P0.
+Der jeweils aktive Zustand kann oben direkt neben den Balken gesehen werden. Sie werden P0 .. P7 genannt. P0 ist dabei der schnellste und P7 der langsamste. Je nach Last vom System, wird dynamisch zwischen den Zuständen hin und hergeschaltet, wobei natürlich P7 weniger Strom verbraucht, als P0.
 
 === Spannung ===
 Mit dem Tool kann man jetzt die Spannung (CPU VID) für jeden dieser Zustände einzeln verstellen. Weiterhin läßt sich auch der Divider verändern, womit die jeweilige Frequenz pro Zustand einstellbar ist. 
 
-Dann drückt man auf "Apply" rechts unten. Damit werden diese Einstellungen erst einmal temporär übernommen. Überprüft werden kann das mit dem sehr guten Programm CPU-Z.
+Nach einer Änderung, drückt man auf "Apply" rechts unten. Damit werden diese Einstellungen erst einmal temporär übernommen. Überprüft werden kann das mit dem sehr guten Programm CPU-Z.
 
-Wenn das alles klappt, sollte man Prime95 downloaden. Damit kann man einen Stresstest durchführen, damit man weiß, ob die Einstellungen stabil sind. Ansonsten können zum Besipiel Blue Screens oder Einfrieren des Rechners vorkommen.
+Als Beispielwerte hier einmal die Einstellungen eines Samsung mit A6-3410MX APU:
+P0 - 2.3GHz - 1.15V
+P1 - 1.6GHz - 0.95V
+P2 - 1.5GHz - 0.925V
+P3 - 1.4GHz - 0.9V
+P4 - 1.3GHz - 0.875V
+P5 - 1.2GHz - 0.8375V
+P6 - 1.0GHz - 0.8V
+P7 - 0.8GHz - 0.75V
 
-Jeder Zustand sollte einzeln mit dem Stresstest überprüft werden. Das kann man mit den EnergieOptionen von Windows machen.
+Damit habe ich einen ca. 10-15% geringeren Verbrauch bei Vollast gemessen, wobei auch die Temperaturen um ca. 5°C sanken.
+
+Wenn das alles klappt, sollte man Prime95 downloaden. Damit kann man einen Stresstest durchführen, um das System auf Stabilität zu testen. Ansonsten können zum Beipiel Blue Screens oder Einfrieren des Rechners vorkommen.
+
+Jeder Zustand sollte einzeln mit dem Stresstest überprüft werden. Das kann man mit den Energie Optionen von Windows erreichen. Während der Stresstests keine wichtige Dateien öffnen, da es bei einem Absturz zu Datenverlust auf geöffneten Dateien kommen kann (allerdings selten).
 
 Sollte das Notebook bei den Tests einfrieren, ist das nicht schlimm. Dann war die Spannung etwas zu niedrig. Einfach lange den Power Knopf drücken und neu mit etwas höherer Spannung probieren (die oben angegebenen Spannungen sollten aber schon relativ sicher sein). Die eingestellten Spannungen im Tool sind noch nirgendwo fest eingestellt.
 
