@@ -8,6 +8,8 @@ If you already have a previous version of the FusionTweaker installed, I strongl
 == Tabs ==
 Once it has started up, you will see a window eleven different tabs. The eight tabs on the left belong to states, which the CPU can be in, while the next two tabs show the setup for the two available NB (Northbridge) PStates. The last, but not least, is the status tab, which can be used for debug and more detailed info on the internal registers.
 
+http://fusiontweaker.googlecode.com/files/FusionTweakerV105.PNG
+
 == CPU PStates ==
 Let's start with the first eight tabs.
 You can see the current active PState looking to the right of the bars . The available PStates are called P0 .. P7. PState P0 is always the fastest mode, while P7 is the slowest one. Depending on the current workload of your system, it will switch dynamically between them. As you can imagine, P0 is drawing more current than P7, which is directly related to battery life you can get.
