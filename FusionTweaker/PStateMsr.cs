@@ -10,6 +10,8 @@ namespace FusionTweaker
 		/// <summary>
 		/// Core multiplicator (4, 4.5, 5, ..., 31.5).
 		/// </summary>
+		//Brazos merge BT
+		//public double Divider { get; set; }
 		public double CPUMultNBDivider { get; set; }
 
 		/// <summary>
@@ -32,21 +34,29 @@ namespace FusionTweaker
 		/// </summary>
 		public static PStateMsr Load(int pStateIndex, int coreIndex)
 		{
+			//Brazos merge BT
+			//if (pStateIndex < 0 || pStateIndex > 4)
 			if (pStateIndex < 0 || pStateIndex > 9)
 				throw new ArgumentOutOfRangeException("pStateIndex");
 
             uint lower = 0;
             //branch here for CPU- and NB-Pstates 
-            if (pStateIndex < 8)
+            //Brazos merge BT
+			//if (pStateIndex < 3)
+			if (pStateIndex < 8)
             {
                 lower = (uint)(Program.Ols.ReadMsr(0xC0010064u + (uint)pStateIndex, coreIndex) & 0xFFFFFFFFu);
             }
-            else if (pStateIndex == 8)
+            //Brazos merge BT
+			//else if (pStateIndex == 3)
+			else if (pStateIndex == 8)
             {
                 // value of interest: F3xDC NbPstate0Register
                 lower = Program.Ols.ReadPciConfig(0xC3, 0xDC);
             }
-            else if (pStateIndex == 9)
+            //Brazos merge BT
+			//else if (pStateIndex == 4)
+			else if (pStateIndex == 9)
             {
                 // value of interest: F6x90 NbPstate1Register
                 lower = Program.Ols.ReadPciConfig(0xC6, 0x90);
@@ -54,60 +64,108 @@ namespace FusionTweaker
 			return Decode(lower,pStateIndex);
 		}
 
-        public static PStateMsr Decode(uint value, int pstate)
+		public static PStateMsr Decode(uint value, int pstate)
 		{
             //uint maxDiv = (uint)K10Manager.MaxCOF();
             uint maxDiv = (uint)K10Manager.CurrCOF();
             uint clk = (uint)K10Manager.GetBIOSBusSpeed();
-                
+            bool turbo = K10Manager.IsTurboSupported();
+
             if (pstate < 8)
             {
-                uint cpuDid = (value >> 0) & 0x0F;
-                uint cpuFid = (value >> 4) & 0x1F;
-                uint cpuVid = (value >> 9) & 0x7F;
-                double Did = 1;
+                if (Form1.family == 12)
+                {
+                    uint cpuDid = (value >> 0) & 0x0F;
+                    uint cpuFid = (value >> 4) & 0x1F;
+                    uint cpuVid = (value >> 9) & 0x7F;
+                    double Did = 1;
 
-                switch (cpuDid)
+                    switch (cpuDid)
+                    {
+                        case 0:
+                            Did = 1;
+                            break;
+                        case 1:
+                            Did = 1.5;
+                            break;
+                        case 2:
+                            Did = 2;
+                            break;
+                        case 3:
+                            Did = 3;
+                            break;
+                        case 4:
+                            Did = 4;
+                            break;
+                        case 5:
+                            Did = 6;
+                            break;
+                        case 6:
+                            Did = 8;
+                            break;
+                        case 7:
+                            Did = 12;
+                            break;
+                        case 8:
+                            Did = 16;
+                            break;
+                        default:
+                            throw new NotSupportedException("This Divider is not supported");
+                    }
+                    double Mult = (cpuFid + 16) / Did;
+                    var msr = new PStateMsr()
+                    {
+                        CPUMultNBDivider = Mult,
+                        Vid = 1.55 - 0.0125 * cpuVid,
+                        CLK = clk,
+                        PLL = Mult * clk
+                    };
+                    return msr;
+                }
+                else
                 {
-                    case 0:
-                        Did = 1;
-                        break;
-                    case 1:
-                        Did = 1.5;
-                        break;
-                    case 2:
-                        Did = 2;
-                        break;
-                    case 3:
-                        Did = 3;
-                        break;
-                    case 4:
-                        Did = 4;
-                        break;
-                    case 5:
-                        Did = 6;
-                        break;
-                    case 6:
-                        Did = 8;
-                        break;
-                    case 7:
-                        Did = 12;
-                        break;
-                    case 8:
-                        Did = 16;
-                        break;
-                    default:
-                        throw new NotSupportedException("This Divider is not supported");
-                } 
-                double Mult = (cpuFid + 16) / Did;
-                var msr = new PStateMsr()
-                {
-                    CPUMultNBDivider = Mult,
-                    Vid = 1.55 - 0.0125 * cpuVid,
-                    CLK = clk,
-                    PLL = Mult * clk
-                };
-                return msr;
+                    if (pstate <= K10Manager.GetHighestPState())
+                    {
+                        uint cpuDidLSD = (value >> 0) & 0x0F;
+                        uint cpuDidMSD = (value >> 4) & 0x1F;
+                        uint cpuVid = (value >> 9) & 0x7F;
+
+                        double Div = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
+                        double DivPLL = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
+                        if (maxDiv == 16 && Div < 2) //E-350 seems to restrict PLL frequencies higher than 1.6GHz
+                        {
+                            DivPLL = 2;
+                        }
+                        else if (maxDiv == 24 && Div < 4 && !turbo) //C-50 seems to restrict PLL frequencies higher than 1.0GHz
+                        {
+                            DivPLL = 4;
+                        }
+                        else if (maxDiv == 24 && Div < 3 && turbo) //C-60 (with turbo seems to restrict PLL frequencies higher than 1.33GHz
+                        {
+                            DivPLL = 3;
+                        }
+
+                        var msr = new PStateMsr()
+                        {
+                            CPUMultNBDivider = Div,
+                            Vid = 1.55 - 0.0125 * cpuVid,
+                            CLK = clk,
+                            PLL = (16 + maxDiv) / DivPLL * clk
+                        };
+                        return msr;
+                    }
+                    else
+                    {
+                        var msr = new PStateMsr()
+                        {
+                            CPUMultNBDivider = 10,
+                            Vid = 0.4,
+                            CLK = 100,
+                            PLL = 1000
+                        };
+                        return msr;
+                    }
+                }
             }
             else if (pstate == 8)
             {
@@ -160,6 +218,7 @@ namespace FusionTweaker
             }
 		}
 
+
 		/// <summary>
 		/// Encodes the settings into the 32 lower bits of a MSR.
 		/// </summary>
@@ -167,100 +226,118 @@ namespace FusionTweaker
 		{
             if (pstate < 8)
             {
-                if (CPUMultNBDivider < 4 || CPUMultNBDivider > 48) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
-                if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
-                if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
+                if (Form1.family == 12)
+                {
+                    if (CPUMultNBDivider < 4 || CPUMultNBDivider > 48) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
+                    if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
+                    if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
 
-                uint cpuFid, cpuDid;
-                if (CPUMultNBDivider >= 19)
-                {
-                    cpuFid = (uint)Math.Abs(CPUMultNBDivider - 16);
-                    cpuDid = 0; //Div 1
-                }
-                else if (CPUMultNBDivider == 18) //PState 4
-                {
-                    cpuFid = 27 - 16;
-                    cpuDid = 1; //Div 1.5
-                }
-                else if (CPUMultNBDivider == 17) 
-                {
-                    cpuFid = 34 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 16)
-                {
-                    cpuFid = 32 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 15)
-                {
-                    cpuFid = 30 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 14) //PState 5
-                {
-                    cpuFid = 28 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 13)
-                {
-                    cpuFid = 26 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 12)  
-                {
-                    cpuFid = 24 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 11) //PState 6
-                {
-                    cpuFid = 22 - 16;
-                    cpuDid = 2; //Div 2
-                }
-                else if (CPUMultNBDivider == 10) 
-                {
-                    cpuFid = 30 - 16;
-                    cpuDid = 3; //Div 3
-                }
-                else if (CPUMultNBDivider == 9)
-                {
-                    cpuFid = 27 - 16;
-                    cpuDid = 3; //Div 3
-                }
-                else if (CPUMultNBDivider == 8) //PState 7
-                {
-                    cpuFid = 24 - 16;
-                    cpuDid = 3; //Div 3
-                }
-                else if (CPUMultNBDivider == 7)
-                {
-                    cpuFid = 21 - 16;
-                    cpuDid = 3; //Div 3
-                }
-                else if (CPUMultNBDivider == 6)
-                {
-                    cpuFid = 24 - 16;
-                    cpuDid = 4; //Div 4
-                }
-                else if (CPUMultNBDivider == 5)
-                {
-                    cpuFid = 20 - 16;
-                    cpuDid = 4; //Div 4
-                }
-                else if (CPUMultNBDivider == 4)
-                {
-                    cpuFid = 24 - 16;
-                    cpuDid = 5; //Div 6
-                }
-                else
-                {
-                    cpuFid = 24 - 16;
-                    cpuDid = 3; //Div 3
-                }
-
+                    uint cpuFid, cpuDid;
+                    if (CPUMultNBDivider >= 19)
+                    {
+                        cpuFid = (uint)Math.Abs(CPUMultNBDivider - 16);
+                        cpuDid = 0; //Div 1
+                    }
+                    else if (CPUMultNBDivider == 18) //PState 4
+                    {
+                        cpuFid = 27 - 16;
+                        cpuDid = 1; //Div 1.5
+                    }
+                    else if (CPUMultNBDivider == 17)
+                    {
+                        cpuFid = 34 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 16)
+                    {
+                        cpuFid = 32 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 15)
+                    {
+                        cpuFid = 30 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 14) //PState 5
+                    {
+                        cpuFid = 28 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 13)
+                    {
+                        cpuFid = 26 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 12)
+                    {
+                        cpuFid = 24 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 11) //PState 6
+                    {
+                        cpuFid = 22 - 16;
+                        cpuDid = 2; //Div 2
+                    }
+                    else if (CPUMultNBDivider == 10)
+                    {
+                        cpuFid = 30 - 16;
+                        cpuDid = 3; //Div 3
+                    }
+                    else if (CPUMultNBDivider == 9)
+                    {
+                        cpuFid = 27 - 16;
+                        cpuDid = 3; //Div 3
+                    }
+                    else if (CPUMultNBDivider == 8) //PState 7
+                    {
+                        cpuFid = 24 - 16;
+                        cpuDid = 3; //Div 3
+                    }
+                    else if (CPUMultNBDivider == 7)
+                    {
+                        cpuFid = 21 - 16;
+                        cpuDid = 3; //Div 3
+                    }
+                    else if (CPUMultNBDivider == 6)
+                    {
+                        cpuFid = 24 - 16;
+                        cpuDid = 4; //Div 4
+                    }
+                    else if (CPUMultNBDivider == 5)
+                    {
+                        cpuFid = 20 - 16;
+                        cpuDid = 4; //Div 4
+                    }
+                    else if (CPUMultNBDivider == 4)
+                    {
+                        cpuFid = 24 - 16;
+                        cpuDid = 5; //Div 6
+                    }
+                    else
+                    {
+                        cpuFid = 24 - 16;
+                        cpuDid = 3; //Div 3
+                    }
+                    uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    return (cpuVid << 9) | (cpuFid << 4) | cpuDid;
                 
-                uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
-                return (cpuVid << 9) | (cpuFid << 4) | cpuDid;
+                } else {
+
+                    if (CPUMultNBDivider < 1 || CPUMultNBDivider > 31.5) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
+                    if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
+                    if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
+
+                    uint cpuDidMSD, cpuDidLSD;
+                    cpuDidMSD = (uint)Math.Abs(CPUMultNBDivider - 1);
+
+                    double temp1 = (double)cpuDidMSD;
+                    double temp2 = CPUMultNBDivider - 1 - temp1;
+                    cpuDidLSD = (uint)Math.Abs(temp2 / 0.25);
+
+                    uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    return (cpuVid << 9) | (cpuDidMSD << 4) | cpuDidLSD;
+                }
+                
             }
             else if (pstate == 8)
             {
@@ -281,7 +358,7 @@ namespace FusionTweaker
                 uint nclk = (uint)Math.Round(CPUMultNBDivider * 4);
 
                 return (nbVid << 8) | (nclk << 0);
-            }
+            }            
             else
             {
                 return 0;

@@ -45,6 +45,7 @@
             this.p1StateControl = new FusionTweaker.PStateControl();
             this.tabPageP2 = new System.Windows.Forms.TabPage();
             this.p2StateControl = new FusionTweaker.PStateControl();
+			//Brazos merge P3 through P7 not available in BT
             this.tabPageP3 = new System.Windows.Forms.TabPage();
             this.p3StateControl = new FusionTweaker.PStateControl();
             this.tabPageP4 = new System.Windows.Forms.TabPage();
@@ -60,10 +61,14 @@
             this.tabPageNbP1 = new System.Windows.Forms.TabPage();
             this.nbp1StateControl = new FusionTweaker.PStateControl();
             this.tabPageStatus = new System.Windows.Forms.TabPage();
+			//Brazos merge logButton1 not available in BT
             this.logButton1 = new System.Windows.Forms.Button();
             this.statusinfo = new FusionTweaker.StatusControl();
             this.logButton = new System.Windows.Forms.Button();
             this.nbBar = new System.Windows.Forms.ProgressBar();
+            //Brazos merge next two lines from BT
+			this.ecread = new System.Windows.Forms.TextBox();
+            this.cfgTempLabel = new System.Windows.Forms.Label();
             this.core1label = new System.Windows.Forms.Label();
             this.core2label = new System.Windows.Forms.Label();
             this.core3label = new System.Windows.Forms.Label();
@@ -79,7 +84,12 @@
             this.alwaysOnTopCheck = new System.Windows.Forms.CheckBox();
             this.paypal = new System.Windows.Forms.LinkLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
+            //Brazos merge next two lines from BT
+            this.timer2 = new System.Windows.Forms.Timer(this.components);
+            this.nbCfgTemp = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+
+			//Brazos merge P3 through P7 not available in BT
             this.tabControl1.SuspendLayout();
             this.tabPageP0.SuspendLayout();
             this.tabPageP1.SuspendLayout();
@@ -183,6 +193,7 @@
             this.tabControl1.Controls.Add(this.tabPageP0);
             this.tabControl1.Controls.Add(this.tabPageP1);
             this.tabControl1.Controls.Add(this.tabPageP2);
+			//Brazos merge P3 through P7 not available in BT
             this.tabControl1.Controls.Add(this.tabPageP3);
             this.tabControl1.Controls.Add(this.tabPageP4);
             this.tabControl1.Controls.Add(this.tabPageP5);
@@ -254,6 +265,7 @@
             this.p2StateControl.PStateIndex = 2;
             this.p2StateControl.Size = new System.Drawing.Size(378, 131);
             this.p2StateControl.TabIndex = 0;
+			//Brazos merge P3 through P7 not available in BT
             // 
             // tabPageP3
             // 
@@ -365,6 +377,8 @@
             // 
             this.nbp0StateControl.Location = new System.Drawing.Point(0, 0);
             this.nbp0StateControl.Name = "nbp0StateControl";
+			//Brazos merge
+            //this.nbp0StateControl.PStateIndex = 3;
             this.nbp0StateControl.PStateIndex = 8;
             this.nbp0StateControl.Size = new System.Drawing.Size(420, 131);
             this.nbp0StateControl.TabIndex = 0;
@@ -384,13 +398,16 @@
             // 
             this.nbp1StateControl.Location = new System.Drawing.Point(0, 0);
             this.nbp1StateControl.Name = "nbp1StateControl";
+			//Brazos merge
+            //this.nbp1StateControl.PStateIndex = 4;
             this.nbp1StateControl.PStateIndex = 9;
             this.nbp1StateControl.Size = new System.Drawing.Size(422, 131);
             this.nbp1StateControl.TabIndex = 0;
             // 
             // tabPageStatus
             // 
-            this.tabPageStatus.Controls.Add(this.logButton1);
+            //Brazos merge next line not in BT
+			this.tabPageStatus.Controls.Add(this.logButton1);
             this.tabPageStatus.Controls.Add(this.statusinfo);
             this.tabPageStatus.Controls.Add(this.logButton);
             this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
@@ -408,8 +425,11 @@
             this.logButton1.Size = new System.Drawing.Size(75, 23);
             this.logButton1.TabIndex = 2;
             this.logButton1.Text = "Log now";
+			//Brazos merge adding tooltip from BT
+            this.toolTip1.SetToolTip(this.logButton1, "Hit the button to store the current settings in a file, which than will be opened" +
+                    " in your default editor for further use.");
             this.logButton1.UseVisualStyleBackColor = true;
-            this.logButton1.Click += new System.EventHandler(this.button1_Click);
+            this.logButton1.Click += new System.EventHandler(this.logButton_Click);
             // 
             // statusinfo
             // 
@@ -431,6 +451,9 @@
             this.logButton.Size = new System.Drawing.Size(56, 19);
             this.logButton.TabIndex = 1;
             this.logButton.Text = "Log now";
+			//Brazos merge adding tooltip from BT
+            this.toolTip1.SetToolTip(this.logButton, "Hit the button to store the current settings in a file, which than will be opened" +
+                    " in your default editor for further use.");
             this.logButton.UseVisualStyleBackColor = true;
             this.logButton.Click += new System.EventHandler(this.logButton_Click);
             // 
@@ -441,7 +464,76 @@
             this.nbBar.Name = "nbBar";
             this.nbBar.Size = new System.Drawing.Size(42, 10);
             this.nbBar.TabIndex = 22;
-            this.toolTip1.SetToolTip(this.nbBar, "Shows the current speed of the NB");
+            //Brazos merge
+			this.toolTip1.SetToolTip(this.nbBar, "Shows the current Northbridge/GPU PState and its related frequency.");
+            //next line from FT
+			//this.toolTip1.SetToolTip(this.nbBar, "Shows the current speed of the NB");
+            // 
+            // pstateLabel
+            // 
+            this.pstateLabel.AutoSize = true;
+            this.pstateLabel.Location = new System.Drawing.Point(88, 40);
+            this.pstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.pstateLabel.Name = "pstateLabel";
+            this.pstateLabel.Size = new System.Drawing.Size(69, 13);
+            this.pstateLabel.TabIndex = 14;
+            this.pstateLabel.Text = "PState - Freq";
+            //Brazos merge next line from BT
+			this.toolTip1.SetToolTip(this.pstateLabel, "This column shows the current Pstate and its related frequency per core. ");
+            // 
+            // monitorCheckBox
+            // 
+            this.monitorCheckBox.AutoSize = true;
+            this.monitorCheckBox.Checked = true;
+            this.monitorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.monitorCheckBox.Location = new System.Drawing.Point(7, 19);
+            this.monitorCheckBox.Margin = new System.Windows.Forms.Padding(2);
+            this.monitorCheckBox.Name = "monitorCheckBox";
+            this.monitorCheckBox.Size = new System.Drawing.Size(110, 17);
+            this.monitorCheckBox.TabIndex = 19;
+            this.monitorCheckBox.Text = "Enable monitoring";
+            //Brazos merge next line from BT
+            this.toolTip1.SetToolTip(this.monitorCheckBox, "Check this option to watch the CPU stepping through the currently enabled frequen" +
+                    "cies based on current load.");
+            this.monitorCheckBox.UseVisualStyleBackColor = true;
+            this.monitorCheckBox.CheckedChanged += new System.EventHandler(this.monitorCheckBox_CheckedChanged);
+            // 
+            // alwaysOnTopCheck
+            // 
+            this.alwaysOnTopCheck.AutoSize = true;
+            this.alwaysOnTopCheck.Location = new System.Drawing.Point(119, 19);
+            this.alwaysOnTopCheck.Margin = new System.Windows.Forms.Padding(2);
+            this.alwaysOnTopCheck.Name = "alwaysOnTopCheck";
+            this.alwaysOnTopCheck.Size = new System.Drawing.Size(92, 17);
+            this.alwaysOnTopCheck.TabIndex = 20;
+            this.alwaysOnTopCheck.Text = "Always on top";
+            //Brazos merge next line from BT
+            this.toolTip1.SetToolTip(this.alwaysOnTopCheck, "Check this option, if you want to see the application always on top to monitor PS" +
+                    "tates and temperature.");
+            this.alwaysOnTopCheck.UseVisualStyleBackColor = true;
+            this.alwaysOnTopCheck.CheckedChanged += new System.EventHandler(this.alwaysOnTopCheck_CheckedChanged);
+            // 
+            // ecread
+            // 
+            this.ecread.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ecread.Location = new System.Drawing.Point(12, 20);
+            this.ecread.MinimumSize = new System.Drawing.Size(226, 20);
+            this.ecread.Name = "ecread";
+            this.ecread.Size = new System.Drawing.Size(231, 20);
+            this.ecread.TabIndex = 7;
+            this.toolTip1.SetToolTip(this.ecread, "Shows the chip and motherboard temperatures, while also adding an approximated va" +
+                    "lue of the fan speed.");
+            // 
+            // cfgTempLabel
+            // 
+            this.cfgTempLabel.AutoSize = true;
+            this.cfgTempLabel.Location = new System.Drawing.Point(199, 77);
+            this.cfgTempLabel.Name = "cfgTempLabel";
+            this.cfgTempLabel.Size = new System.Drawing.Size(79, 13);
+            this.cfgTempLabel.TabIndex = 24;
+            this.cfgTempLabel.Text = "NB CFG Temp:";
+            this.toolTip1.SetToolTip(this.cfgTempLabel, "Shows the current APU temperature.");
             // 
             // core1label
             // 
@@ -483,16 +575,6 @@
             this.core4label.TabIndex = 13;
             this.core4label.Text = "Core 4";
             // 
-            // pstateLabel
-            // 
-            this.pstateLabel.AutoSize = true;
-            this.pstateLabel.Location = new System.Drawing.Point(88, 40);
-            this.pstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.pstateLabel.Name = "pstateLabel";
-            this.pstateLabel.Size = new System.Drawing.Size(69, 13);
-            this.pstateLabel.TabIndex = 14;
-            this.pstateLabel.Text = "PState - Freq";
-            // 
             // pstateLabel1
             // 
             this.pstateLabel1.AutoSize = true;
@@ -533,52 +615,6 @@
             this.pstateLabel4.TabIndex = 18;
             this.pstateLabel4.Text = "-1";
             // 
-            // nbLabel
-            // 
-            this.nbLabel.AutoSize = true;
-            this.nbLabel.Location = new System.Drawing.Point(165, 55);
-            this.nbLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.nbLabel.Name = "nbLabel";
-            this.nbLabel.Size = new System.Drawing.Size(22, 13);
-            this.nbLabel.TabIndex = 21;
-            this.nbLabel.Text = "NB";
-            // 
-            // nbPstateLabel
-            // 
-            this.nbPstateLabel.AutoSize = true;
-            this.nbPstateLabel.Location = new System.Drawing.Point(246, 53);
-            this.nbPstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.nbPstateLabel.Name = "nbPstateLabel";
-            this.nbPstateLabel.Size = new System.Drawing.Size(16, 13);
-            this.nbPstateLabel.TabIndex = 23;
-            this.nbPstateLabel.Text = "-1";
-            // 
-            // monitorCheckBox
-            // 
-            this.monitorCheckBox.AutoSize = true;
-            this.monitorCheckBox.Checked = true;
-            this.monitorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.monitorCheckBox.Location = new System.Drawing.Point(7, 19);
-            this.monitorCheckBox.Margin = new System.Windows.Forms.Padding(2);
-            this.monitorCheckBox.Name = "monitorCheckBox";
-            this.monitorCheckBox.Size = new System.Drawing.Size(110, 17);
-            this.monitorCheckBox.TabIndex = 19;
-            this.monitorCheckBox.Text = "Enable monitoring";
-            this.monitorCheckBox.UseVisualStyleBackColor = true;
-            this.monitorCheckBox.CheckedChanged += new System.EventHandler(this.monitorCheckBox_CheckedChanged);
-            // 
-            // alwaysOnTopCheck
-            // 
-            this.alwaysOnTopCheck.AutoSize = true;
-            this.alwaysOnTopCheck.Location = new System.Drawing.Point(119, 19);
-            this.alwaysOnTopCheck.Margin = new System.Windows.Forms.Padding(2);
-            this.alwaysOnTopCheck.Name = "alwaysOnTopCheck";
-            this.alwaysOnTopCheck.Size = new System.Drawing.Size(92, 17);
-            this.alwaysOnTopCheck.TabIndex = 20;
-            this.alwaysOnTopCheck.Text = "Always on top";
-            this.alwaysOnTopCheck.UseVisualStyleBackColor = true;
-            this.alwaysOnTopCheck.CheckedChanged += new System.EventHandler(this.alwaysOnTopCheck_CheckedChanged);
-            // 
             // paypal
             // 
             this.paypal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
@@ -598,17 +634,56 @@
             this.timer1.Enabled = true;
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            //Brazos merge adding from BT 
+            // timer2
+            // 
+            this.timer2.Enabled = true;
+            this.timer2.Interval = 2000;
+            this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
             // notifyIcon
             // 
             this.notifyIcon.Text = "FusionTweaker";
             this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
             // 
+            // 
+            // nbLabel
+            // 
+            this.nbLabel.AutoSize = true;
+            this.nbLabel.Location = new System.Drawing.Point(165, 55);
+            this.nbLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nbLabel.Name = "nbLabel";
+            this.nbLabel.Size = new System.Drawing.Size(22, 13);
+            this.nbLabel.TabIndex = 21;
+            this.nbLabel.Text = "NB";
+            // 
+            // nbPstateLabel
+            // 
+            this.nbPstateLabel.AutoSize = true;
+            this.nbPstateLabel.Location = new System.Drawing.Point(246, 53);
+            this.nbPstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nbPstateLabel.Name = "nbPstateLabel";
+            this.nbPstateLabel.Size = new System.Drawing.Size(16, 13);
+            this.nbPstateLabel.TabIndex = 23;
+            this.nbPstateLabel.Text = "-1";
+            //Brazos merge adding from BT 
+            // nbCfgTemp
+            // 
+            this.nbCfgTemp.AutoSize = true;
+            this.nbCfgTemp.Location = new System.Drawing.Point(284, 77);
+            this.nbCfgTemp.Name = "nbCfgTemp";
+            this.nbCfgTemp.Size = new System.Drawing.Size(30, 13);
+            this.nbCfgTemp.TabIndex = 25;
+            this.nbCfgTemp.Text = "35°C";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(532, 406);
+			//Brazos merge adding two lines from BT
+            this.Controls.Add(this.nbCfgTemp);
+            this.Controls.Add(this.cfgTempLabel);
             this.Controls.Add(this.nbBar);
             this.Controls.Add(this.nbPstateLabel);
             this.Controls.Add(this.nbLabel);
@@ -636,12 +711,13 @@
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(350, 200);
             this.Name = "Form1";
-            this.Text = "FusionTweaker V1.0.5";
+            this.Text = "FusionTweaker V2.0.0";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.tabControl1.ResumeLayout(false);
             this.tabPageP0.ResumeLayout(false);
             this.tabPageP1.ResumeLayout(false);
             this.tabPageP2.ResumeLayout(false);
+			//Brazos merge P3 through P7 not in BT
             this.tabPageP3.ResumeLayout(false);
             this.tabPageP4.ResumeLayout(false);
             this.tabPageP5.ResumeLayout(false);
@@ -663,6 +739,11 @@
 		private System.Windows.Forms.Button serviceButton;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.Timer timer1;
+		//Brazos merge adding timer2 ecread cfgTempLabel nbCfgTemp
+        private System.Windows.Forms.Timer timer2;
+        private System.Windows.Forms.TextBox ecread;
+        private System.Windows.Forms.Label cfgTempLabel;
+        private System.Windows.Forms.Label nbCfgTemp;
 		private System.Windows.Forms.NotifyIcon notifyIcon;
 		private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.LinkLabel paypal;

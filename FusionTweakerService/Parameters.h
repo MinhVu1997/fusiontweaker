@@ -21,6 +21,7 @@ struct CustomCnQProfile
 
 struct Parameters
 {
+	//Brazos merge BT just had 5 here
 	bool EnableCustomPStates;
 	// lower 32 bits for each core's MSR, for all 5 P-states (P0 to P4)
 	std::vector<unsigned int> Msrs[10];
@@ -28,6 +29,7 @@ struct Parameters
 	int TurboCores; // max number of cores in the Turbo state at a time
 
 	bool EnableCustomCnQ;
+	//Brazos merge BT just had 3 here, which is causing issues, if there are more than 3 power profiles
 	CustomCnQProfile Profiles[10]; // Balanced, High performance, Power saver
 
 	bool EnableFanManagement;

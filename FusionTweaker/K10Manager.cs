@@ -1,4 +1,5 @@
 ﻿using System;
+//Brazos merge only in FT
 using System.Windows.Forms;
 
 namespace FusionTweaker
@@ -15,7 +16,14 @@ namespace FusionTweaker
 		/// </summary>
 		public static int GetCurrentPState(int coreIndex)
 		{
-			return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
+            if (Form1.family == 14)
+            {
+                return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
+            }
+            else
+            {
+                return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
+            }
 		}
 
 		/// <summary>
@@ -23,6 +31,8 @@ namespace FusionTweaker
 		/// </summary>
 		public static void SwitchToPState(int pStateIndex, int coreIndex)
 		{
+			//Brazos merge next line from BT
+			//if (pStateIndex < 0 || pStateIndex > 4)
 			if (pStateIndex < 0 || pStateIndex > 7)
 				throw new ArgumentOutOfRangeException("pStateIndex");
 
@@ -33,6 +43,8 @@ namespace FusionTweaker
 
 		#region Functions affecting all cores.
 
+		
+		//Brazos merge BT is calling this function GetHighestPState()
 		/// <summary>
 		/// Returns the currently highest allowed hardware P-state index.
 		/// </summary>
@@ -45,17 +57,20 @@ namespace FusionTweaker
 			uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
 			return (int)((settings >> 8) & 0x7);
 		}
-
+		
+		//Brazos merge function modified in FT
         /// <summary>
         /// Returns the highest allowed hardware P-state index (read-only).
         /// </summary>
         public static int GetHighestPState()
         {
-			return (int)((Program.Ols.ReadMsr(0xC0010061u, 0) >> 4) & 0x7);
+            ulong settings = Program.Ols.ReadMsr(0xC0010061u, 0);
+
+            return (int)((settings >> 4) & 0x7);
 		}
 
         /// <summary>
-        /// Returns the bus speed controlled by BIOS.
+        /// Returns 1, if C6 state is allowed for cores
         /// </summary>
         public static int GetC6EnableBit()
         {
@@ -97,6 +112,16 @@ namespace FusionTweaker
             settings = settings << 8 | fsb; //(settings SwitchToPState 101MHz)
             Program.Ols.WritePciConfig(0x00, 0xE4, settings);
             return (int)(settings & 0xFF);
+        }
+
+		//Brazos merge function added from BT
+        /// <summary>
+        /// Sets the bus speed controlled by BIOS.
+        /// </summary>
+        public static int GetTemp()
+        {
+            uint settings = Program.Ols.ReadPciConfig(0xC3, 0xA4);
+            return (int)(((settings >> 21) & 0x7FF) >> 3);
         }
 
         /// <summary>
@@ -219,12 +244,19 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbPState()
         {
-            //D18 Device F0 -> C0
-            //D0 Device F0 -> 00
-            //10,20,30,40,50,60 -> no device
-            // value of interest: D18F6x98[NbPs1Act]
-            uint settings = Program.Ols.ReadPciConfig(0xC6, 0x98);
-            return (int)((settings >> 2) & 0x1);
+            if (Form1.family == 16) 
+            {
+                //D18F5x174 Northbridge P-state Status 20:19 CurNbPstate
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x174);
+                return (int)((settings >> 19) & 0x3);
+            } else {
+                //D18 Device F0 -> C0
+                //D0 Device F0 -> 00
+                //10,20,30,40,50,60 -> no device
+                // value of interest: D18F6x98[NbPs1Act]
+                uint settings = Program.Ols.ReadPciConfig(0xC6, 0x98);
+                return (int)((settings >> 2) & 0x1);
+            }
         }
 
         /// <summary>
@@ -232,12 +264,32 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbVidPState0()
         {
-            //D18 Device F0 -> C0
-            //D0 Device F0 -> 00
-            //10,20,30,40,50,60 -> no device
-            // value of interest: D18F3xDC[NbPs0Vid]
-            uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
-            return (int)((settings >> 12) & 0x7F);
+            if (Form1.family == 16)
+            {
+                //Kabini 16h
+                //Register Mapping for D18F5x16[C:0]
+                //Register Function
+                //D18F5x160 NB P-state 0
+                //D18F5x164 NB P-state 1
+                //D18F5x168 NB P-state 2
+                //D18F5x16C NB P-state 3
+                //21 NbVid[7].
+                //16:10 NbVid[6:0]: Northbridge VID
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x160);
+                uint nbvidh = ((settings >> 14) & 0x80);
+                uint nbvidl = ((settings >> 10) & 0x7F);
+
+                return (int)(nbvidh + nbvidl);
+            }
+            else
+            {
+                //D18 Device F0 -> C0
+                //D0 Device F0 -> 00
+                //10,20,30,40,50,60 -> no device
+                // value of interest: D18F3xDC[NbPs0Vid]
+                uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+                return (int)((settings >> 12) & 0x7F);
+            }
         }
 
         /// <summary>
@@ -245,12 +297,32 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbVidPState1()
         {
-            //D18 Device F0 -> C0
-            //D0 Device F0 -> 00
-            //10,20,30,40,50,60 -> no device
-            // value of interest: D18F6x90[NbPs0Vid]
-            uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
-            return (int)((settings >> 8) & 0x7F);
+            if (Form1.family == 16)
+            {
+                //Kabini 16h
+                //Register Mapping for D18F5x16[C:0]
+                //Register Function
+                //D18F5x160 NB P-state 0
+                //D18F5x164 NB P-state 1
+                //D18F5x168 NB P-state 2
+                //D18F5x16C NB P-state 3
+                //21 NbVid[7].
+                //16:10 NbVid[6:0]: Northbridge VID
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x164);
+                uint nbvidh = ((settings >> 14) & 0x80);
+                uint nbvidl = ((settings >> 10) & 0x7F);
+
+                return (int)(nbvidh + nbvidl);
+            }
+            else
+            {
+                //D18 Device F0 -> C0
+                //D0 Device F0 -> 00
+                //10,20,30,40,50,60 -> no device
+                // value of interest: D18F6x90[NbPs0Vid]
+                uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
+                return (int)((settings >> 8) & 0x7F);
+            }
         }
 
         /// <summary>
@@ -258,19 +330,40 @@ namespace FusionTweaker
         /// </summary>
         public static double GetNbDivPState0()
         {
-            //D18 Device F0 -> C0
-            //D0 Device F0 -> 00
-            //10,20,30,40,50,60 -> no device
-            // value of interest: D18F3xDC[NbPs0NclkDiv] -> default 24d
-            uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
-            uint nclk = ((settings >> 20) & 0x7F);
-            double nclkdiv = 0;
-            //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-            if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
-            else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
-            else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
-            else nclkdiv = 0;
-            return nclkdiv;
+            if (Form1.family == 16)
+            {
+                //Kabini 16h
+                //Register Mapping for D18F5x16[C:0]
+                //Register Function
+                //D18F5x160 NB P-state 0
+                //D18F5x164 NB P-state 1
+                //D18F5x168 NB P-state 2
+                //D18F5x16C NB P-state 3
+                //NBCOF[0] = (100 * (D18F5x160[NbFid] + 4h) / (2^D18F5x160[NbDid])).
+                //7 NbDid: Northbridge divisor ID
+                //6:1 NbFid[5]: Northbridge frequency ID.
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x160);
+                uint nbdid = ((settings >> 7) & 0x1);
+                uint nbfid = ((settings >> 1) & 0x1F);
+                double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
+                return nclkdiv;
+            }
+            else
+            {
+                //D18 Device F0 -> C0
+                //D0 Device F0 -> 00
+                //10,20,30,40,50,60 -> no device
+                // value of interest: D18F3xDC[NbPs0NclkDiv] -> default 24d
+                uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+                uint nclk = ((settings >> 20) & 0x7F);
+                double nclkdiv = 0;
+                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
+                else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
+                else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
+                else nclkdiv = 0;
+                return nclkdiv;
+            }
         }
 
         /// <summary>
@@ -278,19 +371,41 @@ namespace FusionTweaker
         /// </summary>
         public static double GetNbDivPState1()
         {
-            //D18 Device F0 -> C0
-            //D0 Device F0 -> 00
-            //10,20,30,40,50,60 -> no device
-            // value of interest: D18F6x90[NbPs0NclkDiv] -> default 38d
-            uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
-            uint nclk = ((settings >> 0) & 0x7F);
-            double nclkdiv = 0;
-            //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-            if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
-            else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
-            else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
-            else nclkdiv = 0;
-            return nclkdiv;
+            if (Form1.family == 16)
+            {
+                //Kabini 16h
+                //Register Mapping for D18F5x16[C:0]
+                //Register Function
+                //D18F5x160 NB P-state 0
+                //D18F5x164 NB P-state 1
+                //D18F5x168 NB P-state 2
+                //D18F5x16C NB P-state 3
+                //NBCOF[0] = (100 * (D18F5x160[NbFid] + 4h) / (2^D18F5x160[NbDid])).
+                //7 NbDid: Northbridge divisor ID
+                //6:1 NbFid[5]: Northbridge frequency ID.
+                
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x164);
+                uint nbdid = ((settings >> 7) & 0x1);
+                uint nbfid = ((settings >> 1) & 0x1F);
+                double nclkdiv = (nbfid + 4) / (Math.Pow(2,nbdid)) ;
+                return nclkdiv;
+            }
+            else
+            {
+                //D18 Device F0 -> C0
+                //D0 Device F0 -> 00
+                //10,20,30,40,50,60 -> no device
+                // value of interest: D18F6x90[NbPs0NclkDiv] -> default 38d
+                uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
+                uint nclk = ((settings >> 0) & 0x7F);
+                double nclkdiv = 0;
+                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
+                else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
+                else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
+                else nclkdiv = 0;
+                return nclkdiv;
+            }
         }
 
 		/// <summary>
@@ -302,7 +417,9 @@ namespace FusionTweaker
             //D0 Device F0 -> 00
             //10,20,30,40,50,60 -> no device
             // value of interest: D18F3xDC
-            if (maxIndex < 0 || maxIndex > 7)
+            //Brazos merge next line BT
+			//if (maxIndex < 0 || maxIndex > 4)
+			if (maxIndex < 0 || maxIndex > 7)
 				throw new ArgumentOutOfRangeException("maxIndex");
 
 			uint reference = Program.Ols.ReadPciConfig(0xC3, 0xDC);
@@ -347,12 +464,23 @@ namespace FusionTweaker
 		/// </summary>
 		public static double MaxCOF()
 		{
-			//MSRC001_0071 [MainPllOpFreqIdMax] - 54:49
-            ulong msr = Program.Ols.ReadMsr(0xC0010071u);
-			int maxCOF = (int)(msr >> 49) & 0x3F;
+            if (Form1.family == 12) //Llano 
+            {
+                //MSRC001_0071 [MainPllOpFreqIdMax] - 54:49
+                ulong msr = Program.Ols.ReadMsr(0xC0010071u);
+                int maxCOF = (int)(msr >> 49) & 0x3F;
 
-            return (maxCOF == 0 ? 48 : maxCOF);
-		}
+                return (maxCOF == 0 ? 48 : maxCOF);
+            }
+            else //Ontario + Kabini
+            {
+                //MSRC001_0071 [MainPllOpFreqIdMax] - 54:49
+                ulong msr = Program.Ols.ReadMsr(0xC0010071u);
+                int maxCOF = (int)(msr >> 49) & 0x3F;
+
+                return (maxCOF == 0 ? 31.5 : maxCOF);
+            }
+       }
 
 		/// <summary>
         /// Gets the CPU's VID limits (for both CPU VID and NB VID). 48:42 MinVid and 41:35 MaxVid from COFVID Status Register
@@ -419,9 +547,26 @@ namespace FusionTweaker
 					_isTurboSupported = 0;
 			}
 
-			return (_isTurboSupported != 0);
+            return (_isTurboSupported != 0); //returns true, if Turbo is supported (C-60) 
+            //return true;
 		}
 
+		//Brazos merge function from BT
+		//ToDo 
+		/// <summary>
+		/// Returns true if the Turbo is not supported or locked
+		/// (number of boosted states and Turbo cores).
+		/// </summary>
+		/*public static bool IsTurboLocked()
+		{
+			if (!IsTurboSupported())
+				return true; //returns true, if Turbo is not supported (C-50) 
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
+			return ((lower & 0x80000000u) != 0);
+		}*/
+
+		//Brazos merge function only in FT
 		/// <summary>
 		/// Returns true if the Turbo is enabled
 		/// (number of boosted states == 0 or battery powered (?)).
@@ -435,6 +580,33 @@ namespace FusionTweaker
             //MessageBox.Show((lower & 0x3u).ToString());
 			return ((lower & 0x1u) == 1); //returns true, if Turbo is enabled / Bit 1 behaves odd, will disregard it 
 		}
+
+		//Brazos merge function from BT, might be outdated
+		//ToDo check, if the function works on all families
+		/*
+				/// <summary>
+		/// Tries to enable/disable the Turbo and returns true if successful.
+		/// If the number of boosted P-states is unlocked, it is set appropriately.
+		/// </summary>
+		public static bool SetTurbo(bool enable)
+		{
+			if (!IsTurboSupported())
+				return false; 
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
+			bool isLocked = ((lower & 0x80000000u) != 0);
+
+			uint newLower = (lower & 0xFFFFFFFCu) | (enable ? 3u : 0u);
+			// set the number of boosted states if unlocked
+			if (!isLocked)
+				newLower = (newLower & 0xFFFFFFFBu) | (enable ? 1u << 2 : 0u);
+
+			if (newLower != lower)
+				Program.Ols.WritePciConfig(0xC4, 0x15C, newLower);
+
+			return true;
+		}
+		*/
 
 		/// <summary>
 		/// Tries to enable/disable the Turbo and returns true if successful.
@@ -486,7 +658,66 @@ namespace FusionTweaker
 
 			return ((int)lower >> 2) & 3;
 		}
+		//Brazos merge older functions from BT, which were not used
+		/*
 
+		/// <summary>
+		/// Tries to set the maximum number of cores in the Turbo state at a time and
+		/// returns true if successful.
+		/// </summary>
+		public static bool SetNumTurboCores(int num)
+		{
+			if (IsTurboLocked())
+				return false;
+
+			uint numIdleCores = (uint)(GetNumCores() - num);
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x16C);
+			uint newLower = (lower & 0xFFFFF1FFu) | ((numIdleCores & 7) << 9);
+
+			if (newLower != lower)
+				Program.Ols.WritePciConfig(0xC4, 0x16C, newLower);
+
+			return true;
+		}
+
+		/// <summary>Returns true if the Turbo is enabled and if there are boosted P-states.</summary>
+		public static bool IsTurboEnabled()
+		{
+			if (!IsTurboSupported())
+				return false;
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
+
+			return ((lower & 7) == 7); // check if enabled and if there is a boosted state
+		}
+
+		/// <summary>Returns the number of boosted (Turbo) P-states.</summary>
+		public static int GetNumBoostedStates()
+		{
+			if (!IsTurboSupported())
+				return 0;
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x15C);
+
+			return ((int)lower >> 2) & 1;
+		}
+
+		/// <summary>
+		/// Returns the maximum number of cores in the Turbo state at a time.
+		/// </summary>
+		public static int GetNumTurboCores()
+		{
+			if (!IsTurboSupported())
+				return 0;
+
+			uint lower = Program.Ols.ReadPciConfig(0xC4, 0x16C);
+			uint numIdleCores = (lower >> 9) & 7;
+
+			return GetNumCores() - (int)numIdleCores;
+		}
+
+		*/
 		#endregion
 	}
 }

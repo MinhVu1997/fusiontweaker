@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+//Brazos merge added from BT
+using System.Threading;
 
 namespace FusionTweaker
 {
@@ -18,9 +20,32 @@ namespace FusionTweaker
 
         private int _index = 0; // 0
 
+        //Brazos merge adding one line from BT
+		//private readonly SMBIOS smbios;
+        
         SMBIOS smbios = new SMBIOS();
 
-        public string GetVendor()
+		//Brazos merge adding from BT START
+        // Registers of the embedded controller
+        byte EC_DATAPORT = 0x62;	// EC data io-port - port for the EC register value
+        byte EC_CTRLPORT = 0x66;	// EC control io-port - port for the EC register index
+
+        // Embedded controller status register bits
+        byte EC_STAT_OBF = 0x01;    // Output buffer full 
+        byte EC_STAT_IBF = 0x02;    // Input buffer full 
+        
+        // Embedded controller commands
+        // (write to EC_CTRLPORT to initiate read/write operation)
+        byte EC_CTRLPORT_READ = 0x80;	
+        
+        byte TP_ECOFFSET_FANSPEED = 0x94; // 16 bit word, lo/hi byte
+
+        byte[] SENSORADDR = { 0xA8, 0xA9, 0xAA };
+                            //Core   Temp1 Temp2
+
+        //Brazos merge adding from BT END
+        
+		public string GetVendor()
         {
             string vendor = "Unknown";
             if (smbios.Board != null)
@@ -62,7 +87,10 @@ namespace FusionTweaker
             get { return _index; }
             set
             {
-                if (value < 0 || value > 9)
+                //Brazos merge 
+                //if (value < 0 || value > 5)
+				
+				if (value < 0 || value > 9)
                     throw new ArgumentOutOfRangeException("StatusIndex");
 
                 _index = value;
@@ -96,33 +124,57 @@ namespace FusionTweaker
             return (_optimalWidth - this.Width);
         }
 
+		//Brazos merge adding from BT
+        public string GetECreadings()
+        {
+            return ECReadings();
+        }
+
         /// <summary>
         /// Loads the P-state settings from each core's MSR.
         /// </summary>
         public void LoadFromHardware()
         {
+			//Brazos merge BT looks easier
+			/*
+            RegLabel64CPU.Text = "Bit numbering\nCOFVID 0071\nP-State0 0064\nP-State1 0065\nP-State2 0066\nP-State3 0067\nP-State4 0068\nP-State5 0069\nP-State6 006A\nP-State7 006B";
             Reg64CPU.Text = "63     59     55     51     47     43     39     35     31     27     23     19     15     11     7       3    0\n"
                 + COFVidString() + "\n" + CPUPstate0() + "\n" + CPUPstate1() + "\n" + CPUPstate2() + "\n" + CPUPstate3() + "\n" + CPUPstate4() + "\n" + CPUPstate5() + "\n" + CPUPstate6() + "\n" + CPUPstate7();
+            RegLabel32NB.Text = "Bit numbering\nNB P-State0 D18F3xDC\nNB P-State1 D18F6x90\nClockTiming D18F3xD4\nBIOSClock D0F0xE4_x0130_80F1";
             Reg32NB.Text = "31     27     23     19     15     11     7       3    0\n" + NBPstate0() + "\n" + NBPstate1() + "\n" + ClockTiming() + "\n" + BIOSClock();
-            PCIDevices.Text = VoltageControl() + "\n" + DebugOutput() + "\n" + MaxPstate() + "\n";
-            PStateReg1.Text = "";
+            PCIDevicesLabel.Text = "D18F3x15C\nD0 00\nD1F0 90\nSMBus A0\nD18 C0\nMSRC001_0061 P-State\nBIOS vendor\nBIOS version\nMoBo vendor\nMoBo name";
+            PCIDevices.Text = VoltageControl() + "\n" + DebugOutput() + "\n" + MaxPstate() + "\n" + GetReport();
+            //PCIDevices.Text = IOInterface();
+            /*PStateReg1.Text = "";
             PStateReg2.Text = "";
             NbPStateReg1.Text = "";
             ClockReg.Text = "";
             BIOSReg.Text = "";
+            //RegLabel64CPU.Text = "";
+            //RegLabel32NB.Text = "";
+            //PCIDevicesLabel.Text = "IOOutput";*/
+		    Reg64CPU.Text = "63     59     55     51     47     43     39     35     31     27     23     19     15     11     7       3    0\n"
+                + COFVidString() + "\n" + CPUPstate0() + "\n" + CPUPstate1() + "\n" + CPUPstate2() + "\n" + CPUPstate3() + "\n" + CPUPstate4() + "\n" + CPUPstate5() + "\n" + CPUPstate6() + "\n" + CPUPstate7();
+            Reg32NB.Text = "31     27     23     19     15     11     7       3    0\n" + NBPstate0() + "\n" + NBPstate1() + "\n" + ClockTiming() + "\n" + BIOSClock();
+            PCIDevices.Text = VoltageControl() + "\n" + DebugOutput() + "\n" + MaxPstate() + "\n";
+            //PStateReg1.Text = "";
+            //PStateReg2.Text = "";
+            //NbPStateReg1.Text = "";
+            //ClockReg.Text = "";
+            //BIOSReg.Text = "";
             RegLabel64CPU.Text = "Bit numbering\nCOFVID 0071\nP-State0 0064\nP-State1 0065\nP-State2 0066\nP-State3 0067\nP-State4 0068\nP-State5 0069\nP-State6 006A\nP-State7 006B";
             RegLabel32NB.Text = "Bit numbering\nNB P-State0 D18F3xDC\nNB P-State1 D18F6x90\nClockTiming D18F3xD4\nBIOSClock D0F0xE4_x0130_80F1";
             PCIDevicesLabel.Text = "D18F3x15C\nD0 00\nD1F0 90\nSMBus A0\nD18 C0\nMSRC001_0061 P-State";
-            RegLabel4.Text = "";
-            RegLabel5.Text = "";
-            RegLabel12.Text = "";
-            RegLabel13.Text = "";
-            RegLabel6.Text = "";
-            RegLabel7.Text = "";
-            RegLabel8.Text = "";
-            RegLabel9.Text = "";
-            RegLabel10.Text = "";
-            RegLabel11.Text = "";
+            //RegLabel4.Text = "";
+            //RegLabel5.Text = "";
+            //RegLabel12.Text = "";
+            //RegLabel13.Text = "";
+            //RegLabel6.Text = "";
+            //RegLabel7.Text = "";
+            //RegLabel8.Text = "";
+            //RegLabel9.Text = "";
+            //RegLabel10.Text = "";
+            //RegLabel11.Text = "";
             _modified = false;
         }
 
@@ -152,6 +204,27 @@ namespace FusionTweaker
             return conv;
         }
 
+		//Brazos merge added function from BT
+        private bool WaitPortStatus(int bits, int onoff = 0, int timeout = 1000)
+        {
+            bool result = false;
+            ushort port = EC_CTRLPORT;
+            int tick = 10;
+            
+            for (int time = 0; time < timeout; time += tick)
+            {
+                byte data = Program.Ols.ReadIoPortByte(port);
+                int flagstate = (data & bits);
+                if (flagstate == onoff)
+                {
+                    result = true;
+                    break;
+                }
+                Thread.Sleep(tick);
+            }
+            return result;
+        }
+
         private uint ReadWord(ushort regPort, ushort valPort, byte regIndex)
         {
             Program.Ols.WriteIoPortByte(regPort, regIndex);
@@ -169,7 +242,8 @@ namespace FusionTweaker
             Program.Ols.WriteIoPortByte(valPort, value);
         }
 
-        public string IOInterface()
+        //Brazos merge commenting out older function from FT
+		/*public string IOInterface()
         {
             byte superIOReg = 0x2E; // port for the SuperIO register index
 		    byte superIOVal = 0x2F; // port for the SuperIO register value 
@@ -194,6 +268,84 @@ namespace FusionTweaker
 		    // exit the MB PnP mode
             WriteByte(superIOReg, superIOVal, 0x02, 0x02);
 	    return "Check";
+        }
+*/
+
+		//Brazos merge added function from BT
+        public byte ReadIOByte(byte offset)
+        {
+            byte data = 0;
+            // wait for IBF and OBF to clear
+            bool ready = WaitPortStatus(EC_STAT_IBF | EC_STAT_OBF, 0);
+            if (ready)
+            {
+                // tell 'em we want to "READ"
+                Program.Ols.WriteIoPortByte(EC_CTRLPORT, EC_CTRLPORT_READ);
+                // wait for IBF to clear (command byte removed from EC's input queue)
+                ready = WaitPortStatus(EC_STAT_IBF, 0);
+                if (ready)
+                {
+                    // tell 'em where we want to read from
+                    Program.Ols.WriteIoPortByte(EC_DATAPORT, offset);
+                    ready = WaitPortStatus(EC_STAT_IBF, 0);
+                    if (ready)
+                    {
+                        // read result (EC byte at offset)
+                        data = Program.Ols.ReadIoPortByte(EC_DATAPORT);
+                    }
+                }
+            }
+            return data;
+        }
+			
+		//Brazos merge added function from BT
+		public string IOInterface()
+        {
+            string text = "";
+            byte loFan = ReadIOByte(TP_ECOFFSET_FANSPEED);
+            byte hiFan = ReadIOByte((byte)(TP_ECOFFSET_FANSPEED + 1));
+            //ushort fanSpeed = (ushort)((hiFan << 8) | (loFan & 0xFF));
+            //if (fanSpeed != 0) { fanSpeed = (ushort)(1350000 / (fanSpeed * 2)); }
+            text += "Fan1: " + loFan + " Fan2: " + hiFan; 
+            for (int i = 0; i < 3; i++)
+            { // temp sensors 0x78 - 0x7f
+                text += " " + i + ": " + ReadIOByte(SENSORADDR[i]);
+            }
+            /*for (int i = 0; i < 8; i++)
+            {
+                text += (done >> (7 - i) & 0x1).ToString();
+                if ((i + 1) % 4 == 0) text += " ";
+            }*/
+            return text;
+        }
+
+		//Brazos merge added function from BT
+        public string ECReadings()
+        {
+            if (GetVendor().Equals("LENOVO") && GetMobo().Equals("Inagua"))
+            {
+                string text = "";
+                //temps 0xA8, 0xA9, 0xAA
+                text += " APU: " + ReadIOByte(SENSORADDR[0]) + "°C ";
+                //text += "MB1: " + ReadIOByte(SENSORADDR[1]) + "°C ";
+                text += "MoBo: " + ReadIOByte(SENSORADDR[2]) + "°C ";
+
+                byte hiFan = ReadIOByte((byte)(TP_ECOFFSET_FANSPEED + 1));
+                int fanspeed = 0;
+                if (hiFan != 255) { fanspeed = 8500 - (50 * hiFan); }
+                text += "Fan: " + fanspeed + " RPM";
+
+                /*for (int i = 0; i < 8; i++)
+                {
+                    text += (done >> (7 - i) & 0x1).ToString();
+                    if ((i + 1) % 4 == 0) text += " ";
+                }*/
+                return text;
+            }
+            else
+            {
+                return "Temp/Fan on " + GetVendor() + "/" + GetMobo() + " not supported yet.";
+            }
         }
 
         public string DebugOutput()
@@ -246,24 +398,39 @@ namespace FusionTweaker
             return text;
         }
 
+		//Brazos merge function, which is in FT only
+
         public string COFVidStringConv()
         {
             string text = "";
             ulong msr = Program.Ols.ReadMsr(0xC0010071u);
-            text += "MainPllOpFreqIdMax: " + ((msr >> 49) & 0x3F)
-                    + " StartupPstate: " + ((msr >> 32) & 0x7)
-                    + " MinVid(V): " + (1.55 - ((msr >> 42) & 0x7F) * 0.0125) 
-                    + " MaxVid(V): " + (1.55 - ((msr >> 35) & 0x7F) * 0.0125) + "\n"
-                    + " CurPstateLimit: " + ((msr >> 56) & 0x7) 
-                    + " CurPstate: " + ((msr >> 16) & 0x7)
-                    + " PstateInProgress: " + ((msr >> 20) & 0x1) + "\n"
-                    + " CurCpuVid(V): " + (1.55 - ((msr >> 9) & 0x7F) * 0.0125)
-                    + " CurNbVid(V): " + (1.55 - ((msr >> 25) & 0x7F) * 0.0125) + "\n"
-                    + " CurCpuFid: " + ((msr >> 4) & 0x1F)
-                    + " CurCpuDid: " + (msr & 0xF);
+            if (Form1.family == 16)
+            {
+                text += "MSRC0010071\n MaxNbCof[63:59]: " + ((msr >> 59) & 0x1F) + " CurPstateLimit[58:56]: " + ((msr >> 56) & 0x7)
+                        + " MaxCpuCof[54:49]: " + ((msr >> 49) & 0x3F) + " StartupPstate[34:32]: " + ((msr >> 32) & 0x7) + "\n"
+                        + " CurNbVid[31:24]: " + ((msr >> 24) & 0xFF) + " NbPstateDis[23]: " + ((msr >> 23) & 0x1)
+                        + " CurCpuVid7[23]: " + ((msr >> 23) & 0x1) + " CurCpuVid6_0[15:9]: " + ((msr >> 9) & 0x7F)
+                        + " CurPstate[18:16]: " + ((msr >> 16) & 0x7) + " CurCpuDid: " + ((msr >> 6) & 0x7)
+                        + " CurCpuFid: " + (msr & 0x3F) + "\n";
+            }
+            else
+            {
+                text += "MainPllOpFreqIdMax: " + ((msr >> 49) & 0x3F)
+                        + " StartupPstate: " + ((msr >> 32) & 0x7)
+                        + " MinVid(V): " + (1.55 - ((msr >> 42) & 0x7F) * 0.0125)
+                        + " MaxVid(V): " + (1.55 - ((msr >> 35) & 0x7F) * 0.0125) + "\n"
+                        + " CurPstateLimit: " + ((msr >> 56) & 0x7)
+                        + " CurPstate: " + ((msr >> 16) & 0x7)
+                        + " PstateInProgress: " + ((msr >> 20) & 0x1) + "\n"
+                        + " CurCpuVid(V): " + (1.55 - ((msr >> 9) & 0x7F) * 0.0125)
+                        + " CurNbVid(V): " + (1.55 - ((msr >> 25) & 0x7F) * 0.0125) + "\n"
+                        + " CurCpuFid: " + ((msr >> 4) & 0x1F)
+                        + " CurCpuDid: " + (msr & 0xF);
+            }
             return text;
         }
 
+		//Brazos merge function, which is in FT only
         public string CPUPstateConv()
         {
             string text = "";
@@ -277,14 +444,31 @@ namespace FusionTweaker
             msr[6] = Program.Ols.ReadMsr(0xC001006Au);
             msr[7] = Program.Ols.ReadMsr(0xC001006Bu);
 
-            for (int i = 0; i < 8; i++)
+            if (Form1.family == 16)
             {
-                text += "Pstate: P" + i + " PStateEn: " + ((msr[i] >> 63) & 0x1)
-                    + " IddDiv: " + ((msr[i] >> 41) & 0x1) + ((msr[i] >> 40) & 0x1)
-                    + " IddValue: " + ((msr[i] >> 32) & 0xFF) + "\n"
-                    + "CpuVid(V): " + (1.55 - ((msr[i] >> 9) & 0x7F) * 0.0125)
-                    + " CpuFid: " + ((msr[i] >> 4) & 0x1F)
-                    + " CpuDid: " + (msr[i] & 0xF) + "\n";
+                for (int i = 0; i < 8; i++)
+                {
+                    text += "Pstate: P" + i + " PStateEn[63]: " + ((msr[i] >> 63) & 0x1)
+                        + " IddDiv[41:40]: " + ((msr[i] >> 40) & 0x3)
+                        + " IddValue[39:32]: " + ((msr[i] >> 32) & 0xFF) + "\n"
+                        + " NbPstate[22]:" + ((msr[i] >> 22) & 0x1)
+                        + " CpuVid7[16]: " + ((msr[i] >> 16) & 0x1)
+                        + " CpuVid6_0[15:9]: " + ((msr[i] >> 9) & 0x7F) 
+                        + " CpuDid[8:6]: " + ((msr[i] >> 6) & 0x7)
+                        + " CpuFid[5:0]: " + (msr[i] & 0x3F) + "\n";
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    text += "Pstate: P" + i + " PStateEn: " + ((msr[i] >> 63) & 0x1)
+                        + " IddDiv: " + ((msr[i] >> 41) & 0x1) + ((msr[i] >> 40) & 0x1)
+                        + " IddValue: " + ((msr[i] >> 32) & 0xFF) + "\n"
+                        + "CpuVid(V): " + (1.55 - ((msr[i] >> 9) & 0x7F) * 0.0125)
+                        + " CpuFid: " + ((msr[i] >> 4) & 0x1F)
+                        + " CpuDid: " + (msr[i] & 0xF) + "\n";
+                }
             }
 
             uint eax = 0, ebx = 0, ecx = 0, edx = 0;
@@ -293,6 +477,7 @@ namespace FusionTweaker
             return text;
         }
 
+		//Brazos merge function, which is in FT only
         public string CorePerfBoostControl()
         {
             string text = "";
@@ -306,6 +491,7 @@ namespace FusionTweaker
             return text;
         }
 
+		//Brazos merge function, which is in FT only
         public string CorePerfBoostControlConv()
         {
             string text = "";
@@ -315,6 +501,7 @@ namespace FusionTweaker
             return text;
         }
 
+		//Brazos merge function, which is in FT only
         public string APMI()
         {
             string text = "";
@@ -436,7 +623,15 @@ namespace FusionTweaker
         public string NBPstate0()
         {
             string text = "";
-            uint settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+            uint settings;
+            if (Form1.family == 16)
+            {
+                settings = Program.Ols.ReadPciConfig(0xC5, 0x160);
+            }
+            else
+            {
+                settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+            }
             for (int i = 0; i < 32; i++)
             {
                 text += (settings >> (31 - i) & 0x1).ToString();
@@ -449,7 +644,15 @@ namespace FusionTweaker
         public string NBPstate1()
         {
             string text = "";
-            uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
+            uint settings;
+            if (Form1.family == 16)
+            {
+                settings = Program.Ols.ReadPciConfig(0xC5, 0x164);
+            }
+            else
+            {
+                settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
+            } 
             for (int i = 0; i < 32; i++)
             {
                 text += (settings >> (31 - i) & 0x1).ToString();
@@ -487,5 +690,29 @@ namespace FusionTweaker
             return text;
         }
         
+		//Brazos merge function from BT
+        private void ResetButton_Click(object sender, EventArgs e)
+         {
+             DialogResult result = MessageBox.Show("Do you really want to delete all your customized settings?\n"
+                    + "If you want that:\n1. Click OK.\n2. Close the application without hitting \"Apply\"\n3. Restart your system.", "Reset PStates", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+             if (result == DialogResult.OK)
+             {
+                 var key = Microsoft.Win32.Registry.LocalMachine.CreateSubKey(@"Software\FusionTweaker");
+                 if (key == null)
+                     return;
+                 for (int i = 0; i < 5; i++)
+                 {
+                     string valueName = "P" + i;
+                     key.DeleteValue(valueName, false);
+                 }
+                 key.SetValue("EnableCustomPStates", 0);
+                 key.Close();
+             }
+         }
+
+        private void Reg64CPU_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

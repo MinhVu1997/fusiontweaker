@@ -23,24 +23,38 @@ namespace FusionTweaker
 		private static readonly bool _useWindowsPowerSchemes = (Environment.OSVersion.Version.Major >= 6);
 
         private static readonly int numCores = System.Environment.ProcessorCount;
-        private static readonly int numPstates = K10Manager.GetHighestPState();
+        //private static readonly int numCores = 1;
+        public static readonly int numPstates = K10Manager.GetHighestPState();
+        //private static readonly int numPstates = 2;
+		//Brazos merge next line removed in BT
         private static readonly int numBoostedPstates = K10Manager.GetNumBoostedStates();
-        private static readonly int family = K10Manager.GetFamily();
+        //private static readonly int family = K10Manager.GetFamily();
+        //private static readonly int family = 14;
         
         private static int[] currentPStateCore = new int[numCores];
+        //Brazos merge 
+        //private static readonly int processBarSteps = numPstates + 1;
         private static readonly int processBarSteps = numPstates + numBoostedPstates + 1;
         private static readonly int processBarPerc = 100 / processBarSteps;
 
-        private static bool monitorPstates = false;
-        //private static bool alwaysOnTop = true;
-
+        private static bool monitorPstates = true;
+        private static bool alwaysOnTop = true;
+        
+        public static readonly int family = K10Manager.GetFamily();
+        
         public static int[] freq = new int[10];
 
         public Form1()
 		{
 			InitializeComponent();
 
-            if (family != 12)
+			//Brazos merge
+            /*if (family != 14)
+            {
+                MessageBox.Show("Your CPU/APU from AMD family: " + family + "h is not supported!");
+            }*/
+
+            if ((family != 12) && (family != 14) && (family != 16))
             {
                 MessageBox.Show("Your CPU/APU from AMD family: " + family + "h is not supported!");
             }
@@ -86,8 +100,12 @@ namespace FusionTweaker
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
+            log_now();
+			//Brazos merge next line was active in BT
 			//this.Width += p0StateControl.GetDeltaOptimalWidth();
             
+			//Brazos merge p3 trough p7 inactive in BT
+			//BT also provides integer value to Load for PState, which shouldn't be needed
 			p0StateControl.LoadFromHardware();
 			p1StateControl.LoadFromHardware();
 			p2StateControl.LoadFromHardware();
@@ -266,6 +284,7 @@ namespace FusionTweaker
 			if (m.Msg == WM_SIZE && m.WParam.ToInt32() == SIZE_MINIMIZED)
 			{
 				timer1.Enabled = false;
+                timer2.Enabled = false;
 				Hide();
 			}
 
@@ -275,7 +294,10 @@ namespace FusionTweaker
 
 		private void applyButton_Click(object sender, EventArgs e)
 		{
-            var controls = new PStateControl[10] { p0StateControl, p1StateControl, p2StateControl, p3StateControl, p4StateControl, p5StateControl, 
+            //Brazos merge 
+			//var controls = new PStateControl[5] { p0StateControl, p1StateControl, p2StateControl, nbp0StateControl, nbp1StateControl };
+
+			var controls = new PStateControl[10] { p0StateControl, p1StateControl, p2StateControl, p3StateControl, p4StateControl, p5StateControl, 
                 p6StateControl, p7StateControl, nbp0StateControl, nbp1StateControl };
             var statuscontrols = new StatusControl[1] { statusinfo };
 
@@ -283,12 +305,17 @@ namespace FusionTweaker
 			if (lastModifiedControl < 0)
 				return; // no control is modified
 
-            if (lastModifiedControl > 7)
+            //Brazos merge 
+			/*if (lastModifiedControl > 2)
+            {
+                lastModifiedControl = 2; //checking CPU P-States only -> skip NB P-States
+            }*/
+
+			if (lastModifiedControl > 7)
             {
                 lastModifiedControl = 7; //checking CPU P-States only -> skip NB P-States
             }
-			// temporary disabled
-              for (int i = 1; i <= lastModifiedControl; i++)
+			for (int i = 1; i <= lastModifiedControl; i++)
 			{
 				// make sure the neighboring P-state on the left specifies a >= VID
 				if (controls[i - 1].Vid < controls[i].Vid)
@@ -298,20 +325,28 @@ namespace FusionTweaker
 					return;
 				}
             }
-			timer1.Enabled = false;
 
+			timer1.Enabled = false;
+            timer2.Enabled = false;
+
+			//Brazos merge next five lines are commented out in BT
 			// try to temporarily set the number of boosted (Turbo) P-states to 0
 			bool turboEnabled = K10Manager.IsTurboEnabled();
 			int boostedStates = K10Manager.GetNumBoostedStates();
 			if (boostedStates != 0)
 				K10Manager.SetTurbo(false);
-
+			
+			//Brazos merge 
+			//for (int i = 0; i < 5; i++)
 			for (int i = 0; i < 10; i++)
 				controls[i].Save();
 
+			//Brazos merge next two lines are commented out in BT
 			if (turboEnabled)
 				K10Manager.SetTurbo(true);
 
+			//Brazos merge 
+			//for (int i = 0; i < 5; i++)
 			// refresh the P-states
             for (int i = 0; i < 10; i++)
                 controls[i].LoadFromHardware();
@@ -319,6 +354,7 @@ namespace FusionTweaker
             statuscontrols[0].LoadFromHardware();
 
 			timer1.Enabled = true;
+            timer2.Enabled = true;
 		}
 
 		private void serviceButton_Click(object sender, EventArgs e)
@@ -330,6 +366,8 @@ namespace FusionTweaker
 				// refresh the P-states
 				if (dialog.Applied)
 				{
+					//Brazos merge p3 trough p7 inactive in BT
+					//BT also provides integer value to Load for PState, which shouldn't be needed
 					p0StateControl.LoadFromHardware();
 					p1StateControl.LoadFromHardware();
 					p2StateControl.LoadFromHardware();
@@ -352,10 +390,12 @@ namespace FusionTweaker
 
 		private void timer1_Tick(object sender, EventArgs e)
 		{
-            if (!monitorPstates)
+            if (monitorPstates)
             {
                 int currentNbPState = K10Manager.GetNbPState();
                 nbBar.Value = (2 - currentNbPState) * 50;
+                //Brazos merge 
+				//nbPstateLabel.Text = currentNbPState.ToString() + " - " + freq[currentNbPState + 3].ToString() + "MHz";
                 nbPstateLabel.Text = currentNbPState.ToString() + " - " + freq[currentNbPState + 8].ToString() + "MHz";
                 
                 // get the current P-state of the first core
@@ -386,6 +426,21 @@ namespace FusionTweaker
             }
 		}
 
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            ecread.SuspendLayout();
+            ecread.Text = statusinfo.GetECreadings();
+            ecread.ResumeLayout();
+
+            nbCfgTemp.SuspendLayout();
+            nbCfgTemp.Text = K10Manager.GetTemp().ToString() + "°C";
+            nbCfgTemp.ResumeLayout();
+             
+            //tabControl1.SuspendLayout();
+            //statusinfo.LoadFromHardware();
+            //tabControl1.ResumeLayout();
+        }
+
 		private void notifyIcon_MouseClick(object sender, MouseEventArgs e)
 		{
 			if (e.Button == MouseButtons.Left && !this.Visible)
@@ -396,11 +451,17 @@ namespace FusionTweaker
 				// refresh the current P-state
 				timer1_Tick(timer1, EventArgs.Empty);
 
+                // refresh the temps
+                timer2_Tick(timer2, EventArgs.Empty);
+
 				// odd, but necessary
 				Refresh();
 
-				// keep refreshing the current P-state
-				timer1.Enabled = true;
+                // keep refreshing the PStates
+                timer1.Enabled = true;
+
+				// keep refreshing the temps
+				timer2.Enabled = true;
 			}
 		}
 
@@ -433,7 +494,8 @@ namespace FusionTweaker
 
         private void ShiftTable(int shifty)
         {
-            //this.tabControl1.Location = new System.Drawing.Point(12, 130 + shifty);
+            //Brazos merge next three lines are active in BT
+			//this.tabControl1.Location = new System.Drawing.Point(12, 130 + shifty);
             //this.tabControl1.Size = new System.Drawing.Size(350, 345 - shifty);
             //this.MinimumSize = new System.Drawing.Size(225, 345 + shifty);
         }
@@ -450,12 +512,7 @@ namespace FusionTweaker
             }
         }
 
-        private void logButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
+        private void log_now ()
         {
             //create new file or just overwrite the old one
             TextWriter htmlwrite = new StreamWriter("FusionTweaker.log", false);
@@ -471,24 +528,69 @@ namespace FusionTweaker
                             + "P-State0 0069\t" + statusinfo.CPUPstate5() + "\n"
                             + "P-State0 006A\t" + statusinfo.CPUPstate6() + "\n"
                             + "P-State0 006B\t" + statusinfo.CPUPstate7() + "\n"
+                //Brazos merge next two lines not in BT
                             + statusinfo.COFVidStringConv() + "\n"
+                            + statusinfo.CPUPstateConv() + "\n"
+                            );
+
+            htmlwrite.WriteLine("Bit numbering\t\t\t31   27   23   19   15   11   7    3  0\n"
+                            + "NB P-State0\t" + statusinfo.NBPstate0() + "\n"
+                            + "NB P-State1\t" + statusinfo.NBPstate1() + "\n"
+                
+            //Brazos merge next two lines not in BT
+                            //+ "Advanced Power Mgmnt\t" + statusinfo.APMI() + "\n"
+                            //+ "Core Perf Boost Ctrl\t" + statusinfo.CorePerfBoostControl() + "\n"
+                            //+ "ClockTiming D18F3xD4\t" + statusinfo.ClockTiming() + "\n"
+                            //+ "BIOSClock D0F0xE4_x0130_80F1\t" + statusinfo.BIOSClock());
+            //htmlwrite.WriteLine("D18F3x15C\t" + statusinfo.VoltageControl() + "\n"
+                //Brazos merge next line not in BT
+                            //+ statusinfo.CorePerfBoostControlConv() + "\n"
+                            //+ "D0 00\tD1F0 90\tSMBus A0\tD18 C0\n" + statusinfo.DebugOutput() + "\n"
+                            + "MSRC001_0061 P-State" + statusinfo.MaxPstate() + "\n"
+                            + "BIOS vendor\tBIOS version\tMoBo vendor\tMoBo name\n" + statusinfo.GetReport());
+
+            htmlwrite.Close();
+            System.Diagnostics.Process.Start("FusionTweaker.log");
+        }
+
+        private void logButton_Click(object sender, EventArgs e)
+        {
+            //create new file or just overwrite the old one
+            TextWriter htmlwrite = new StreamWriter("FusionTweaker.log", false);
+
+            htmlwrite.WriteLine("Family: " + family + "h");
+            htmlwrite.WriteLine("Bit numbering\t63   59   55   51   47   43   39   35   31   27   23   19   15   11   7    3  0\n"
+                            + "COFVID 0071\t\t" + statusinfo.COFVidString() + "\n" 
+                            + "P-State0 0064\t" + statusinfo.CPUPstate0() + "\n"
+                            + "P-State0 0065\t" + statusinfo.CPUPstate1() + "\n"
+                            + "P-State0 0066\t" + statusinfo.CPUPstate2() + "\n"
+                            + "P-State0 0067\t" + statusinfo.CPUPstate3() + "\n"
+                            + "P-State0 0068\t" + statusinfo.CPUPstate4() + "\n"
+                            + "P-State0 0069\t" + statusinfo.CPUPstate5() + "\n"
+                            + "P-State0 006A\t" + statusinfo.CPUPstate6() + "\n"
+                            + "P-State0 006B\t" + statusinfo.CPUPstate7() + "\n"
+                            //Brazos merge next two lines not in BT
+							+ statusinfo.COFVidStringConv() + "\n"
                             + statusinfo.CPUPstateConv() + "\n"
                             );
 
             htmlwrite.WriteLine("Bit numbering\t\t\t31   27   23   19   15   11   7    3  0\n"
                             + "NB P-State0 D18F3xDC\t" + statusinfo.NBPstate0() + "\n"
                             + "NB P-State1 D18F6x90\t" + statusinfo.NBPstate1() + "\n"
-                            + "Advanced Power Mgmnt\t" + statusinfo.APMI() + "\n"
+                            //Brazos merge next two lines not in BT
+							+ "Advanced Power Mgmnt\t" + statusinfo.APMI() + "\n"
                             + "Core Perf Boost Ctrl\t" + statusinfo.CorePerfBoostControl() + "\n"
                             + "ClockTiming D18F3xD4\t" + statusinfo.ClockTiming() + "\n"
                             + "BIOSClock D0F0xE4_x0130_80F1\t" + statusinfo.BIOSClock());
             htmlwrite.WriteLine("D18F3x15C\t" + statusinfo.VoltageControl() + "\n"
-                            + statusinfo.CorePerfBoostControlConv() + "\n"
+                            //Brazos merge next line not in BT
+							+ statusinfo.CorePerfBoostControlConv() + "\n"
                             + "D0 00\tD1F0 90\tSMBus A0\tD18 C0\n" + statusinfo.DebugOutput() + "\n"
                             + "MSRC001_0061 P-State" + statusinfo.MaxPstate() + "\n"
                             + "BIOS vendor\tBIOS version\tMoBo vendor\tMoBo name\n" + statusinfo.GetReport());
 
             htmlwrite.Close();
+            System.Diagnostics.Process.Start("FusionTweaker.log");
         }
     }
 }

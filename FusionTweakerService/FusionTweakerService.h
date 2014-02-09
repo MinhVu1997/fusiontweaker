@@ -142,6 +142,7 @@ private:
 		if (_params.EnableCustomPStates)
 		{
 			ApplyCustomPStates();
+			//Brazos merge next line active in BT, but probably creates issues
 			//UnlockPStates();
 
 			// the service needs to be kept alive to re-apply custom P-states when
@@ -149,6 +150,7 @@ private:
 			result = true;
 		}
 
+		//Brazos merge next lines not available in BT
 		//family 12h doesn't support setting the turbo per core that way
 		/*if (_params.TurboCores >= 0)
 		{
@@ -202,6 +204,7 @@ private:
 	/// </summary>
 	void ApplyCustomPStates()
 	{
+		//Brazos merge next line need for reading in power profiles (5 in BT)
 		bool customized[10];
 		for (int i = 0; i < 10; i++)
 			customized[i] = !_params.Msrs[i].empty();
@@ -209,6 +212,7 @@ private:
 		// try to temporarily set the number of boosted (Turbo) P-states to 0
 		// this should suspend the restriction of software P-state multis by F3x1F0[MaxSwPstateCpuCof]
 		const bool turboEnabled = TurboManager::IsEnabled();
+		//Brazos merge next five lines not in BT
 		int boostedStates = TurboManager::GetNumBoostedStates(); // the number of boosted states may be 1 even if the Turbo is disabled
 		if (boostedStates != 0)
 		{
@@ -239,6 +243,9 @@ private:
 			currentHwPState = (lower >> 16) & 7;
 
 			// customize all hardware P-states except the currently active one
+			//Brazos merge line from BT might introduced problems
+			//for (int state = 0; state < 5; state++)
+
 			for (int state = 0; state < 8; state++)
 			{
 				if (customized[state] && state != currentHwPState)
@@ -253,6 +260,9 @@ private:
 				// if software P0 or boost is currently active: try the highest enabled software P-state
 				//   it should specify a lower multi and a lower voltage than the current state
 				//   (multi applied before voltage when switching up)
+
+				//Brazos merge line from BT
+				//const int tempSwPState = (currentHwPState <= 0 ? maxEnabledSwPState : 0);
 				const int tempSwPState = (currentHwPState <= boostedStates ? maxEnabledSwPState : 0);
 
 				// initiate switching to the temp state and immediately continue with the next core
@@ -271,6 +281,8 @@ private:
 
 			// initiate switching back (or to software P0 if the core was boosted) and immediately
 			// continue with the next core
+			//Brazos merge next line BT
+			//const int currentSwPState = std::max(0, currentHwPState);
 			const int currentSwPState = std::max(0, currentHwPState - boostedStates);
 			const DWORD_PTR affinityMask = (DWORD_PTR)1 << i;
 			WrmsrTx(0xC0010062u, currentSwPState, 0, affinityMask);
@@ -278,6 +290,7 @@ private:
 		delete[] currentHwPStates;
 		Sleep(3); // let transitions complete
 
+		//Brazos merge next for is only done in FT
 		// customize all hardware NB P-states
 		for (int state = 8; state < 10; state++)
 		{
@@ -286,6 +299,7 @@ private:
 
 		SetThreadPriority(currentThread, previousPriority);
 		
+		//Brazos merge next for is only done in FT
 		// re-enable the Turbo
 		if (turboEnabled)
 			TurboManager::Set(true);
@@ -353,6 +367,7 @@ private:
 	/// </summary>
 	static void SavePState(unsigned int index, unsigned int lowMsr, unsigned int core)
 	{
+		//Brazos merge BT is using 3 instead of 8
 		if (index < 8) { //this is, what we need to do for the CPU
 			const unsigned int msrIndex = 0xC0010064u + index;
 			const DWORD_PTR affinityMask = (DWORD_PTR)1 << core;
@@ -364,6 +379,7 @@ private:
 			lower = (lower & ~lowMsrMask) | (lowMsr & lowMsrMask);
 
 			WrmsrTx(msrIndex, lower, higher, affinityMask);
+		//Brazos merge BT is starting with 3 instead of 8
 		} else if ((index == 8 || index == 9) && (core == 0)) { //we will handle NB P0/1 settings here
 			index = index - 8;
 			EnableNBPstateSwitching();
@@ -375,6 +391,7 @@ private:
 				SwitchToNbPState(index);
                 for (int i = 0; i < 10; i++)
                 {
+					//Brazos merge shorter wait time vs BT
 					Sleep(20);
 					changedNbstate = GetNbPState();
 					if (changedNbstate == index) i = 10;
@@ -420,14 +437,16 @@ private:
                 SwitchToNbPState(1);
                 for (int i = 0; i < 10; i++)
                 {
-                    Sleep(20); // let transitions complete
+                    //Brazos merge shorter wait time vs BT
+					Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
                     if (changedNbstate == 1) i = 10;
                 }
                 SwitchToNbPState(0);
                 for (int i = 0; i < 10; i++)
                 {
-                    Sleep(20); // let transitions complete
+                    //Brazos merge shorter wait time vs BT
+					Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
                     if (changedNbstate == 0) i = 10;
                 }
@@ -437,14 +456,16 @@ private:
                 SwitchToNbPState(0);
                 for (int i = 0; i < 10; i++)
                 {
-                    Sleep(20); // let transitions complete
+                    //Brazos merge shorter wait time vs BT
+					Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
                     if (changedNbstate == 0) i = 10;
                 }
                 SwitchToNbPState(1);
                 for (int i = 0; i < 10; i++)
                 {
-                    Sleep(20); // let transitions complete
+                    //Brazos merge shorter wait time vs BT
+					Sleep(20); // let transitions complete
                     changedNbstate = GetNbPState();
                     if (changedNbstate == 1) i = 10;
                 }
@@ -461,6 +482,8 @@ private:
 
 		// get the max enabled hardware P-state from core 0
 		int maxEnabledPState = 2;
+		//Brazos merge line from BT might have caused issues
+		//for (int i = 0; i < 5; i++)
 		for (int i = 0; i < 8; i++)
 		{
 			const unsigned int msrIndex = 0xC0010064u + i;
@@ -476,6 +499,8 @@ private:
 		}
 
 		// make sure the profiles' P-state bounds are valid
+		//Brazos merge line from BT might have caused issues
+		//for (int i = 0; i < 3; i++)
 		for (int i = 0; i < 8; i++)
 		{
 			CustomCnQProfile& profile = _params.Profiles[i];
@@ -504,6 +529,8 @@ private:
 
 		// custom P-states
 		_params.EnableCustomPStates = false;
+		//Brazos merge line from BT might have caused issues
+		//for (int i = 0; i < 5; i++)
 		for (int i = 0; i < 10; i++)
 		{
 			const std::string registryValue = std::string("P") + StringUtils::ToString(i);
@@ -569,7 +596,11 @@ private:
 		profile.Ganged = true;
 		Registry::GetBool(key, "Ganged", profile.Ganged);
 
+		//ToDo rework needs to be done here, because the next lines can prevent 
+		//Pstate changes by power profile 
 		profile.MinPState = (profileIndex == 2 ? 1 : 0);
+		//Brazos merge line from FT might cause issues
+		//profile.MaxPState = (profileIndex == 1 ? 0 : 2); BT
 		profile.MaxPState = (profileIndex == 1 ? 0 : 6);
 		Registry::GetDword(key, "MinPState", profile.MinPState);
 		Registry::GetDword(key, "MaxPState", profile.MaxPState);
