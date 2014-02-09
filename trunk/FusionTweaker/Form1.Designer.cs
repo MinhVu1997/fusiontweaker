@@ -40,56 +40,49 @@
             this.cpu4Bar = new System.Windows.Forms.ProgressBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageP0 = new System.Windows.Forms.TabPage();
-            this.p0StateControl = new FusionTweaker.PStateControl();
             this.tabPageP1 = new System.Windows.Forms.TabPage();
-            this.p1StateControl = new FusionTweaker.PStateControl();
             this.tabPageP2 = new System.Windows.Forms.TabPage();
-            this.p2StateControl = new FusionTweaker.PStateControl();
-			//Brazos merge P3 through P7 not available in BT
             this.tabPageP3 = new System.Windows.Forms.TabPage();
-            this.p3StateControl = new FusionTweaker.PStateControl();
             this.tabPageP4 = new System.Windows.Forms.TabPage();
-            this.p4StateControl = new FusionTweaker.PStateControl();
             this.tabPageP5 = new System.Windows.Forms.TabPage();
-            this.p5StateControl = new FusionTweaker.PStateControl();
             this.tabPageP6 = new System.Windows.Forms.TabPage();
-            this.p6StateControl = new FusionTweaker.PStateControl();
             this.tabPageP7 = new System.Windows.Forms.TabPage();
-            this.p7StateControl = new FusionTweaker.PStateControl();
             this.tabPageNbP0 = new System.Windows.Forms.TabPage();
-            this.nbp0StateControl = new FusionTweaker.PStateControl();
             this.tabPageNbP1 = new System.Windows.Forms.TabPage();
-            this.nbp1StateControl = new FusionTweaker.PStateControl();
             this.tabPageStatus = new System.Windows.Forms.TabPage();
-			//Brazos merge logButton1 not available in BT
             this.logButton1 = new System.Windows.Forms.Button();
-            this.statusinfo = new FusionTweaker.StatusControl();
-            this.logButton = new System.Windows.Forms.Button();
             this.nbBar = new System.Windows.Forms.ProgressBar();
-            //Brazos merge next two lines from BT
-			this.ecread = new System.Windows.Forms.TextBox();
+            this.pstateLabel = new System.Windows.Forms.Label();
+            this.monitorCheckBox = new System.Windows.Forms.CheckBox();
+            this.alwaysOnTopCheck = new System.Windows.Forms.CheckBox();
+            this.ecread = new System.Windows.Forms.TextBox();
             this.cfgTempLabel = new System.Windows.Forms.Label();
             this.core1label = new System.Windows.Forms.Label();
             this.core2label = new System.Windows.Forms.Label();
             this.core3label = new System.Windows.Forms.Label();
             this.core4label = new System.Windows.Forms.Label();
-            this.pstateLabel = new System.Windows.Forms.Label();
             this.pstateLabel1 = new System.Windows.Forms.Label();
             this.pstateLabel2 = new System.Windows.Forms.Label();
             this.pstateLabel3 = new System.Windows.Forms.Label();
             this.pstateLabel4 = new System.Windows.Forms.Label();
             this.nbLabel = new System.Windows.Forms.Label();
             this.nbPstateLabel = new System.Windows.Forms.Label();
-            this.monitorCheckBox = new System.Windows.Forms.CheckBox();
-            this.alwaysOnTopCheck = new System.Windows.Forms.CheckBox();
             this.paypal = new System.Windows.Forms.LinkLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            //Brazos merge next two lines from BT
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.nbCfgTemp = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-
-			//Brazos merge P3 through P7 not available in BT
+            this.p0StateControl = new FusionTweaker.PStateControl();
+            this.p1StateControl = new FusionTweaker.PStateControl();
+            this.p2StateControl = new FusionTweaker.PStateControl();
+            this.p3StateControl = new FusionTweaker.PStateControl();
+            this.p4StateControl = new FusionTweaker.PStateControl();
+            this.p5StateControl = new FusionTweaker.PStateControl();
+            this.p6StateControl = new FusionTweaker.PStateControl();
+            this.p7StateControl = new FusionTweaker.PStateControl();
+            this.nbp0StateControl = new FusionTweaker.PStateControl();
+            this.nbp1StateControl = new FusionTweaker.PStateControl();
+            this.statusinfo = new FusionTweaker.StatusControl();
             this.tabControl1.SuspendLayout();
             this.tabPageP0.SuspendLayout();
             this.tabPageP1.SuspendLayout();
@@ -119,8 +112,8 @@
             // 
             // powerSchemesComboBox
             // 
-            this.powerSchemesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.powerSchemesComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.powerSchemesComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.powerSchemesComboBox.FormattingEnabled = true;
             this.powerSchemesComboBox.Location = new System.Drawing.Point(12, 368);
@@ -187,13 +180,12 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPageP0);
             this.tabControl1.Controls.Add(this.tabPageP1);
             this.tabControl1.Controls.Add(this.tabPageP2);
-			//Brazos merge P3 through P7 not available in BT
             this.tabControl1.Controls.Add(this.tabPageP3);
             this.tabControl1.Controls.Add(this.tabPageP4);
             this.tabControl1.Controls.Add(this.tabPageP5);
@@ -220,14 +212,6 @@
             this.tabPageP0.Text = "P0";
             this.tabPageP0.UseVisualStyleBackColor = true;
             // 
-            // p0StateControl
-            // 
-            this.p0StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p0StateControl.Name = "p0StateControl";
-            this.p0StateControl.PStateIndex = 0;
-            this.p0StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p0StateControl.TabIndex = 0;
-            // 
             // tabPageP1
             // 
             this.tabPageP1.Controls.Add(this.p1StateControl);
@@ -238,14 +222,6 @@
             this.tabPageP1.TabIndex = 1;
             this.tabPageP1.Text = "P1";
             this.tabPageP1.UseVisualStyleBackColor = true;
-            // 
-            // p1StateControl
-            // 
-            this.p1StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p1StateControl.Name = "p1StateControl";
-            this.p1StateControl.PStateIndex = 1;
-            this.p1StateControl.Size = new System.Drawing.Size(377, 131);
-            this.p1StateControl.TabIndex = 0;
             // 
             // tabPageP2
             // 
@@ -258,15 +234,6 @@
             this.tabPageP2.Text = "P2";
             this.tabPageP2.UseVisualStyleBackColor = true;
             // 
-            // p2StateControl
-            // 
-            this.p2StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p2StateControl.Name = "p2StateControl";
-            this.p2StateControl.PStateIndex = 2;
-            this.p2StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p2StateControl.TabIndex = 0;
-			//Brazos merge P3 through P7 not available in BT
-            // 
             // tabPageP3
             // 
             this.tabPageP3.Controls.Add(this.p3StateControl);
@@ -277,14 +244,6 @@
             this.tabPageP3.TabIndex = 3;
             this.tabPageP3.Text = "P3";
             this.tabPageP3.UseVisualStyleBackColor = true;
-            // 
-            // p3StateControl
-            // 
-            this.p3StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p3StateControl.Name = "p3StateControl";
-            this.p3StateControl.PStateIndex = 3;
-            this.p3StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p3StateControl.TabIndex = 0;
             // 
             // tabPageP4
             // 
@@ -297,14 +256,6 @@
             this.tabPageP4.Text = "P4";
             this.tabPageP4.UseVisualStyleBackColor = true;
             // 
-            // p4StateControl
-            // 
-            this.p4StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p4StateControl.Name = "p4StateControl";
-            this.p4StateControl.PStateIndex = 4;
-            this.p4StateControl.Size = new System.Drawing.Size(379, 131);
-            this.p4StateControl.TabIndex = 0;
-            // 
             // tabPageP5
             // 
             this.tabPageP5.Controls.Add(this.p5StateControl);
@@ -315,14 +266,6 @@
             this.tabPageP5.TabIndex = 5;
             this.tabPageP5.Text = "P5";
             this.tabPageP5.UseVisualStyleBackColor = true;
-            // 
-            // p5StateControl
-            // 
-            this.p5StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p5StateControl.Name = "p5StateControl";
-            this.p5StateControl.PStateIndex = 5;
-            this.p5StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p5StateControl.TabIndex = 0;
             // 
             // tabPageP6
             // 
@@ -335,14 +278,6 @@
             this.tabPageP6.Text = "P6";
             this.tabPageP6.UseVisualStyleBackColor = true;
             // 
-            // p6StateControl
-            // 
-            this.p6StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p6StateControl.Name = "p6StateControl";
-            this.p6StateControl.PStateIndex = 6;
-            this.p6StateControl.Size = new System.Drawing.Size(377, 131);
-            this.p6StateControl.TabIndex = 0;
-            // 
             // tabPageP7
             // 
             this.tabPageP7.Controls.Add(this.p7StateControl);
@@ -354,14 +289,6 @@
             this.tabPageP7.Text = "P7";
             this.tabPageP7.UseVisualStyleBackColor = true;
             // 
-            // p7StateControl
-            // 
-            this.p7StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p7StateControl.Name = "p7StateControl";
-            this.p7StateControl.PStateIndex = 7;
-            this.p7StateControl.Size = new System.Drawing.Size(379, 131);
-            this.p7StateControl.TabIndex = 0;
-            // 
             // tabPageNbP0
             // 
             this.tabPageNbP0.Controls.Add(this.nbp0StateControl);
@@ -369,19 +296,9 @@
             this.tabPageNbP0.Name = "tabPageNbP0";
             this.tabPageNbP0.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageNbP0.Size = new System.Drawing.Size(499, 205);
-            this.tabPageNbP0.TabIndex = 3;
+            this.tabPageNbP0.TabIndex = 8;
             this.tabPageNbP0.Text = "NB P0";
             this.tabPageNbP0.UseVisualStyleBackColor = true;
-            // 
-            // nbp0StateControl
-            // 
-            this.nbp0StateControl.Location = new System.Drawing.Point(0, 0);
-            this.nbp0StateControl.Name = "nbp0StateControl";
-			//Brazos merge
-            //this.nbp0StateControl.PStateIndex = 3;
-            this.nbp0StateControl.PStateIndex = 8;
-            this.nbp0StateControl.Size = new System.Drawing.Size(420, 131);
-            this.nbp0StateControl.TabIndex = 0;
             // 
             // tabPageNbP1
             // 
@@ -390,31 +307,19 @@
             this.tabPageNbP1.Name = "tabPageNbP1";
             this.tabPageNbP1.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageNbP1.Size = new System.Drawing.Size(499, 205);
-            this.tabPageNbP1.TabIndex = 4;
+            this.tabPageNbP1.TabIndex = 9;
             this.tabPageNbP1.Text = "NB P1";
             this.tabPageNbP1.UseVisualStyleBackColor = true;
             // 
-            // nbp1StateControl
-            // 
-            this.nbp1StateControl.Location = new System.Drawing.Point(0, 0);
-            this.nbp1StateControl.Name = "nbp1StateControl";
-			//Brazos merge
-            //this.nbp1StateControl.PStateIndex = 4;
-            this.nbp1StateControl.PStateIndex = 9;
-            this.nbp1StateControl.Size = new System.Drawing.Size(422, 131);
-            this.nbp1StateControl.TabIndex = 0;
-            // 
             // tabPageStatus
             // 
-            //Brazos merge next line not in BT
-			this.tabPageStatus.Controls.Add(this.logButton1);
+            this.tabPageStatus.Controls.Add(this.logButton1);
             this.tabPageStatus.Controls.Add(this.statusinfo);
-            this.tabPageStatus.Controls.Add(this.logButton);
             this.tabPageStatus.Location = new System.Drawing.Point(4, 22);
             this.tabPageStatus.Name = "tabPageStatus";
             this.tabPageStatus.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageStatus.Size = new System.Drawing.Size(499, 205);
-            this.tabPageStatus.TabIndex = 5;
+            this.tabPageStatus.TabIndex = 10;
             this.tabPageStatus.Text = "Status";
             this.tabPageStatus.UseVisualStyleBackColor = true;
             // 
@@ -423,51 +328,21 @@
             this.logButton1.Location = new System.Drawing.Point(88, 10);
             this.logButton1.Name = "logButton1";
             this.logButton1.Size = new System.Drawing.Size(75, 23);
-            this.logButton1.TabIndex = 2;
+            this.logButton1.TabIndex = 10;
             this.logButton1.Text = "Log now";
-			//Brazos merge adding tooltip from BT
             this.toolTip1.SetToolTip(this.logButton1, "Hit the button to store the current settings in a file, which than will be opened" +
-                    " in your default editor for further use.");
+        " in your default editor for further use.");
             this.logButton1.UseVisualStyleBackColor = true;
             this.logButton1.Click += new System.EventHandler(this.logButton_Click);
             // 
-            // statusinfo
-            // 
-            this.statusinfo.AutoSize = true;
-            this.statusinfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.statusinfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.statusinfo.Location = new System.Drawing.Point(3, 3);
-            this.statusinfo.Margin = new System.Windows.Forms.Padding(4);
-            this.statusinfo.Name = "statusinfo";
-            this.statusinfo.Size = new System.Drawing.Size(493, 199);
-            this.statusinfo.StatusIndex = 0;
-            this.statusinfo.TabIndex = 0;
-            // 
-            // logButton
-            // 
-            this.logButton.Location = new System.Drawing.Point(100, 12);
-            this.logButton.Margin = new System.Windows.Forms.Padding(2);
-            this.logButton.Name = "logButton";
-            this.logButton.Size = new System.Drawing.Size(56, 19);
-            this.logButton.TabIndex = 1;
-            this.logButton.Text = "Log now";
-			//Brazos merge adding tooltip from BT
-            this.toolTip1.SetToolTip(this.logButton, "Hit the button to store the current settings in a file, which than will be opened" +
-                    " in your default editor for further use.");
-            this.logButton.UseVisualStyleBackColor = true;
-            this.logButton.Click += new System.EventHandler(this.logButton_Click);
-            // 
             // nbBar
             // 
-            this.nbBar.Location = new System.Drawing.Point(191, 56);
+            this.nbBar.Location = new System.Drawing.Point(220, 55);
             this.nbBar.Margin = new System.Windows.Forms.Padding(2);
             this.nbBar.Name = "nbBar";
             this.nbBar.Size = new System.Drawing.Size(42, 10);
             this.nbBar.TabIndex = 22;
-            //Brazos merge
-			this.toolTip1.SetToolTip(this.nbBar, "Shows the current Northbridge/GPU PState and its related frequency.");
-            //next line from FT
-			//this.toolTip1.SetToolTip(this.nbBar, "Shows the current speed of the NB");
+            this.toolTip1.SetToolTip(this.nbBar, "Shows the current Northbridge/GPU PState and its related frequency.");
             // 
             // pstateLabel
             // 
@@ -478,8 +353,7 @@
             this.pstateLabel.Size = new System.Drawing.Size(69, 13);
             this.pstateLabel.TabIndex = 14;
             this.pstateLabel.Text = "PState - Freq";
-            //Brazos merge next line from BT
-			this.toolTip1.SetToolTip(this.pstateLabel, "This column shows the current Pstate and its related frequency per core. ");
+            this.toolTip1.SetToolTip(this.pstateLabel, "This column shows the current Pstate and its related frequency per core. ");
             // 
             // monitorCheckBox
             // 
@@ -492,9 +366,8 @@
             this.monitorCheckBox.Size = new System.Drawing.Size(110, 17);
             this.monitorCheckBox.TabIndex = 19;
             this.monitorCheckBox.Text = "Enable monitoring";
-            //Brazos merge next line from BT
             this.toolTip1.SetToolTip(this.monitorCheckBox, "Check this option to watch the CPU stepping through the currently enabled frequen" +
-                    "cies based on current load.");
+        "cies based on current load.");
             this.monitorCheckBox.UseVisualStyleBackColor = true;
             this.monitorCheckBox.CheckedChanged += new System.EventHandler(this.monitorCheckBox_CheckedChanged);
             // 
@@ -507,28 +380,27 @@
             this.alwaysOnTopCheck.Size = new System.Drawing.Size(92, 17);
             this.alwaysOnTopCheck.TabIndex = 20;
             this.alwaysOnTopCheck.Text = "Always on top";
-            //Brazos merge next line from BT
             this.toolTip1.SetToolTip(this.alwaysOnTopCheck, "Check this option, if you want to see the application always on top to monitor PS" +
-                    "tates and temperature.");
+        "tates and temperature.");
             this.alwaysOnTopCheck.UseVisualStyleBackColor = true;
             this.alwaysOnTopCheck.CheckedChanged += new System.EventHandler(this.alwaysOnTopCheck_CheckedChanged);
             // 
             // ecread
             // 
-            this.ecread.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.ecread.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.ecread.Location = new System.Drawing.Point(12, 20);
             this.ecread.MinimumSize = new System.Drawing.Size(226, 20);
             this.ecread.Name = "ecread";
             this.ecread.Size = new System.Drawing.Size(231, 20);
             this.ecread.TabIndex = 7;
             this.toolTip1.SetToolTip(this.ecread, "Shows the chip and motherboard temperatures, while also adding an approximated va" +
-                    "lue of the fan speed.");
+        "lue of the fan speed.");
             // 
             // cfgTempLabel
             // 
             this.cfgTempLabel.AutoSize = true;
-            this.cfgTempLabel.Location = new System.Drawing.Point(199, 77);
+            this.cfgTempLabel.Location = new System.Drawing.Point(189, 69);
             this.cfgTempLabel.Name = "cfgTempLabel";
             this.cfgTempLabel.Size = new System.Drawing.Size(79, 13);
             this.cfgTempLabel.TabIndex = 24;
@@ -615,10 +487,30 @@
             this.pstateLabel4.TabIndex = 18;
             this.pstateLabel4.Text = "-1";
             // 
+            // nbLabel
+            // 
+            this.nbLabel.AutoSize = true;
+            this.nbLabel.Location = new System.Drawing.Point(189, 55);
+            this.nbLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nbLabel.Name = "nbLabel";
+            this.nbLabel.Size = new System.Drawing.Size(22, 13);
+            this.nbLabel.TabIndex = 21;
+            this.nbLabel.Text = "NB";
+            // 
+            // nbPstateLabel
+            // 
+            this.nbPstateLabel.AutoSize = true;
+            this.nbPstateLabel.Location = new System.Drawing.Point(268, 53);
+            this.nbPstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.nbPstateLabel.Name = "nbPstateLabel";
+            this.nbPstateLabel.Size = new System.Drawing.Size(16, 13);
+            this.nbPstateLabel.TabIndex = 23;
+            this.nbPstateLabel.Text = "-1";
+            // 
             // paypal
             // 
-            this.paypal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.paypal.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.paypal.AutoSize = true;
             this.paypal.Location = new System.Drawing.Point(9, 2);
             this.paypal.Margin = new System.Windows.Forms.Padding(2);
@@ -634,54 +526,125 @@
             this.timer1.Enabled = true;
             this.timer1.Interval = 250;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            //Brazos merge adding from BT 
+            // 
             // timer2
             // 
             this.timer2.Enabled = true;
             this.timer2.Interval = 2000;
             this.timer2.Tick += new System.EventHandler(this.timer2_Tick);
             // 
+            // nbCfgTemp
+            // 
+            this.nbCfgTemp.AutoSize = true;
+            this.nbCfgTemp.Location = new System.Drawing.Point(268, 68);
+            this.nbCfgTemp.Name = "nbCfgTemp";
+            this.nbCfgTemp.Size = new System.Drawing.Size(30, 13);
+            this.nbCfgTemp.TabIndex = 25;
+            this.nbCfgTemp.Text = "35°C";
+            // 
             // notifyIcon
             // 
             this.notifyIcon.Text = "FusionTweaker";
             this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
             // 
+            // p0StateControl
             // 
-            // nbLabel
+            this.p0StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p0StateControl.Name = "p0StateControl";
+            this.p0StateControl.PStateIndex = 0;
+            this.p0StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p0StateControl.TabIndex = 0;
             // 
-            this.nbLabel.AutoSize = true;
-            this.nbLabel.Location = new System.Drawing.Point(165, 55);
-            this.nbLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.nbLabel.Name = "nbLabel";
-            this.nbLabel.Size = new System.Drawing.Size(22, 13);
-            this.nbLabel.TabIndex = 21;
-            this.nbLabel.Text = "NB";
+            // p1StateControl
             // 
-            // nbPstateLabel
+            this.p1StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p1StateControl.Name = "p1StateControl";
+            this.p1StateControl.PStateIndex = 1;
+            this.p1StateControl.Size = new System.Drawing.Size(377, 131);
+            this.p1StateControl.TabIndex = 1;
             // 
-            this.nbPstateLabel.AutoSize = true;
-            this.nbPstateLabel.Location = new System.Drawing.Point(246, 53);
-            this.nbPstateLabel.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.nbPstateLabel.Name = "nbPstateLabel";
-            this.nbPstateLabel.Size = new System.Drawing.Size(16, 13);
-            this.nbPstateLabel.TabIndex = 23;
-            this.nbPstateLabel.Text = "-1";
-            //Brazos merge adding from BT 
-            // nbCfgTemp
+            // p2StateControl
             // 
-            this.nbCfgTemp.AutoSize = true;
-            this.nbCfgTemp.Location = new System.Drawing.Point(284, 77);
-            this.nbCfgTemp.Name = "nbCfgTemp";
-            this.nbCfgTemp.Size = new System.Drawing.Size(30, 13);
-            this.nbCfgTemp.TabIndex = 25;
-            this.nbCfgTemp.Text = "35°C";
+            this.p2StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p2StateControl.Name = "p2StateControl";
+            this.p2StateControl.PStateIndex = 2;
+            this.p2StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p2StateControl.TabIndex = 2;
+            // 
+            // p3StateControl
+            // 
+            this.p3StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p3StateControl.Name = "p3StateControl";
+            this.p3StateControl.PStateIndex = 3;
+            this.p3StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p3StateControl.TabIndex = 3;
+            // 
+            // p4StateControl
+            // 
+            this.p4StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p4StateControl.Name = "p4StateControl";
+            this.p4StateControl.PStateIndex = 4;
+            this.p4StateControl.Size = new System.Drawing.Size(379, 131);
+            this.p4StateControl.TabIndex = 4;
+            // 
+            // p5StateControl
+            // 
+            this.p5StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p5StateControl.Name = "p5StateControl";
+            this.p5StateControl.PStateIndex = 5;
+            this.p5StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p5StateControl.TabIndex = 5;
+            // 
+            // p6StateControl
+            // 
+            this.p6StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p6StateControl.Name = "p6StateControl";
+            this.p6StateControl.PStateIndex = 6;
+            this.p6StateControl.Size = new System.Drawing.Size(377, 131);
+            this.p6StateControl.TabIndex = 6;
+            // 
+            // p7StateControl
+            // 
+            this.p7StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p7StateControl.Name = "p7StateControl";
+            this.p7StateControl.PStateIndex = 7;
+            this.p7StateControl.Size = new System.Drawing.Size(379, 131);
+            this.p7StateControl.TabIndex = 7;
+            // 
+            // nbp0StateControl
+            // 
+            this.nbp0StateControl.Location = new System.Drawing.Point(0, 0);
+            this.nbp0StateControl.Name = "nbp0StateControl";
+            this.nbp0StateControl.PStateIndex = 8;
+            this.nbp0StateControl.Size = new System.Drawing.Size(420, 131);
+            this.nbp0StateControl.TabIndex = 8;
+            // 
+            // nbp1StateControl
+            // 
+            this.nbp1StateControl.AutoSize = true;
+            this.nbp1StateControl.Location = new System.Drawing.Point(0, 0);
+            this.nbp1StateControl.Name = "nbp1StateControl";
+            this.nbp1StateControl.PStateIndex = 9;
+            this.nbp1StateControl.Size = new System.Drawing.Size(422, 131);
+            this.nbp1StateControl.TabIndex = 9;
+            // 
+            // statusinfo
+            // 
+            this.statusinfo.AutoSize = true;
+            this.statusinfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.statusinfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statusinfo.Location = new System.Drawing.Point(3, 3);
+            this.statusinfo.Margin = new System.Windows.Forms.Padding(4);
+            this.statusinfo.Name = "statusinfo";
+            this.statusinfo.Size = new System.Drawing.Size(493, 199);
+            this.statusinfo.StatusIndex = 0;
+            this.statusinfo.TabIndex = 10;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(532, 406);
-			//Brazos merge adding two lines from BT
             this.Controls.Add(this.nbCfgTemp);
             this.Controls.Add(this.cfgTempLabel);
             this.Controls.Add(this.nbBar);
@@ -717,7 +680,6 @@
             this.tabPageP0.ResumeLayout(false);
             this.tabPageP1.ResumeLayout(false);
             this.tabPageP2.ResumeLayout(false);
-			//Brazos merge P3 through P7 not in BT
             this.tabPageP3.ResumeLayout(false);
             this.tabPageP4.ResumeLayout(false);
             this.tabPageP5.ResumeLayout(false);
@@ -725,6 +687,7 @@
             this.tabPageP7.ResumeLayout(false);
             this.tabPageNbP0.ResumeLayout(false);
             this.tabPageNbP1.ResumeLayout(false);
+            this.tabPageNbP1.PerformLayout();
             this.tabPageStatus.ResumeLayout(false);
             this.tabPageStatus.PerformLayout();
             this.ResumeLayout(false);
@@ -787,7 +750,6 @@
         private System.Windows.Forms.Label nbLabel;
         private System.Windows.Forms.ProgressBar nbBar;
         private System.Windows.Forms.Label nbPstateLabel;
-        private System.Windows.Forms.Button logButton;
         private System.Windows.Forms.Button logButton1;
     }
 }
