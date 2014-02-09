@@ -78,6 +78,10 @@
             this.pStatesLabel.Name = "pStatesLabel";
             this.pStatesLabel.Size = new System.Drawing.Size(264, 65);
             this.pStatesLabel.TabIndex = 1;
+			//Brazos merge 
+            //this.pStatesLabel.Text = "P0: 2|2 @ 1.225V/100MHz/1600MHz\r\nP1: 2.5|2.5 @ 1.05V/100MHz/1280MHz\r\nP2: 4|4 @ 0." +
+            //    "85V/100MHz/800MHz\r\nP3: 6|6 @ 0.85V/100MHz/533MHz\r\nP4: 9.5|9.5 @ 0.8V/100MHz/336M" +
+            //    "Hz\r\n";
             this.pStatesLabel.Text = "P0: 12.5|12.5|12.5|12.5|12.5|12.5 @ 1.4625V/1.3125V\r\nP1: 12|12|12|12 @ 1.4625V/1." +
                 "3125V\r\nP2: 12|12|12|12 @ 1.4625V/1.3125V\r\nP3: 12|12|12|12 @ 1.4625V/1.3125V\r\nP4:" +
                 " 12|12|12|12 @ 1.4625V/1.3125V\r\n";
@@ -100,8 +104,8 @@
             this.enableCustomCnQCheckBox.Size = new System.Drawing.Size(157, 17);
             this.enableCustomCnQCheckBox.TabIndex = 4;
             this.enableCustomCnQCheckBox.Text = "Enable custom Cool & Quiet";
-            this.toolTip1.SetToolTip(this.enableCustomCnQCheckBox, "Let FusionTweaker handle P-state transitions.\r\nRecommended for Phenom I and/or Wi" +
-                    "ndows XP.\r\nCannot be used with hardware Turbo.");
+            this.toolTip1.SetToolTip(this.enableCustomCnQCheckBox, "Let FusionTweaker handle P-state transitions.\r\n \r\nCannot be used with hardware Tu" +
+                    "rbo.");
             this.enableCustomCnQCheckBox.UseMnemonic = false;
             this.enableCustomCnQCheckBox.UseVisualStyleBackColor = true;
             // 

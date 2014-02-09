@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+//Brazos merge next line added from BT
+using System.Windows.Forms;
 
 namespace FusionTweaker
 {
@@ -9,6 +11,8 @@ namespace FusionTweaker
 	public class PState
 	{
 		private static readonly int _numCores = System.Environment.ProcessorCount;
+		//Brazos merge next line added from BT
+        private static int _maxPstate = K10Manager.GetHighestPState();
 
 		private PStateMsr[] _msrs = new PStateMsr[_numCores];
 
@@ -33,6 +37,8 @@ namespace FusionTweaker
 		/// <param name="index">Index of the hardware P-state (0-7) to be loaded. Adding NB P-state (8,9)</param>
 		public static PState Load(int index)
 		{
+			//Brazos merge next line from BT
+			//if (index < 0 || index > 4)
 			if (index < 0 || index > 9)
 				throw new ArgumentOutOfRangeException("index");
 
@@ -50,18 +56,26 @@ namespace FusionTweaker
         /// <param name="index">Index of the hardware P-state (0-4) to be modified. Adding NB P-state (8,9)</param>
 		public void Save(int index)
 		{
+			//Brazos merge next line from BT
+			//if (index < 0 || index > 4)
 			if (index < 0 || index > 9)
 				throw new ArgumentOutOfRangeException("index");
 
-            if (index < 8) //dealing with CPU P-States
+            //Brazos merge next line from BT
+			//if (index < 3) //dealing with CPU P-States
+			if (index < 8) //dealing with CPU P-States
             {
                 uint msrIndex = 0xC0010064u + (uint)index;
 
-                int boostedStates = K10Manager.GetNumBoostedStates();
-                //int boostedStates = 0;
+                //Brazos merge next line commented out in BT
+				int boostedStates = K10Manager.GetNumBoostedStates();
+                //Brazos merge next line active in BT
+				//int boostedStates = 0;
                 int indexSw = Math.Max(0, index - boostedStates);
 
-                int tempPStateHw = (index <= boostedStates ? K10Manager.GetHighestPState() : 0);
+                //Brazos merge next line active in BT
+				//int tempPStateHw = (index <= boostedStates ? _maxPstate : 0);
+				int tempPStateHw = (index <= boostedStates ? K10Manager.GetHighestPState() : 0);
                 int tempPStateSw = Math.Max(0, tempPStateHw - boostedStates);
 
                 // switch temporarily to the highest thread priority
@@ -94,6 +108,8 @@ namespace FusionTweaker
                 Thread.Sleep(3); // let transitions complete
 
                 Thread.CurrentThread.Priority = previousPriority;
+            //Brazos merge next line from BT
+			//} else if (index == 3 || index == 4) //dealing with NB P-State 0
             } else if (index == 8 || index == 9) //dealing with NB P-State 0
             {
                 // switch temporarily to the highest thread priority
@@ -102,7 +118,9 @@ namespace FusionTweaker
                 Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                 //check, if current NB P-State is the one, which is going to be modified
-                index = index - 8;
+                //Brazos merge next line from BT
+				//index = index - 3;
+				index = index - 8;
                 int curNbstate = K10Manager.GetNbPState();
 
                 string message = "Start: " + curNbstate;
@@ -120,7 +138,8 @@ namespace FusionTweaker
                     K10Manager.SwitchToNbPState(index);
                     for (int i = 0; i < 10; i++)
                     {
-                        Thread.Sleep(20); // let transitions complete
+                        //Brazos merge BT uses Sleep 100 and i=1000
+						Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
                         if (changedNbstate == index)
                         {
@@ -141,9 +160,19 @@ namespace FusionTweaker
                     uint config = Program.Ols.ReadPciConfig(0xC3, 0xDC);
                     //const uint mask = 0x07F7F000; //enable overwrite of Vid and Div
                     const uint mask = 0x0007F000; //enable overwrite of Vid only
+                    //Brazos merge next line from BT
+					//config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
                     config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                     uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
-                    const uint maskvolt = 0x00007F00;
+                    //Brazos next 4 lines from BT
+					//ToDo family dependent code
+					/*
+                    //const uint maskvolt = 0x00007F00;
+                    const uint maskvolt = 0x7F7F7F00; //overwriting VIDSelect2 and 3 in addition
+                    uint check = _msrs[0].Encode(index + 3) >> 12 & 0x7F;
+                    voltage = (voltage & ~maskvolt) | ((check << 24) | (check << 16) | (check << 8) & maskvolt);
+					*/
+					const uint maskvolt = 0x00007F00;
                     uint check = _msrs[0].Encode(index + 8) >> 12 & 0x7F;
                     voltage = (voltage & ~maskvolt) | ((check << 8) & maskvolt);
 
@@ -157,10 +186,14 @@ namespace FusionTweaker
                     uint config = Program.Ols.ReadPciConfig(0xC6, 0x90);
                     //const uint mask = 0x00007F7F; //enable DID and VID modification
                     const uint mask = 0x00007F00; //enable VID modification only
+                    //Brazos merge next line from BT
+					//config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
                     config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                     uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
                     const uint maskvolt = 0x0000007F;
-                    uint check = _msrs[0].Encode(index + 8) >> 8;
+                    //Brazos merge next line from BT
+					//uint check = _msrs[0].Encode(index + 3) >> 8;
+					uint check = _msrs[0].Encode(index + 8) >> 8;
                     voltage = (voltage & ~maskvolt) | (check & maskvolt);
 
                     Program.Ols.WritePciConfig(0xC6, 0x90, config);
@@ -172,7 +205,8 @@ namespace FusionTweaker
                     K10Manager.SwitchToNbPState(1);
                     for (int i = 0; i < 10; i++)
                     {
-                        Thread.Sleep(20); // let transitions complete
+                        //Brazos merge BT uses Sleep 100 and i=1000
+						Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
                         if (changedNbstate == 1)
                         {
@@ -183,7 +217,8 @@ namespace FusionTweaker
                     K10Manager.SwitchToNbPState(0);
                     for (int i = 0; i < 10; i++)
                     {
-                        Thread.Sleep(20); // let transitions complete
+                        //Brazos merge BT uses Sleep 100 and i=1000
+						Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
                         if (changedNbstate == 0)
                         {
@@ -197,7 +232,8 @@ namespace FusionTweaker
                     K10Manager.SwitchToNbPState(0);
                     for (int i = 0; i < 10; i++)
                     {
-                        Thread.Sleep(20); // let transitions complete
+                        //Brazos merge BT uses Sleep 100 and i=1000
+						Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
                         if (changedNbstate == 0)
                         {
@@ -208,7 +244,8 @@ namespace FusionTweaker
                     K10Manager.SwitchToNbPState(1);
                     for (int i = 0; i < 10; i++)
                     {
-                        Thread.Sleep(20); // let transitions complete
+                        //Brazos merge BT uses Sleep 100 and i=1000
+						Thread.Sleep(20); // let transitions complete
                         changedNbstate = K10Manager.GetNbPState();
                         if (changedNbstate == 1)
                         {
@@ -284,6 +321,8 @@ namespace FusionTweaker
             int maxPLL = 0;
 			for (int i = 0; i < _msrs.Length; i++)
 			{
+				//Brazos merge next line from BT
+				//sb.Append(_msrs[i].Divider);
 				sb.Append(_msrs[i].CPUMultNBDivider);
 				if (i < _numCores - 1)
 					sb.Append('|');

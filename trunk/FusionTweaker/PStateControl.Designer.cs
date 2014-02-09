@@ -50,15 +50,15 @@
             this.Cofstate.AutoSize = true;
             this.Cofstate.Location = new System.Drawing.Point(3, 0);
             this.Cofstate.Name = "Cofstate";
-            this.Cofstate.Size = new System.Drawing.Size(114, 13);
+            this.Cofstate.Size = new System.Drawing.Size(57, 13);
             this.Cofstate.TabIndex = 0;
-            this.Cofstate.Text = "Mult = 32 divided by ->";
+            this.Cofstate.Text = "Frequency";
             // 
             // CLKNumericUpDown
             // 
             this.CLKNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.CLKNumericUpDown.AutoSize = true;
-            this.CLKNumericUpDown.Location = new System.Drawing.Point(123, 42);
+            this.CLKNumericUpDown.Location = new System.Drawing.Point(103, 42);
             this.CLKNumericUpDown.Maximum = new decimal(new int[] {
             155,
             0,
@@ -72,6 +72,8 @@
             this.CLKNumericUpDown.Name = "CLKNumericUpDown";
             this.CLKNumericUpDown.Size = new System.Drawing.Size(29, 20);
             this.CLKNumericUpDown.TabIndex = 5;
+            this.toolTip1.SetToolTip(this.CLKNumericUpDown, "This value shows the reference clock sourced by the motherboards PLL. All interna" +
+        "l clocks are derived from that clock.");
             this.CLKNumericUpDown.Value = new decimal(new int[] {
             1225,
             0,
@@ -83,7 +85,7 @@
             this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.refreshButton.AutoSize = true;
             this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
-            this.refreshButton.Location = new System.Drawing.Point(185, 35);
+            this.refreshButton.Location = new System.Drawing.Point(165, 35);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.tableLayoutPanelPstates.SetRowSpan(this.refreshButton, 2);
@@ -111,7 +113,7 @@
             0,
             0,
             262144});
-            this.VidNumericUpDown.Location = new System.Drawing.Point(123, 16);
+            this.VidNumericUpDown.Location = new System.Drawing.Point(103, 16);
             this.VidNumericUpDown.Maximum = new decimal(new int[] {
             155,
             0,
@@ -125,6 +127,7 @@
             this.VidNumericUpDown.Name = "VidNumericUpDown";
             this.VidNumericUpDown.Size = new System.Drawing.Size(56, 20);
             this.VidNumericUpDown.TabIndex = 3;
+            this.toolTip1.SetToolTip(this.VidNumericUpDown, "Requested voltage level to supply the CPU part of the chip.");
             this.VidNumericUpDown.Value = new decimal(new int[] {
             130,
             0,
@@ -143,11 +146,11 @@
             this.tableLayoutPanelPstates.Controls.Add(this.VIDlabel, 0, 1);
             this.tableLayoutPanelPstates.Controls.Add(this.CLKlabel, 0, 2);
             this.tableLayoutPanelPstates.Controls.Add(this.flowLayoutPanel1, 1, 0);
-            this.tableLayoutPanelPstates.Controls.Add(this.Cofstate, 0, 0);
             this.tableLayoutPanelPstates.Controls.Add(this.CLKNumericUpDown, 1, 2);
             this.tableLayoutPanelPstates.Controls.Add(this.VidNumericUpDown, 1, 1);
             this.tableLayoutPanelPstates.Controls.Add(this.refreshButton, 2, 1);
             this.tableLayoutPanelPstates.Controls.Add(this.pllfreq, 0, 3);
+            this.tableLayoutPanelPstates.Controls.Add(this.Cofstate, 0, 0);
             this.tableLayoutPanelPstates.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPstates.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanelPstates.Margin = new System.Windows.Forms.Padding(0);
@@ -166,9 +169,9 @@
             this.VIDlabel.AutoSize = true;
             this.VIDlabel.Location = new System.Drawing.Point(3, 19);
             this.VIDlabel.Name = "VIDlabel";
-            this.VIDlabel.Size = new System.Drawing.Size(28, 13);
+            this.VIDlabel.Size = new System.Drawing.Size(43, 13);
             this.VIDlabel.TabIndex = 2;
-            this.VIDlabel.Text = "VID:";
+            this.VIDlabel.Text = "Voltage";
             // 
             // CLKlabel
             // 
@@ -186,7 +189,7 @@
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanelPstates.SetColumnSpan(this.flowLayoutPanel1, 2);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(120, 6);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(100, 6);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(158, 0);

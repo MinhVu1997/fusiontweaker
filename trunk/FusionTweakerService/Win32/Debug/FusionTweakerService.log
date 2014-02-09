@@ -1,0 +1,23 @@
+﻿Der Buildvorgang wurde am 09.02.2014 00:56:24 gestartet.
+     1>Projekt "E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweakerService\FusionTweakerService.vcxproj" auf Knoten "2", rebuild Ziel(e).
+     1>_PrepareForClean:
+         Die Datei "Win32\Debug\FusionTweakerService.lastbuildstate" wird gelöscht.
+       InitializeBuildStatus:
+         "Win32\Debug\FusionTweakerService.unsuccessfulbuild" wird erstellt, da "AlwaysCreate" angegeben wurde.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W4 /WX- /Od /Oy- /D DEBUG /D _MBCS /Gm- /EHsc /RTCc /RTC1 /MDd /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Win32\Debug\\" /Fd"Win32\Debug\vc100.pdb" /Gd /TP /wd4100 /analyze- /errorReport:prompt Service.cpp
+         Service.cpp
+     1>e:\programmierung\svn\fusiontweaker\trunk\fusiontweakerservice\TurboManager.h(66): warning C4800: 'BOOL': Variable wird auf booleschen Wert ('True' oder 'False') gesetzt (Auswirkungen auf Leistungsverhalten möglich)
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Programmierung\SVN\fusiontweaker\trunk\\Debug\Win32\FusionTweakerService.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Win32\Debug\FusionTweakerService.exe.intermediate.manifest" /MANIFESTUAC:"level='requireAdministrator' uiAccess='false'" /DEBUG /PDB:"E:\Programmierung\SVN\fusiontweaker\trunk\Debug\Win32\FusionTweakerService.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Programmierung\SVN\fusiontweaker\trunk\\Debug\Win32\FusionTweakerService.lib" /MACHINE:X86 Win32\Debug\Service.obj
+         FusionTweakerService.vcxproj -> E:\Programmierung\SVN\fusiontweaker\trunk\\Debug\Win32\FusionTweakerService.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"E:\Programmierung\SVN\fusiontweaker\trunk\\Debug\Win32\FusionTweakerService.exe;#1" /manifest Win32\Debug\FusionTweakerService.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Die Datei "Win32\Debug\FusionTweakerService.unsuccessfulbuild" wird gelöscht.
+         Aktualisieren des Timestamps von "Win32\Debug\FusionTweakerService.lastbuildstate".
+     1>Die Erstellung des Projekts "E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweakerService\FusionTweakerService.vcxproj" ist abgeschlossen, rebuild Ziel(e).
+
+Das Erstellen war erfolgreich.
+
+Verstrichene Zeit 00:00:05.48

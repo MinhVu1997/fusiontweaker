@@ -1,0 +1,13 @@
+E:\Programmierung\SVN\fusiontweaker\trunk\Release\FusionTweaker.exe
+E:\Programmierung\SVN\fusiontweaker\trunk\Release\FusionTweaker.pdb
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\ResolveAssemblyReference.cache
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.CnQProfileControl.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.Form1.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.Properties.Resources.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.PStateControl.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.ServiceDialog.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.StatusControl.resources
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\ResGen.read.1.tlog
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\ResGen.write.1.tlog
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.exe
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Release\FusionTweaker.pdb

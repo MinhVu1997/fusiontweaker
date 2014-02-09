@@ -48,12 +48,25 @@ public:
 		DWORD lower;
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return false;
+		
+		//Brazos merge needs to make sure, family gets checked ToDo
+		/*following lines are for Phenom
+		const bool isLocked = ((lower & 0x80000000u) != 0);
+
+		DWORD newLower = (lower & 0xFFFFFFFCu) | (enable ? 3 : 0);
+		// set the number of boosted states if unlocked
+		if (!isLocked)
+			newLower = (newLower & 0xFFFFFFFBu) | (enable ? 1 << 2 : 0);
+
+		return (newLower == lower || WritePciConfigDwordEx(0xC4, 0x15C, newLower));
+		*/
 
 		DWORD newLower = (lower & 0xFFFFFFFEu) | (enable ? 1 : 0);
 
 		return WritePciConfigDwordEx(0xC4, 0x15C, newLower);
 	}
 
+	//Brazos merge this fuction is from Phenom
 	/// <summary>
 	/// Tries to set the number of idle cores (in C1) for the Turbo to kick in and
 	/// returns true if successful.
@@ -90,6 +103,9 @@ public:
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return true; // assume it's enabled by default if supported
 
+		//Brazos merge line from Phenom
+		//return ((lower & 7) == 7); // check if enabled and if there is a boosted state
+
 		return ((lower & 1) == 1); // check if enabled 
 	} 
 
@@ -102,6 +118,9 @@ public:
 		DWORD lower;
 		if (!ReadPciConfigDwordEx(0xC4, 0x15C, &lower))
 			return 1; // assume it's enabled by default if supported
+
+		//Brazos merge line from Phenom
+		//return (lower >> 2) & 1;
 
 		return (lower >> 2) & 3;
 	}
