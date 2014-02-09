@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.refreshButton = new System.Windows.Forms.Button();
             this.Reg64CPU = new System.Windows.Forms.Label();
             this.PCIDevices = new System.Windows.Forms.Label();
             this.Reg32NB = new System.Windows.Forms.Label();
@@ -39,23 +38,9 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanelStatus = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.refreshButton = new System.Windows.Forms.Button();
             this.tableLayoutPanelStatus.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // refreshButton
-            // 
-            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshButton.AutoSize = true;
-            this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
-            this.refreshButton.Location = new System.Drawing.Point(165, 3);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.refreshButton.Size = new System.Drawing.Size(90, 27);
-            this.refreshButton.TabIndex = 0;
-            this.refreshButton.Text = "Refresh";
-            this.refreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip1.SetToolTip(this.refreshButton, "Load the current settings directly from the CPU registers.");
-            this.refreshButton.UseVisualStyleBackColor = true;
             // 
             // Reg64CPU
             // 
@@ -163,6 +148,21 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(254, 0);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
+            // refreshButton
+            // 
+            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.refreshButton.AutoSize = true;
+            this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
+            this.refreshButton.Location = new System.Drawing.Point(165, 3);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.refreshButton.Size = new System.Drawing.Size(90, 27);
+            this.refreshButton.TabIndex = 0;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip1.SetToolTip(this.refreshButton, "Load the current settings directly from the CPU registers.");
+            this.refreshButton.UseVisualStyleBackColor = true;
+            // 
             // StatusControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -179,7 +179,6 @@
 
         #endregion
 
-        private System.Windows.Forms.Button refreshButton;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelStatus;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
@@ -191,5 +190,6 @@
         private System.Windows.Forms.Label RegLabel64CPU;
         private System.Windows.Forms.Label RegLabel32NB;
         private System.Windows.Forms.Label PCIDevicesLabel;
+        private System.Windows.Forms.Button refreshButton;
     }
 }

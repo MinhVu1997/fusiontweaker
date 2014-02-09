@@ -23,30 +23,37 @@ namespace FusionTweaker
 		private static readonly bool _useWindowsPowerSchemes = (Environment.OSVersion.Version.Major >= 6);
 
         private static readonly int numCores = System.Environment.ProcessorCount;
-        //private static readonly int numCores = 1;
-        public static readonly int numPstates = K10Manager.GetHighestPState();
-        //private static readonly int numPstates = 2;
-		//Brazos merge next line removed in BT
-        private static readonly int numBoostedPstates = K10Manager.GetNumBoostedStates();
-        //private static readonly int family = K10Manager.GetFamily();
-        //private static readonly int family = 14;
+        
+        private readonly int numPstates = -1;
+		private readonly int numBoostedPstates = 0;
+        //public readonly int family = -1;
         
         private static int[] currentPStateCore = new int[numCores];
         //Brazos merge 
         //private static readonly int processBarSteps = numPstates + 1;
-        private static readonly int processBarSteps = numPstates + numBoostedPstates + 1;
-        private static readonly int processBarPerc = 100 / processBarSteps;
+        private readonly int processBarSteps = 0;
+        private readonly int processBarPerc = 0;
 
         private static bool monitorPstates = true;
         private static bool alwaysOnTop = true;
         
-        public static readonly int family = K10Manager.GetFamily();
+        //public static readonly int family = K10Manager.GetFamily();
+        public static int family = new int();
         
         public static int[] freq = new int[10];
 
         public Form1()
 		{
-			InitializeComponent();
+            
+            InitializeComponent();
+
+            family = K10Manager.GetFamily();
+            numPstates = K10Manager.GetHighestPState();
+            //Brazos merge next line removed in BT
+            //numBoostedPstates = K10Manager.GetNumBoostedStates();
+            numBoostedPstates = 0;
+            processBarSteps = numPstates + numBoostedPstates + 1;
+            processBarPerc = 100 / processBarSteps;
 
 			//Brazos merge
             /*if (family != 14)
@@ -100,7 +107,8 @@ namespace FusionTweaker
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
-            log_now();
+            if (family == 16) 
+                log_now();
 			//Brazos merge next line was active in BT
 			//this.Width += p0StateControl.GetDeltaOptimalWidth();
             
