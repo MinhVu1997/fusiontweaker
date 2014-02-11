@@ -328,7 +328,7 @@ namespace FusionTweaker
 					sb.Append('|');
 
                 maxVid = Math.Max(maxVid, _msrs[i].Vid);
-                maxCLK = Math.Max(maxCLK, _msrs[i].CLK);
+                maxCLK = Form1.clock;
                 maxPLL = (int)Math.Max(maxCLK, _msrs[i].PLL);
 			}
 

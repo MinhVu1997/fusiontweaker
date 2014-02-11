@@ -57,15 +57,6 @@ namespace FusionTweaker
 		}
 
 		/// <summary>
-		/// Gets the currently selected CLK.
-		/// </summary>
-		public double CLK
-		{
-			get { return (double)CLKNumericUpDown.Value; }
-		}
-
-
-		/// <summary>
 		/// Constructor.
 		/// </summary>
 		public PStateControl()
@@ -109,10 +100,8 @@ namespace FusionTweaker
 			}
 
 			VidNumericUpDown.Minimum = (decimal)_minVid;
-            CLKNumericUpDown.Minimum = 0;
             VidNumericUpDown.Maximum = (decimal)_maxVid;
-            CLKNumericUpDown.Maximum = 200;
-
+ 
 			// add as many NumericUpDown controls as there are CPU cores for the multis
 			for (int i = 0; i < _numCores; i++)
 			{
@@ -153,12 +142,10 @@ namespace FusionTweaker
 			}
 
 			VidNumericUpDown.ValueChanged += (s, e) => _modified = true;
-		    CLKNumericUpDown.ValueChanged += (s, e) => _modified = true;
-
+		    
 			// set the tab order
 			VidNumericUpDown.TabIndex = 3 + _numCores;
-			CLKNumericUpDown.TabIndex = VidNumericUpDown.TabIndex + 1;
-			refreshButton.TabIndex = CLKNumericUpDown.TabIndex + 1;
+			refreshButton.TabIndex = VidNumericUpDown.TabIndex + 1;
 
 			// compute the optimal width, based on the number of cores
 			_optimalWidth = Cofstate.Width + Cofstate.Margin.Horizontal + flowLayoutPanel1.Controls.Count *
@@ -188,11 +175,11 @@ namespace FusionTweaker
             if (_index < 8) //hardware loads for CPU
             {
                 //FT if (_index <= K10Manager.GetHighestPState() + K10Manager.GetNumBoostedStates()) //skip, in case index is bigger than initialized CPU PStates 
-                if (_index <= _maxPstate) //skip, in case just 2 CPU PStates are initialized 
+                if (_index <= 7)//_maxPstate) //skip, in case just 2 CPU PStates are initialized 
                 {
                     _pState = PState.Load(_index);
                     double maxCpuVid = 0;
-                    for (int i = 0; i < _pState.Msrs.Length; i++)
+                    for (int i = 0; i < _pState.Msrs.Length; i++)//iterating through cores
                         {
                             var msr = _pState.Msrs[i];
 
@@ -204,8 +191,9 @@ namespace FusionTweaker
 
                     VidNumericUpDown.Value = Math.Min(VidNumericUpDown.Maximum, (decimal)maxCpuVid);
                     //int check = K10Manager.SetBIOSBusSpeed(80); 
-                    CLKNumericUpDown.Value = (decimal)K10Manager.GetBIOSBusSpeed();
-                    pllfreq.Text = "P" + _index + " Freq (CPU): " + (int)_pState.Msrs[0].PLL + "MHz";
+                    pllfreq.Text = "P" + _index + " Freq (CPU): ";
+                    clockvalue.Text = K10Manager.GetBIOSBusSpeed() + "MHz"; 
+                    freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
                     if ((Form1.family == 12) || (Form1.family == 16)) {
                         Cofstate.Text = "Mult = ";
                     } else {
@@ -216,7 +204,6 @@ namespace FusionTweaker
                 else
                 {
                     VidNumericUpDown.Value = (decimal)0.4;
-                    CLKNumericUpDown.Value = 100;
                 }
             } else if (_index == 8)
             {
@@ -225,9 +212,10 @@ namespace FusionTweaker
                 var control = (NumericUpDown)flowLayoutPanel1.Controls[0];
                 control.Value = (decimal)K10Manager.GetNbDivPState0();
                 VidNumericUpDown.Value = (decimal)(1.55 - 0.0125 * K10Manager.GetNbVidPState0());
-                CLKNumericUpDown.Value = (decimal)K10Manager.GetBIOSBusSpeed();
-                pllfreq.Text = "NB P0 Freq (GPU): " + (int)_pState.Msrs[0].PLL + "MHz";
+                pllfreq.Text = "NB P0 Freq (GPU): ";
                 Cofstate.Text = "Mult = " + (K10Manager.CurrCOF() + 16) + " divided by ->";
+                clockvalue.Text = K10Manager.GetBIOSBusSpeed() + "MHz";
+                freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
                 Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
             }
             else if (_index == 9)
@@ -237,15 +225,15 @@ namespace FusionTweaker
                 var control = (NumericUpDown)flowLayoutPanel1.Controls[0];
                 control.Value = (decimal)K10Manager.GetNbDivPState1();
                 VidNumericUpDown.Value = (decimal)(1.55 - 0.0125 * K10Manager.GetNbVidPState1());
-                CLKNumericUpDown.Value = (decimal)K10Manager.GetBIOSBusSpeed();
-                pllfreq.Text = "NB P1 Freq (GPU): " + (int)_pState.Msrs[0].PLL + "MHz";
+                pllfreq.Text = "NB P1 Freq (GPU): ";
+                clockvalue.Text = K10Manager.GetBIOSBusSpeed() + "MHz";
+                freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
                 Cofstate.Text = "Mult = " + (K10Manager.CurrCOF() + 16) + " divided by ->";
                 Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
             }
             else if (_index == 10) //settings for displaying registers
             {
                 VidNumericUpDown.Value = 1;
-                CLKNumericUpDown.Value = 100;
             }
                 _modified = false;
         }
@@ -269,12 +257,32 @@ namespace FusionTweaker
 				//_pState.Msrs[i].Divider = (double)control.Value;
 				_pState.Msrs[i].CPUMultNBDivider = (double)control.Value;
 				_pState.Msrs[i].Vid = (double)VidNumericUpDown.Value;
-				_pState.Msrs[i].CLK = (double)CLKNumericUpDown.Value;
+				_pState.Msrs[i].Enabled = 1;
 			}
 
 			_pState.Save(_index);
 
 			_modified = false;
 		}
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox_Penable.Checked)
+            {
+                for (int i = 0; i < _numCores; i++)
+                {
+                    _pState.Msrs[i].Enabled = 1;
+                }
+                _pState.Save(_index);
+            }
+            else
+            {
+                for (int i = 0; i < _numCores; i++)
+                {
+                    _pState.Msrs[i].Enabled = 0;
+                }
+                _pState.Save(_index);
+            }
+        }
 	}
 }
