@@ -39,7 +39,7 @@ namespace FusionTweaker
         
         //public static readonly int family = K10Manager.GetFamily();
         public static int family = new int();
-        
+        public static int clock = new int();
         public static int[] freq = new int[10];
 
         public Form1()
@@ -49,6 +49,7 @@ namespace FusionTweaker
 
             family = K10Manager.GetFamily();
             numPstates = K10Manager.GetHighestPState();
+            clock = K10Manager.GetBIOSBusSpeed();
             //Brazos merge next line removed in BT
             //numBoostedPstates = K10Manager.GetNumBoostedStates();
             numBoostedPstates = 0;

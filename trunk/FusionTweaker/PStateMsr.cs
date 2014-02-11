@@ -20,9 +20,9 @@ namespace FusionTweaker
 		public double Vid { get; set; }
 
 		/// <summary>
-		/// Bus speed (0 ... 200MHz).
+		/// Pstate enabled.
 		/// </summary>
-		public double CLK { get; set; }
+		public uint Enabled { get; set; }
 
         /// <summary>
         /// Core / GPU frequency.
@@ -51,15 +51,29 @@ namespace FusionTweaker
 			//else if (pStateIndex == 3)
 			else if (pStateIndex == 8)
             {
-                // value of interest: F3xDC NbPstate0Register
-                lower = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+                if (Form1.family == 16)//Kabini
+                {
+                    lower = Program.Ols.ReadPciConfig(0xC5, 0x160);
+                }
+                else
+                {
+                    // value of interest: F3xDC NbPstate0Register
+                    lower = Program.Ols.ReadPciConfig(0xC3, 0xDC);
+                }
             }
             //Brazos merge BT
 			//else if (pStateIndex == 4)
 			else if (pStateIndex == 9)
             {
-                // value of interest: F6x90 NbPstate1Register
-                lower = Program.Ols.ReadPciConfig(0xC6, 0x90);
+                if (Form1.family == 16)//Kabini
+                {
+                    lower = Program.Ols.ReadPciConfig(0xC5, 0x164);
+                }
+                else
+                {
+                    // value of interest: F6x90 NbPstate1Register
+                    lower = Program.Ols.ReadPciConfig(0xC6, 0x90);
+                }
             }  
 			return Decode(lower,pStateIndex);
 		}
@@ -68,7 +82,7 @@ namespace FusionTweaker
 		{
             //uint maxDiv = (uint)K10Manager.MaxCOF();
             uint maxDiv = (uint)K10Manager.CurrCOF();
-            uint clk = (uint)K10Manager.GetBIOSBusSpeed();
+            uint clk = (uint)Form1.clock;
             bool turbo = K10Manager.IsTurboSupported();
 
             if (pstate < 8)
@@ -78,6 +92,7 @@ namespace FusionTweaker
                     uint cpuDid = (value >> 0) & 0x0F;
                     uint cpuFid = (value >> 4) & 0x1F;
                     uint cpuVid = (value >> 9) & 0x7F;
+                    uint enabled = (value >> 63) & 0x1;
                     double Did = 1;
 
                     switch (cpuDid)
@@ -117,18 +132,19 @@ namespace FusionTweaker
                     {
                         CPUMultNBDivider = Mult,
                         Vid = 1.55 - 0.0125 * cpuVid,
-                        CLK = clk,
+                        Enabled = enabled,
                         PLL = Mult * clk
                     };
                     return msr;
                 }
-                else
+                else if (Form1.family == 14)
                 {
                     if (pstate <= K10Manager.GetHighestPState())
                     {
                         uint cpuDidLSD = (value >> 0) & 0x0F;
                         uint cpuDidMSD = (value >> 4) & 0x1F;
                         uint cpuVid = (value >> 9) & 0x7F;
+                        uint enabled = (value >> 63) & 0x1;
 
                         double Div = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
                         double DivPLL = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
@@ -149,7 +165,7 @@ namespace FusionTweaker
                         {
                             CPUMultNBDivider = Div,
                             Vid = 1.55 - 0.0125 * cpuVid,
-                            CLK = clk,
+                            Enabled = enabled,
                             PLL = (16 + maxDiv) / DivPLL * clk
                         };
                         return msr;
@@ -160,7 +176,52 @@ namespace FusionTweaker
                         {
                             CPUMultNBDivider = 10,
                             Vid = 0.4,
-                            CLK = 100,
+                            Enabled = 0,
+                            PLL = 0
+                        };
+                        return msr;
+                    }
+                }
+                else //family 16
+                {
+                    if (pstate <= K10Manager.GetHighestPState())
+                    {
+                        uint cpuDidLSD = (value >> 0) & 0x0F;
+                        uint cpuDidMSD = (value >> 4) & 0x1F;
+                        uint cpuVid = (value >> 9) & 0x7F;
+                        uint enabled = (value >> 63) & 0x1;
+
+                        double Div = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
+                        double DivPLL = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
+                        if (maxDiv == 16 && Div < 2) //E-350 seems to restrict PLL frequencies higher than 1.6GHz
+                        {
+                            DivPLL = 2;
+                        }
+                        else if (maxDiv == 24 && Div < 4 && !turbo) //C-50 seems to restrict PLL frequencies higher than 1.0GHz
+                        {
+                            DivPLL = 4;
+                        }
+                        else if (maxDiv == 24 && Div < 3 && turbo) //C-60 (with turbo seems to restrict PLL frequencies higher than 1.33GHz
+                        {
+                            DivPLL = 3;
+                        }
+
+                        var msr = new PStateMsr()
+                        {
+                            CPUMultNBDivider = Div,
+                            Vid = 1.55 - 0.0125 * cpuVid,
+                            Enabled = enabled,
+                            PLL = (16 + maxDiv) / DivPLL * clk
+                        };
+                        return msr;
+                    }
+                    else
+                    {
+                        var msr = new PStateMsr()
+                        {
+                            CPUMultNBDivider = 10,
+                            Vid = 0.4,
+                            Enabled = 0,
                             PLL = 1000
                         };
                         return msr;
@@ -169,41 +230,77 @@ namespace FusionTweaker
             }
             else if (pstate == 8)
             {
-                uint nclk = ((value >> 20) & 0x7F);
-                uint nbVid = ((value >> 12) & 0x7F);
-                double nclkdiv = 1;
-                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-                if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
-                else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
-                else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
-                else nclkdiv = 1;
-                var msr = new PStateMsr()
+                if (Form1.family == 16) //Kabini
                 {
-                    CPUMultNBDivider = nclkdiv,
-                    Vid = 1.55 - 0.0125 * nbVid,
-                    CLK = clk,
-                    PLL = (16 + maxDiv) / nclkdiv * clk
-                };
-                return msr;
+                    uint nbdid = ((value >> 7) & 0x1);
+                    uint nbfid = ((value >> 1) & 0x1F);
+                    double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
+                    uint nbVid = ((value >> 10) & 0x7F); 
+                    var msr = new PStateMsr()
+                    {
+                        CPUMultNBDivider = nclkdiv,
+                        Vid = 1.55 - 0.0125 * nbVid,
+                        Enabled = 1,
+                        PLL = nclkdiv * clk
+                    };
+                    return msr;
+                }
+                else
+                {
+                    uint nclk = ((value >> 20) & 0x7F);
+                    uint nbVid = ((value >> 12) & 0x7F);
+                    double nclkdiv = 1;
+                    //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                    if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
+                    else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
+                    else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
+                    else nclkdiv = 1;
+                    var msr = new PStateMsr()
+                    {
+                        CPUMultNBDivider = nclkdiv,
+                        Vid = 1.55 - 0.0125 * nbVid,
+                        Enabled = 1,
+                        PLL = (16 + maxDiv) / nclkdiv * clk
+                    };
+                    return msr;
+                }
             }
             else if (pstate == 9)
             {
-                uint nclk = ((value >> 0) & 0x7F);
-                uint nbVid = ((value >> 8) & 0x7F);
-                double nclkdiv = 1;
-                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-                if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
-                else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
-                else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
-                else nclkdiv = 1;
-                var msr = new PStateMsr()
+                if (Form1.family == 16) //Kabini
                 {
-                    CPUMultNBDivider = nclkdiv,
-                    Vid = 1.55 - 0.0125 * nbVid,
-                    CLK = clk,
-                    PLL = (16 + maxDiv) / nclkdiv * clk
-                };
-                return msr;
+                    uint nbdid = ((value >> 7) & 0x1);
+                    uint nbfid = ((value >> 1) & 0x1F);
+                    double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
+                    uint nbVid = ((value >> 10) & 0x7F);
+                    var msr = new PStateMsr()
+                    {
+                        CPUMultNBDivider = nclkdiv,
+                        Vid = 1.55 - 0.0125 * nbVid,
+                        Enabled = 1,
+                        PLL = (16 + maxDiv) / nclkdiv * clk
+                    };
+                    return msr;
+                }
+                else
+                {
+                    uint nclk = ((value >> 0) & 0x7F);
+                    uint nbVid = ((value >> 8) & 0x7F);
+                    double nclkdiv = 1;
+                    //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                    if (nclk >= 8 && nclk <= 63) nclkdiv = nclk * 0.25;
+                    else if (nclk >= 64 && nclk <= 95) nclkdiv = (nclk - 64) * 0.5 - 16;
+                    else if (nclk >= 96 && nclk <= 127) nclkdiv = nclk - 64;
+                    else nclkdiv = 1;
+                    var msr = new PStateMsr()
+                    {
+                        CPUMultNBDivider = nclkdiv,
+                        Vid = 1.55 - 0.0125 * nbVid,
+                        Enabled = 1,
+                        PLL = (16 + maxDiv) / nclkdiv * clk
+                    };
+                    return msr;
+                }
             }
             else
             {
@@ -211,7 +308,7 @@ namespace FusionTweaker
                 {
                     CPUMultNBDivider = 0,
                     Vid = 1,
-                    CLK = 100,
+                    Enabled = 1,
                     PLL = 1600
                 };
                 return msr;
@@ -230,8 +327,7 @@ namespace FusionTweaker
                 {
                     if (CPUMultNBDivider < 4 || CPUMultNBDivider > 48) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                     if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
-                    if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
-
+                    
                     uint cpuFid, cpuDid;
                     if (CPUMultNBDivider >= 19)
                     {
@@ -325,8 +421,7 @@ namespace FusionTweaker
 
                     if (CPUMultNBDivider < 1 || CPUMultNBDivider > 31.5) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                     if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
-                    if (CLK <= 0 || CLK > 200) throw new ArgumentOutOfRangeException("CLK");
-
+                    
                     uint cpuDidMSD, cpuDidLSD;
                     cpuDidMSD = (uint)Math.Abs(CPUMultNBDivider - 1);
 

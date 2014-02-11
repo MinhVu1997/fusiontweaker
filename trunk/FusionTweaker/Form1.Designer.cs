@@ -40,17 +40,28 @@
             this.cpu4Bar = new System.Windows.Forms.ProgressBar();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageP0 = new System.Windows.Forms.TabPage();
+            this.p0StateControl = new FusionTweaker.PStateControl();
             this.tabPageP1 = new System.Windows.Forms.TabPage();
+            this.p1StateControl = new FusionTweaker.PStateControl();
             this.tabPageP2 = new System.Windows.Forms.TabPage();
+            this.p2StateControl = new FusionTweaker.PStateControl();
             this.tabPageP3 = new System.Windows.Forms.TabPage();
+            this.p3StateControl = new FusionTweaker.PStateControl();
             this.tabPageP4 = new System.Windows.Forms.TabPage();
+            this.p4StateControl = new FusionTweaker.PStateControl();
             this.tabPageP5 = new System.Windows.Forms.TabPage();
+            this.p5StateControl = new FusionTweaker.PStateControl();
             this.tabPageP6 = new System.Windows.Forms.TabPage();
+            this.p6StateControl = new FusionTweaker.PStateControl();
             this.tabPageP7 = new System.Windows.Forms.TabPage();
+            this.p7StateControl = new FusionTweaker.PStateControl();
             this.tabPageNbP0 = new System.Windows.Forms.TabPage();
+            this.nbp0StateControl = new FusionTweaker.PStateControl();
             this.tabPageNbP1 = new System.Windows.Forms.TabPage();
+            this.nbp1StateControl = new FusionTweaker.PStateControl();
             this.tabPageStatus = new System.Windows.Forms.TabPage();
             this.logButton1 = new System.Windows.Forms.Button();
+            this.statusinfo = new FusionTweaker.StatusControl();
             this.nbBar = new System.Windows.Forms.ProgressBar();
             this.pstateLabel = new System.Windows.Forms.Label();
             this.monitorCheckBox = new System.Windows.Forms.CheckBox();
@@ -72,17 +83,6 @@
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.nbCfgTemp = new System.Windows.Forms.Label();
             this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.p0StateControl = new FusionTweaker.PStateControl();
-            this.p1StateControl = new FusionTweaker.PStateControl();
-            this.p2StateControl = new FusionTweaker.PStateControl();
-            this.p3StateControl = new FusionTweaker.PStateControl();
-            this.p4StateControl = new FusionTweaker.PStateControl();
-            this.p5StateControl = new FusionTweaker.PStateControl();
-            this.p6StateControl = new FusionTweaker.PStateControl();
-            this.p7StateControl = new FusionTweaker.PStateControl();
-            this.nbp0StateControl = new FusionTweaker.PStateControl();
-            this.nbp1StateControl = new FusionTweaker.PStateControl();
-            this.statusinfo = new FusionTweaker.StatusControl();
             this.tabControl1.SuspendLayout();
             this.tabPageP0.SuspendLayout();
             this.tabPageP1.SuspendLayout();
@@ -212,6 +212,14 @@
             this.tabPageP0.Text = "P0";
             this.tabPageP0.UseVisualStyleBackColor = true;
             // 
+            // p0StateControl
+            // 
+            this.p0StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p0StateControl.Name = "p0StateControl";
+            this.p0StateControl.PStateIndex = 0;
+            this.p0StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p0StateControl.TabIndex = 0;
+            // 
             // tabPageP1
             // 
             this.tabPageP1.Controls.Add(this.p1StateControl);
@@ -222,6 +230,14 @@
             this.tabPageP1.TabIndex = 1;
             this.tabPageP1.Text = "P1";
             this.tabPageP1.UseVisualStyleBackColor = true;
+            // 
+            // p1StateControl
+            // 
+            this.p1StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p1StateControl.Name = "p1StateControl";
+            this.p1StateControl.PStateIndex = 1;
+            this.p1StateControl.Size = new System.Drawing.Size(377, 170);
+            this.p1StateControl.TabIndex = 1;
             // 
             // tabPageP2
             // 
@@ -234,6 +250,14 @@
             this.tabPageP2.Text = "P2";
             this.tabPageP2.UseVisualStyleBackColor = true;
             // 
+            // p2StateControl
+            // 
+            this.p2StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p2StateControl.Name = "p2StateControl";
+            this.p2StateControl.PStateIndex = 2;
+            this.p2StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p2StateControl.TabIndex = 2;
+            // 
             // tabPageP3
             // 
             this.tabPageP3.Controls.Add(this.p3StateControl);
@@ -244,6 +268,14 @@
             this.tabPageP3.TabIndex = 3;
             this.tabPageP3.Text = "P3";
             this.tabPageP3.UseVisualStyleBackColor = true;
+            // 
+            // p3StateControl
+            // 
+            this.p3StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p3StateControl.Name = "p3StateControl";
+            this.p3StateControl.PStateIndex = 3;
+            this.p3StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p3StateControl.TabIndex = 3;
             // 
             // tabPageP4
             // 
@@ -256,6 +288,14 @@
             this.tabPageP4.Text = "P4";
             this.tabPageP4.UseVisualStyleBackColor = true;
             // 
+            // p4StateControl
+            // 
+            this.p4StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p4StateControl.Name = "p4StateControl";
+            this.p4StateControl.PStateIndex = 4;
+            this.p4StateControl.Size = new System.Drawing.Size(379, 131);
+            this.p4StateControl.TabIndex = 4;
+            // 
             // tabPageP5
             // 
             this.tabPageP5.Controls.Add(this.p5StateControl);
@@ -266,6 +306,14 @@
             this.tabPageP5.TabIndex = 5;
             this.tabPageP5.Text = "P5";
             this.tabPageP5.UseVisualStyleBackColor = true;
+            // 
+            // p5StateControl
+            // 
+            this.p5StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p5StateControl.Name = "p5StateControl";
+            this.p5StateControl.PStateIndex = 5;
+            this.p5StateControl.Size = new System.Drawing.Size(378, 131);
+            this.p5StateControl.TabIndex = 5;
             // 
             // tabPageP6
             // 
@@ -278,6 +326,14 @@
             this.tabPageP6.Text = "P6";
             this.tabPageP6.UseVisualStyleBackColor = true;
             // 
+            // p6StateControl
+            // 
+            this.p6StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p6StateControl.Name = "p6StateControl";
+            this.p6StateControl.PStateIndex = 6;
+            this.p6StateControl.Size = new System.Drawing.Size(377, 131);
+            this.p6StateControl.TabIndex = 6;
+            // 
             // tabPageP7
             // 
             this.tabPageP7.Controls.Add(this.p7StateControl);
@@ -288,6 +344,14 @@
             this.tabPageP7.TabIndex = 7;
             this.tabPageP7.Text = "P7";
             this.tabPageP7.UseVisualStyleBackColor = true;
+            // 
+            // p7StateControl
+            // 
+            this.p7StateControl.Location = new System.Drawing.Point(0, 0);
+            this.p7StateControl.Name = "p7StateControl";
+            this.p7StateControl.PStateIndex = 7;
+            this.p7StateControl.Size = new System.Drawing.Size(379, 131);
+            this.p7StateControl.TabIndex = 7;
             // 
             // tabPageNbP0
             // 
@@ -300,6 +364,14 @@
             this.tabPageNbP0.Text = "NB P0";
             this.tabPageNbP0.UseVisualStyleBackColor = true;
             // 
+            // nbp0StateControl
+            // 
+            this.nbp0StateControl.Location = new System.Drawing.Point(0, 0);
+            this.nbp0StateControl.Name = "nbp0StateControl";
+            this.nbp0StateControl.PStateIndex = 8;
+            this.nbp0StateControl.Size = new System.Drawing.Size(420, 131);
+            this.nbp0StateControl.TabIndex = 8;
+            // 
             // tabPageNbP1
             // 
             this.tabPageNbP1.Controls.Add(this.nbp1StateControl);
@@ -310,6 +382,15 @@
             this.tabPageNbP1.TabIndex = 9;
             this.tabPageNbP1.Text = "NB P1";
             this.tabPageNbP1.UseVisualStyleBackColor = true;
+            // 
+            // nbp1StateControl
+            // 
+            this.nbp1StateControl.AutoSize = true;
+            this.nbp1StateControl.Location = new System.Drawing.Point(0, 0);
+            this.nbp1StateControl.Name = "nbp1StateControl";
+            this.nbp1StateControl.PStateIndex = 9;
+            this.nbp1StateControl.Size = new System.Drawing.Size(422, 131);
+            this.nbp1StateControl.TabIndex = 9;
             // 
             // tabPageStatus
             // 
@@ -334,6 +415,18 @@
         " in your default editor for further use.");
             this.logButton1.UseVisualStyleBackColor = true;
             this.logButton1.Click += new System.EventHandler(this.logButton_Click);
+            // 
+            // statusinfo
+            // 
+            this.statusinfo.AutoSize = true;
+            this.statusinfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.statusinfo.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statusinfo.Location = new System.Drawing.Point(3, 3);
+            this.statusinfo.Margin = new System.Windows.Forms.Padding(4);
+            this.statusinfo.Name = "statusinfo";
+            this.statusinfo.Size = new System.Drawing.Size(493, 199);
+            this.statusinfo.StatusIndex = 0;
+            this.statusinfo.TabIndex = 10;
             // 
             // nbBar
             // 
@@ -546,99 +639,6 @@
             // 
             this.notifyIcon.Text = "FusionTweaker";
             this.notifyIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseClick);
-            // 
-            // p0StateControl
-            // 
-            this.p0StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p0StateControl.Name = "p0StateControl";
-            this.p0StateControl.PStateIndex = 0;
-            this.p0StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p0StateControl.TabIndex = 0;
-            // 
-            // p1StateControl
-            // 
-            this.p1StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p1StateControl.Name = "p1StateControl";
-            this.p1StateControl.PStateIndex = 1;
-            this.p1StateControl.Size = new System.Drawing.Size(377, 131);
-            this.p1StateControl.TabIndex = 1;
-            // 
-            // p2StateControl
-            // 
-            this.p2StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p2StateControl.Name = "p2StateControl";
-            this.p2StateControl.PStateIndex = 2;
-            this.p2StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p2StateControl.TabIndex = 2;
-            // 
-            // p3StateControl
-            // 
-            this.p3StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p3StateControl.Name = "p3StateControl";
-            this.p3StateControl.PStateIndex = 3;
-            this.p3StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p3StateControl.TabIndex = 3;
-            // 
-            // p4StateControl
-            // 
-            this.p4StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p4StateControl.Name = "p4StateControl";
-            this.p4StateControl.PStateIndex = 4;
-            this.p4StateControl.Size = new System.Drawing.Size(379, 131);
-            this.p4StateControl.TabIndex = 4;
-            // 
-            // p5StateControl
-            // 
-            this.p5StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p5StateControl.Name = "p5StateControl";
-            this.p5StateControl.PStateIndex = 5;
-            this.p5StateControl.Size = new System.Drawing.Size(378, 131);
-            this.p5StateControl.TabIndex = 5;
-            // 
-            // p6StateControl
-            // 
-            this.p6StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p6StateControl.Name = "p6StateControl";
-            this.p6StateControl.PStateIndex = 6;
-            this.p6StateControl.Size = new System.Drawing.Size(377, 131);
-            this.p6StateControl.TabIndex = 6;
-            // 
-            // p7StateControl
-            // 
-            this.p7StateControl.Location = new System.Drawing.Point(0, 0);
-            this.p7StateControl.Name = "p7StateControl";
-            this.p7StateControl.PStateIndex = 7;
-            this.p7StateControl.Size = new System.Drawing.Size(379, 131);
-            this.p7StateControl.TabIndex = 7;
-            // 
-            // nbp0StateControl
-            // 
-            this.nbp0StateControl.Location = new System.Drawing.Point(0, 0);
-            this.nbp0StateControl.Name = "nbp0StateControl";
-            this.nbp0StateControl.PStateIndex = 8;
-            this.nbp0StateControl.Size = new System.Drawing.Size(420, 131);
-            this.nbp0StateControl.TabIndex = 8;
-            // 
-            // nbp1StateControl
-            // 
-            this.nbp1StateControl.AutoSize = true;
-            this.nbp1StateControl.Location = new System.Drawing.Point(0, 0);
-            this.nbp1StateControl.Name = "nbp1StateControl";
-            this.nbp1StateControl.PStateIndex = 9;
-            this.nbp1StateControl.Size = new System.Drawing.Size(422, 131);
-            this.nbp1StateControl.TabIndex = 9;
-            // 
-            // statusinfo
-            // 
-            this.statusinfo.AutoSize = true;
-            this.statusinfo.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.statusinfo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.statusinfo.Location = new System.Drawing.Point(3, 3);
-            this.statusinfo.Margin = new System.Windows.Forms.Padding(4);
-            this.statusinfo.Name = "statusinfo";
-            this.statusinfo.Size = new System.Drawing.Size(493, 199);
-            this.statusinfo.StatusIndex = 0;
-            this.statusinfo.TabIndex = 10;
             // 
             // Form1
             // 

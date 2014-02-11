@@ -30,16 +30,17 @@
 		{
             this.components = new System.ComponentModel.Container();
             this.Cofstate = new System.Windows.Forms.Label();
-            this.CLKNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.refreshButton = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.VidNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanelPstates = new System.Windows.Forms.TableLayoutPanel();
             this.VIDlabel = new System.Windows.Forms.Label();
-            this.CLKlabel = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this.CLKlabel = new System.Windows.Forms.Label();
+            this.checkBox_Penable = new System.Windows.Forms.CheckBox();
             this.pllfreq = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.CLKNumericUpDown)).BeginInit();
+            this.freqvalue = new System.Windows.Forms.Label();
+            this.clockvalue = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.VidNumericUpDown)).BeginInit();
             this.tableLayoutPanelPstates.SuspendLayout();
             this.SuspendLayout();
@@ -48,44 +49,19 @@
             // 
             this.Cofstate.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.Cofstate.AutoSize = true;
-            this.Cofstate.Location = new System.Drawing.Point(3, 0);
+            this.Cofstate.Location = new System.Drawing.Point(3, 3);
+            this.Cofstate.Margin = new System.Windows.Forms.Padding(3);
             this.Cofstate.Name = "Cofstate";
             this.Cofstate.Size = new System.Drawing.Size(57, 13);
             this.Cofstate.TabIndex = 0;
             this.Cofstate.Text = "Frequency";
             // 
-            // CLKNumericUpDown
-            // 
-            this.CLKNumericUpDown.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.CLKNumericUpDown.AutoSize = true;
-            this.CLKNumericUpDown.Location = new System.Drawing.Point(103, 42);
-            this.CLKNumericUpDown.Maximum = new decimal(new int[] {
-            155,
-            0,
-            0,
-            131072});
-            this.CLKNumericUpDown.Minimum = new decimal(new int[] {
-            125,
-            0,
-            0,
-            262144});
-            this.CLKNumericUpDown.Name = "CLKNumericUpDown";
-            this.CLKNumericUpDown.Size = new System.Drawing.Size(29, 20);
-            this.CLKNumericUpDown.TabIndex = 5;
-            this.toolTip1.SetToolTip(this.CLKNumericUpDown, "This value shows the reference clock sourced by the motherboards PLL. All interna" +
-        "l clocks are derived from that clock.");
-            this.CLKNumericUpDown.Value = new decimal(new int[] {
-            1225,
-            0,
-            0,
-            196608});
-            // 
             // refreshButton
             // 
-            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.refreshButton.Anchor = System.Windows.Forms.AnchorStyles.Top;
             this.refreshButton.AutoSize = true;
             this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
-            this.refreshButton.Location = new System.Drawing.Point(165, 35);
+            this.refreshButton.Location = new System.Drawing.Point(159, 22);
             this.refreshButton.Name = "refreshButton";
             this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.tableLayoutPanelPstates.SetRowSpan(this.refreshButton, 2);
@@ -113,7 +89,7 @@
             0,
             0,
             262144});
-            this.VidNumericUpDown.Location = new System.Drawing.Point(103, 16);
+            this.VidNumericUpDown.Location = new System.Drawing.Point(97, 22);
             this.VidNumericUpDown.Maximum = new decimal(new int[] {
             155,
             0,
@@ -138,50 +114,44 @@
             // 
             this.tableLayoutPanelPstates.AutoSize = true;
             this.tableLayoutPanelPstates.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanelPstates.ColumnCount = 4;
+            this.tableLayoutPanelPstates.ColumnCount = 3;
             this.tableLayoutPanelPstates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelPstates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanelPstates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelPstates.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanelPstates.Controls.Add(this.VIDlabel, 0, 1);
-            this.tableLayoutPanelPstates.Controls.Add(this.CLKlabel, 0, 2);
             this.tableLayoutPanelPstates.Controls.Add(this.flowLayoutPanel1, 1, 0);
-            this.tableLayoutPanelPstates.Controls.Add(this.CLKNumericUpDown, 1, 2);
             this.tableLayoutPanelPstates.Controls.Add(this.VidNumericUpDown, 1, 1);
-            this.tableLayoutPanelPstates.Controls.Add(this.refreshButton, 2, 1);
-            this.tableLayoutPanelPstates.Controls.Add(this.pllfreq, 0, 3);
             this.tableLayoutPanelPstates.Controls.Add(this.Cofstate, 0, 0);
+            this.tableLayoutPanelPstates.Controls.Add(this.refreshButton, 2, 1);
+            this.tableLayoutPanelPstates.Controls.Add(this.CLKlabel, 0, 2);
+            this.tableLayoutPanelPstates.Controls.Add(this.checkBox_Penable, 0, 4);
+            this.tableLayoutPanelPstates.Controls.Add(this.pllfreq, 0, 3);
+            this.tableLayoutPanelPstates.Controls.Add(this.freqvalue, 1, 3);
+            this.tableLayoutPanelPstates.Controls.Add(this.clockvalue, 1, 2);
             this.tableLayoutPanelPstates.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanelPstates.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanelPstates.Margin = new System.Windows.Forms.Padding(0);
+            this.tableLayoutPanelPstates.MinimumSize = new System.Drawing.Size(0, 110);
             this.tableLayoutPanelPstates.Name = "tableLayoutPanelPstates";
-            this.tableLayoutPanelPstates.RowCount = 4;
-            this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanelPstates.RowCount = 5;
             this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanelPstates.Size = new System.Drawing.Size(283, 85);
+            this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelPstates.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            this.tableLayoutPanelPstates.Size = new System.Drawing.Size(237, 110);
             this.tableLayoutPanelPstates.TabIndex = 0;
             // 
             // VIDlabel
             // 
             this.VIDlabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.VIDlabel.AutoSize = true;
-            this.VIDlabel.Location = new System.Drawing.Point(3, 19);
+            this.VIDlabel.Location = new System.Drawing.Point(3, 25);
+            this.VIDlabel.Margin = new System.Windows.Forms.Padding(3);
             this.VIDlabel.Name = "VIDlabel";
             this.VIDlabel.Size = new System.Drawing.Size(43, 13);
             this.VIDlabel.TabIndex = 2;
             this.VIDlabel.Text = "Voltage";
-            // 
-            // CLKlabel
-            // 
-            this.CLKlabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.CLKlabel.AutoSize = true;
-            this.CLKlabel.Location = new System.Drawing.Point(3, 45);
-            this.CLKlabel.Name = "CLKlabel";
-            this.CLKlabel.Size = new System.Drawing.Size(94, 13);
-            this.CLKlabel.TabIndex = 4;
-            this.CLKlabel.Text = "CLK (can\'t be set):";
             // 
             // flowLayoutPanel1
             // 
@@ -189,21 +159,67 @@
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.tableLayoutPanelPstates.SetColumnSpan(this.flowLayoutPanel1, 2);
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(100, 6);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(94, 9);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(158, 0);
             this.flowLayoutPanel1.TabIndex = 1;
+            // 
+            // CLKlabel
+            // 
+            this.CLKlabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.CLKlabel.AutoSize = true;
+            this.CLKlabel.Location = new System.Drawing.Point(3, 48);
+            this.CLKlabel.Margin = new System.Windows.Forms.Padding(3);
+            this.CLKlabel.Name = "CLKlabel";
+            this.CLKlabel.Size = new System.Drawing.Size(36, 13);
+            this.CLKlabel.TabIndex = 4;
+            this.CLKlabel.Text = "clock:";
+            // 
+            // checkBox_Penable
+            // 
+            this.checkBox_Penable.AutoSize = true;
+            this.checkBox_Penable.Location = new System.Drawing.Point(3, 88);
+            this.checkBox_Penable.MinimumSize = new System.Drawing.Size(0, 20);
+            this.checkBox_Penable.Name = "checkBox_Penable";
+            this.checkBox_Penable.Size = new System.Drawing.Size(88, 20);
+            this.checkBox_Penable.TabIndex = 8;
+            this.checkBox_Penable.Text = "Pstate active";
+            this.checkBox_Penable.UseVisualStyleBackColor = true;
+            this.checkBox_Penable.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // pllfreq
             // 
             this.pllfreq.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.pllfreq.AutoSize = true;
             this.pllfreq.Location = new System.Drawing.Point(3, 68);
+            this.pllfreq.Margin = new System.Windows.Forms.Padding(3);
             this.pllfreq.Name = "pllfreq";
             this.pllfreq.Size = new System.Drawing.Size(28, 13);
             this.pllfreq.TabIndex = 7;
             this.pllfreq.Text = "Freq";
+            this.pllfreq.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // freqvalue
+            // 
+            this.freqvalue.AutoSize = true;
+            this.freqvalue.Location = new System.Drawing.Point(97, 68);
+            this.freqvalue.Margin = new System.Windows.Forms.Padding(3);
+            this.freqvalue.Name = "freqvalue";
+            this.freqvalue.Size = new System.Drawing.Size(53, 13);
+            this.freqvalue.TabIndex = 9;
+            this.freqvalue.Text = "1000MHz";
+            this.freqvalue.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // clockvalue
+            // 
+            this.clockvalue.AutoSize = true;
+            this.clockvalue.Location = new System.Drawing.Point(97, 48);
+            this.clockvalue.Margin = new System.Windows.Forms.Padding(3);
+            this.clockvalue.Name = "clockvalue";
+            this.clockvalue.Size = new System.Drawing.Size(47, 13);
+            this.clockvalue.TabIndex = 10;
+            this.clockvalue.Text = "100MHz";
             // 
             // PStateControl
             // 
@@ -211,8 +227,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanelPstates);
             this.Name = "PStateControl";
-            this.Size = new System.Drawing.Size(283, 89);
-            ((System.ComponentModel.ISupportInitialize)(this.CLKNumericUpDown)).EndInit();
+            this.Size = new System.Drawing.Size(237, 146);
             ((System.ComponentModel.ISupportInitialize)(this.VidNumericUpDown)).EndInit();
             this.tableLayoutPanelPstates.ResumeLayout(false);
             this.tableLayoutPanelPstates.PerformLayout();
@@ -225,13 +240,15 @@
 
 		private System.Windows.Forms.Label Cofstate;
         private System.Windows.Forms.Label pllfreq;
-        private System.Windows.Forms.NumericUpDown CLKNumericUpDown;
 		private System.Windows.Forms.Button refreshButton;
 		private System.Windows.Forms.ToolTip toolTip1;
 		private System.Windows.Forms.TableLayoutPanel tableLayoutPanelPstates;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
 		private System.Windows.Forms.Label VIDlabel;
 		private System.Windows.Forms.Label CLKlabel;
-		private System.Windows.Forms.NumericUpDown VidNumericUpDown;
+        private System.Windows.Forms.NumericUpDown VidNumericUpDown;
+        private System.Windows.Forms.CheckBox checkBox_Penable;
+        private System.Windows.Forms.Label freqvalue;
+        private System.Windows.Forms.Label clockvalue;
 	}
 }
