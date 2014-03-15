@@ -459,6 +459,29 @@ namespace FusionTweaker
             return curCOF;
         }
 
+        /// <summary>
+        /// Returns true, if the Motherboard uses SVI2, which uses 8bit encoding for voltages
+        /// </summary>
+        public static uint SVI2()
+        {
+            //D18 Device F0 -> C0
+            //D0 Device F0 -> 00
+            //10,20,30,40,50,60 -> no device
+            
+            //Program.Ols.WritePciConfig(0x00, 0xE0, 0x013080F1);
+            Program.Ols.WritePciConfig(0x00, 0xE0, 0x3F9D8);
+            //D0F0xBC_x3F9D8 PM_CONFIG
+            //29 SviMode. Read-write.
+            //Bits Description
+            //0 SVI1.
+            //1 SVI2
+            
+            uint settings = Program.Ols.ReadPciConfig(0x00, 0xBC);
+            // value of interest: D0F0xE4_x0130_80F1[ClockRate]
+            //uint settings = Program.Ols.ReadPciConfig(0x00, 0xE4);
+            return ((settings >> 29) & 0x1);
+        }
+ 
 		/// <summary>
         /// Returns the maximum supported COF of the main PLL. 54:49 MaxCpuCof from COFVID Status Register
 		/// </summary>
