@@ -186,32 +186,24 @@ namespace FusionTweaker
                 {
                     if (pstate <= K10Manager.GetHighestPState())
                     {
-                        uint cpuDidLSD = (value >> 0) & 0x0F;
-                        uint cpuDidMSD = (value >> 4) & 0x1F;
-                        uint cpuVid = (value >> 9) & 0x7F;
+                        uint cpuDid = (value >> 6) & 0x7;
+                        uint cpuFid = value & 0x3F;
+                        uint cpuVid = (value >> 10) & 0x7F; //this works for SVI only - 7bits
                         uint enabled = (value >> 63) & 0x1;
 
-                        double Div = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
-                        double DivPLL = cpuDidMSD + (cpuDidLSD * 0.25) + 1;
-                        if (maxDiv == 16 && Div < 2) //E-350 seems to restrict PLL frequencies higher than 1.6GHz
-                        {
-                            DivPLL = 2;
-                        }
-                        else if (maxDiv == 24 && Div < 4 && !turbo) //C-50 seems to restrict PLL frequencies higher than 1.0GHz
-                        {
-                            DivPLL = 4;
-                        }
-                        else if (maxDiv == 24 && Div < 3 && turbo) //C-60 (with turbo seems to restrict PLL frequencies higher than 1.33GHz
-                        {
-                            DivPLL = 3;
+                        if (cpuDid <= 4){
+                            cpuDid = (uint)(Math.Pow(2, cpuDid));
+                        } else {
+                            throw new NotSupportedException("This Divider is not supported");
                         }
 
+                        double CoreCOF = (cpuFid + 16) / cpuDid;
                         var msr = new PStateMsr()
                         {
-                            CPUMultNBDivider = Div,
+                            CPUMultNBDivider = CoreCOF,
                             Vid = 1.55 - 0.0125 * cpuVid,
                             Enabled = enabled,
-                            PLL = (16 + maxDiv) / DivPLL * clk
+                            PLL = CoreCOF * clk
                         };
                         return msr;
                     }
@@ -222,7 +214,7 @@ namespace FusionTweaker
                             CPUMultNBDivider = 10,
                             Vid = 0.4,
                             Enabled = 0,
-                            PLL = 1000
+                            PLL = 0
                         };
                         return msr;
                     }
@@ -232,14 +224,19 @@ namespace FusionTweaker
             {
                 if (Form1.family == 16) //Kabini
                 {
+                    uint nbvidh = ((value >> 14) & 0x80);
+                    //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
+                    uint nbvidl = ((value >> 11) & 0x3F);
+                    uint nbvid = (nbvidh + nbvidl);
+
                     uint nbdid = ((value >> 7) & 0x1);
-                    uint nbfid = ((value >> 1) & 0x1F);
+                    uint nbfid = ((value >> 1) & 0x3F);
                     double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
-                    uint nbVid = ((value >> 10) & 0x7F); 
+
                     var msr = new PStateMsr()
                     {
                         CPUMultNBDivider = nclkdiv,
-                        Vid = 1.55 - 0.0125 * nbVid,
+                        Vid = 1.55 - 0.0125 * nbvid,
                         Enabled = 1,
                         PLL = nclkdiv * clk
                     };
@@ -269,16 +266,21 @@ namespace FusionTweaker
             {
                 if (Form1.family == 16) //Kabini
                 {
+                    uint nbvidh = ((value >> 14) & 0x80);
+                    //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
+                    uint nbvidl = ((value >> 11) & 0x3F);
+                    uint nbvid = (nbvidh + nbvidl);
+
                     uint nbdid = ((value >> 7) & 0x1);
-                    uint nbfid = ((value >> 1) & 0x1F);
+                    uint nbfid = ((value >> 1) & 0x3F);
                     double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
-                    uint nbVid = ((value >> 10) & 0x7F);
+                    
                     var msr = new PStateMsr()
                     {
                         CPUMultNBDivider = nclkdiv,
-                        Vid = 1.55 - 0.0125 * nbVid,
+                        Vid = 1.55 - 0.0125 * nbvid,
                         Enabled = 1,
-                        PLL = (16 + maxDiv) / nclkdiv * clk
+                        PLL = nclkdiv * clk
                     };
                     return msr;
                 }

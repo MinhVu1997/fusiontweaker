@@ -108,8 +108,8 @@ namespace FusionTweaker
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
-            if (family == 16) 
-                log_now();
+            //if (family == 16) 
+            //    log_now();
 			//Brazos merge next line was active in BT
 			//this.Width += p0StateControl.GetDeltaOptimalWidth();
             
