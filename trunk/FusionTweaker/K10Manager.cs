@@ -481,7 +481,32 @@ namespace FusionTweaker
             //uint settings = Program.Ols.ReadPciConfig(0x00, 0xE4);
             return ((settings >> 29) & 0x1);
         }
- 
+
+
+        /// <summary>
+        /// Resets the effective Frequency registers
+        /// </summary>
+        public static void ResetEffFreq()
+        {
+            //MSR0000_00E7 [Max Performance Frequency Clock Count (MPERF)]
+            //MSR0000_00E8 [Actual Performance Frequency Clock Count (APERF)]
+            Program.Ols.WriteMsr(0x000000E7u, 0, 0);
+            Program.Ols.WriteMsr(0x000000E8u, 0, 0);
+        }
+
+        /// <summary>
+        /// Returns the effective Frequency of the system
+        /// </summary>
+        public static float EffFreq()
+        {
+            //MSR0000_00E7 [Max Performance Frequency Clock Count (MPERF)]
+                //MSR0000_00E8 [Actual Performance Frequency Clock Count (APERF)]
+                ulong msr_max = Program.Ols.ReadMsr(0x000000E7u,0);
+                ulong msr_act = Program.Ols.ReadMsr(0x000000E8u,0);
+
+                return (msr_act / msr_max * 1600);
+         }
+
 		/// <summary>
         /// Returns the maximum supported COF of the main PLL. 54:49 MaxCpuCof from COFVID Status Register
 		/// </summary>

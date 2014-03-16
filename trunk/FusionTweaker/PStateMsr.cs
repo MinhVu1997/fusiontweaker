@@ -87,7 +87,7 @@ namespace FusionTweaker
 
             if (pstate < 8)
             {
-                if (Form1.family == 12)
+                if (Form1.family == 12) //Llano
                 {
                     uint cpuDid = (value >> 0) & 0x0F;
                     uint cpuFid = (value >> 4) & 0x1F;
@@ -137,7 +137,7 @@ namespace FusionTweaker
                     };
                     return msr;
                 }
-                else if (Form1.family == 14)
+                else if (Form1.family == 14) //Brazos
                 {
                     if (pstate <= K10Manager.GetHighestPState())
                     {
@@ -182,7 +182,7 @@ namespace FusionTweaker
                         return msr;
                     }
                 }
-                else //family 16
+                else //family 16 Kabini
                 {
                     if (pstate <= K10Manager.GetHighestPState())
                     {

@@ -1,13 +1,11 @@
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\bin\Debug\FusionTweaker.exe
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\bin\Debug\FusionTweaker.pdb
-E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\ResolveAssemblyReference.cache
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.CnQProfileControl.resources
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.Form1.resources
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.Properties.Resources.resources
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.PStateControl.resources
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.ServiceDialog.resources
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.StatusControl.resources
-E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\ResGen.read.1.tlog
-E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\ResGen.write.1.tlog
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.exe
 E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.pdb
+E:\Programmierung\SVN\fusiontweaker\trunk\FusionTweaker\obj\Debug\FusionTweaker.csproj.GenerateResource.Cache

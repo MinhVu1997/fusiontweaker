@@ -35,7 +35,6 @@ namespace FusionTweaker
         private readonly int processBarPerc = 0;
 
         private static bool monitorPstates = true;
-        private static bool alwaysOnTop = true;
         
         //public static readonly int family = K10Manager.GetFamily();
         public static int family = new int();
@@ -108,15 +107,15 @@ namespace FusionTweaker
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
-            //if (family == 16) 
-            //    log_now();
+            if (family == 16) 
+                log_now();
 			//Brazos merge next line was active in BT
 			//this.Width += p0StateControl.GetDeltaOptimalWidth();
             
 			//Brazos merge p3 trough p7 inactive in BT
 			//BT also provides integer value to Load for PState, which shouldn't be needed
 			p0StateControl.LoadFromHardware();
-			p1StateControl.LoadFromHardware();
+            p1StateControl.LoadFromHardware();
 			p2StateControl.LoadFromHardware();
             p3StateControl.LoadFromHardware();
             p4StateControl.LoadFromHardware();
@@ -127,7 +126,7 @@ namespace FusionTweaker
             nbp1StateControl.LoadFromHardware();
             statusinfo.LoadFromHardware();
 
-			if (!_useWindowsPowerSchemes)
+            if (!_useWindowsPowerSchemes)
 			{
 				// use FusionTweaker's power schemes (via the registry)
 				powerSchemesComboBox.Items.Add(new PowerScheme() { Name = "Balanced" });
@@ -359,6 +358,7 @@ namespace FusionTweaker
 			// refresh the P-states
             for (int i = 0; i < 10; i++)
                 controls[i].LoadFromHardware();
+                
 
             statuscontrols[0].LoadFromHardware();
 
@@ -401,6 +401,7 @@ namespace FusionTweaker
 		{
             if (monitorPstates)
             {
+                //K10Manager.ResetEffFreq();
                 int currentNbPState = K10Manager.GetNbPState();
                 nbBar.Value = (2 - currentNbPState) * 50;
                 //Brazos merge 
@@ -432,11 +433,16 @@ namespace FusionTweaker
                         pstateLabel4.Text = currentPStateCore[i].ToString() + " - " + freq[currentPStateCore[i]].ToString() + "MHz";
                     }
                 }
+                //RealFreq.SuspendLayout();
+                //RealFreq.Text = K10Manager.EffFreq().ToString();
+                //RealFreq.ResumeLayout();
+
             }
 		}
 
         private void timer2_Tick(object sender, EventArgs e)
         {
+            K10Manager.ResetEffFreq();
             ecread.SuspendLayout();
             ecread.Text = statusinfo.GetECreadings();
             ecread.ResumeLayout();
@@ -444,6 +450,7 @@ namespace FusionTweaker
             nbCfgTemp.SuspendLayout();
             nbCfgTemp.Text = K10Manager.GetTemp().ToString() + "°C";
             nbCfgTemp.ResumeLayout();
+
              
             //tabControl1.SuspendLayout();
             //statusinfo.LoadFromHardware();

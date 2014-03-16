@@ -29,79 +29,18 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.Reg64CPU = new System.Windows.Forms.Label();
-            this.PCIDevices = new System.Windows.Forms.Label();
-            this.Reg32NB = new System.Windows.Forms.Label();
-            this.RegLabel64CPU = new System.Windows.Forms.Label();
-            this.RegLabel32NB = new System.Windows.Forms.Label();
-            this.PCIDevicesLabel = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.refreshButton = new System.Windows.Forms.Button();
             this.tableLayoutPanelStatus = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.refreshButton = new System.Windows.Forms.Button();
+            this.PCIDevices = new System.Windows.Forms.Label();
+            this.Reg32NB = new System.Windows.Forms.Label();
+            this.PCIDevicesLabel = new System.Windows.Forms.Label();
+            this.RegLabel32NB = new System.Windows.Forms.Label();
+            this.RegLabel64CPU = new System.Windows.Forms.Label();
+            this.Reg64CPU = new System.Windows.Forms.Label();
             this.tableLayoutPanelStatus.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // Reg64CPU
-            // 
-            this.Reg64CPU.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.Reg64CPU.AutoSize = true;
-            this.Reg64CPU.Location = new System.Drawing.Point(37, 10);
-            this.Reg64CPU.Name = "Reg64CPU";
-            this.Reg64CPU.Size = new System.Drawing.Size(28, 13);
-            this.Reg64CPU.TabIndex = 7;
-            this.Reg64CPU.Text = "Freq";
-            this.Reg64CPU.Click += new System.EventHandler(this.Reg64CPU_Click);
-            // 
-            // PCIDevices
-            // 
-            this.PCIDevices.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.PCIDevices.AutoSize = true;
-            this.PCIDevices.Location = new System.Drawing.Point(37, 46);
-            this.PCIDevices.Name = "PCIDevices";
-            this.PCIDevices.Size = new System.Drawing.Size(28, 13);
-            this.PCIDevices.TabIndex = 7;
-            this.PCIDevices.Text = "Freq";
-            // 
-            // Reg32NB
-            // 
-            this.Reg32NB.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.Reg32NB.AutoSize = true;
-            this.Reg32NB.Location = new System.Drawing.Point(37, 33);
-            this.Reg32NB.Name = "Reg32NB";
-            this.Reg32NB.Size = new System.Drawing.Size(28, 13);
-            this.Reg32NB.TabIndex = 7;
-            this.Reg32NB.Text = "Freq";
-            // 
-            // RegLabel64CPU
-            // 
-            this.RegLabel64CPU.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.RegLabel64CPU.AutoSize = true;
-            this.RegLabel64CPU.Location = new System.Drawing.Point(3, 10);
-            this.RegLabel64CPU.Name = "RegLabel64CPU";
-            this.RegLabel64CPU.Size = new System.Drawing.Size(28, 13);
-            this.RegLabel64CPU.TabIndex = 7;
-            this.RegLabel64CPU.Text = "Freq";
-            // 
-            // RegLabel32NB
-            // 
-            this.RegLabel32NB.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.RegLabel32NB.AutoSize = true;
-            this.RegLabel32NB.Location = new System.Drawing.Point(3, 33);
-            this.RegLabel32NB.Name = "RegLabel32NB";
-            this.RegLabel32NB.Size = new System.Drawing.Size(28, 13);
-            this.RegLabel32NB.TabIndex = 7;
-            this.RegLabel32NB.Text = "Freq";
-            // 
-            // PCIDevicesLabel
-            // 
-            this.PCIDevicesLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.PCIDevicesLabel.AutoSize = true;
-            this.PCIDevicesLabel.Location = new System.Drawing.Point(3, 46);
-            this.PCIDevicesLabel.Name = "PCIDevicesLabel";
-            this.PCIDevicesLabel.Size = new System.Drawing.Size(28, 13);
-            this.PCIDevicesLabel.TabIndex = 7;
-            this.PCIDevicesLabel.Text = "Freq";
             // 
             // toolTip1
             // 
@@ -109,6 +48,21 @@
             this.toolTip1.InitialDelay = 500;
             this.toolTip1.IsBalloon = true;
             this.toolTip1.ReshowDelay = 500;
+            // 
+            // refreshButton
+            // 
+            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.refreshButton.AutoSize = true;
+            this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
+            this.refreshButton.Location = new System.Drawing.Point(165, 3);
+            this.refreshButton.Name = "refreshButton";
+            this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.refreshButton.Size = new System.Drawing.Size(90, 27);
+            this.refreshButton.TabIndex = 0;
+            this.refreshButton.Text = "Refresh";
+            this.refreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.toolTip1.SetToolTip(this.refreshButton, "Load the current settings directly from the CPU registers.");
+            this.refreshButton.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanelStatus
             // 
@@ -148,20 +102,60 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(254, 0);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
-            // refreshButton
+            // PCIDevices
             // 
-            this.refreshButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.refreshButton.AutoSize = true;
-            this.refreshButton.Image = global::FusionTweaker.Properties.Resources.refresh;
-            this.refreshButton.Location = new System.Drawing.Point(165, 3);
-            this.refreshButton.Name = "refreshButton";
-            this.refreshButton.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
-            this.refreshButton.Size = new System.Drawing.Size(90, 27);
-            this.refreshButton.TabIndex = 0;
-            this.refreshButton.Text = "Refresh";
-            this.refreshButton.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.toolTip1.SetToolTip(this.refreshButton, "Load the current settings directly from the CPU registers.");
-            this.refreshButton.UseVisualStyleBackColor = true;
+            this.PCIDevices.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.PCIDevices.AutoSize = true;
+            this.PCIDevices.Location = new System.Drawing.Point(9, 46);
+            this.PCIDevices.Name = "PCIDevices";
+            this.PCIDevices.Size = new System.Drawing.Size(0, 13);
+            this.PCIDevices.TabIndex = 7;
+            // 
+            // Reg32NB
+            // 
+            this.Reg32NB.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.Reg32NB.AutoSize = true;
+            this.Reg32NB.Location = new System.Drawing.Point(9, 33);
+            this.Reg32NB.Name = "Reg32NB";
+            this.Reg32NB.Size = new System.Drawing.Size(0, 13);
+            this.Reg32NB.TabIndex = 7;
+            // 
+            // PCIDevicesLabel
+            // 
+            this.PCIDevicesLabel.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.PCIDevicesLabel.AutoSize = true;
+            this.PCIDevicesLabel.Location = new System.Drawing.Point(3, 46);
+            this.PCIDevicesLabel.Name = "PCIDevicesLabel";
+            this.PCIDevicesLabel.Size = new System.Drawing.Size(0, 13);
+            this.PCIDevicesLabel.TabIndex = 7;
+            // 
+            // RegLabel32NB
+            // 
+            this.RegLabel32NB.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.RegLabel32NB.AutoSize = true;
+            this.RegLabel32NB.Location = new System.Drawing.Point(3, 33);
+            this.RegLabel32NB.Name = "RegLabel32NB";
+            this.RegLabel32NB.Size = new System.Drawing.Size(0, 13);
+            this.RegLabel32NB.TabIndex = 7;
+            // 
+            // RegLabel64CPU
+            // 
+            this.RegLabel64CPU.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.RegLabel64CPU.AutoSize = true;
+            this.RegLabel64CPU.Location = new System.Drawing.Point(3, 10);
+            this.RegLabel64CPU.Name = "RegLabel64CPU";
+            this.RegLabel64CPU.Size = new System.Drawing.Size(0, 13);
+            this.RegLabel64CPU.TabIndex = 7;
+            // 
+            // Reg64CPU
+            // 
+            this.Reg64CPU.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.Reg64CPU.AutoSize = true;
+            this.Reg64CPU.Location = new System.Drawing.Point(9, 10);
+            this.Reg64CPU.Name = "Reg64CPU";
+            this.Reg64CPU.Size = new System.Drawing.Size(0, 13);
+            this.Reg64CPU.TabIndex = 7;
+            this.Reg64CPU.Click += new System.EventHandler(this.Reg64CPU_Click);
             // 
             // StatusControl
             // 
@@ -182,14 +176,13 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanelStatus;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private System.Windows.Forms.Label Reg64CPU;
         //Brazos merge
-		private System.Windows.Forms.Button ResetButton;
-        private System.Windows.Forms.Label PCIDevices;
+        private System.Windows.Forms.Button refreshButton;
+        private System.Windows.Forms.Label Reg64CPU;
         private System.Windows.Forms.Label Reg32NB;
         private System.Windows.Forms.Label RegLabel64CPU;
         private System.Windows.Forms.Label RegLabel32NB;
         private System.Windows.Forms.Label PCIDevicesLabel;
-        private System.Windows.Forms.Button refreshButton;
+        private System.Windows.Forms.Label PCIDevices;
     }
 }

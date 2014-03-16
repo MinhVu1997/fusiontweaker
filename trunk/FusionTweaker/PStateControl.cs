@@ -187,6 +187,7 @@ namespace FusionTweaker
                             control.Value = (decimal)msr.CPUMultNBDivider;
 
                             maxCpuVid = Math.Max(maxCpuVid, msr.Vid);
+                            
                         }
 
                     VidNumericUpDown.Value = Math.Min(VidNumericUpDown.Maximum, (decimal)maxCpuVid);
@@ -200,6 +201,16 @@ namespace FusionTweaker
                         Cofstate.Text = "Mult = " + (K10Manager.CurrCOF() + 16) + " divided by ->";
                     }
                     Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
+                    if (PStateIndex <= _maxPstate)
+                    {
+                        checkBox_Penable.Checked = true;
+                        checkBox_Penable.Enabled = false;
+                    }
+                    else
+                    {
+                        checkBox_Penable.Checked = false;
+                        checkBox_Penable.Enabled = false;
+                    }
                 }
                 else
                 {
@@ -217,6 +228,8 @@ namespace FusionTweaker
                 clockvalue.Text = K10Manager.GetBIOSBusSpeed() + "MHz";
                 freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
                 Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
+                checkBox_Penable.Checked = true;
+                checkBox_Penable.Enabled = false;
             }
             else if (_index == 9)
             {
@@ -230,6 +243,8 @@ namespace FusionTweaker
                 freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
                 Cofstate.Text = "Mult = " + (K10Manager.CurrCOF() + 16) + " divided by ->";
                 Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
+                checkBox_Penable.Checked = true;
+                checkBox_Penable.Enabled = false;
             }
             else if (_index == 10) //settings for displaying registers
             {
@@ -258,6 +273,7 @@ namespace FusionTweaker
 				_pState.Msrs[i].CPUMultNBDivider = (double)control.Value;
 				_pState.Msrs[i].Vid = (double)VidNumericUpDown.Value;
 				_pState.Msrs[i].Enabled = 1;
+                checkBox_Penable.Checked = true;
 			}
 
 			_pState.Save(_index);
@@ -272,6 +288,7 @@ namespace FusionTweaker
                 for (int i = 0; i < _numCores; i++)
                 {
                     _pState.Msrs[i].Enabled = 1;
+                    //MessageBox.Show("Check 0 - " + _pState.Msrs[i].Enabled);
                 }
                 _pState.Save(_index);
             }
@@ -280,6 +297,7 @@ namespace FusionTweaker
                 for (int i = 0; i < _numCores; i++)
                 {
                     _pState.Msrs[i].Enabled = 0;
+                    //MessageBox.Show("Check 1 - " + _pState.Msrs[i].Enabled);
                 }
                 _pState.Save(_index);
             }
