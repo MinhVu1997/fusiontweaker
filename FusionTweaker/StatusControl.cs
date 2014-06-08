@@ -594,11 +594,11 @@ namespace FusionTweaker
         {
             string text = "";
             uint settings;
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 settings = Program.Ols.ReadPciConfig(0xC5, 0x160);
             }
-            else
+            else //Llano + Brazos
             {
                 settings = Program.Ols.ReadPciConfig(0xC3, 0xDC);
             }
@@ -615,11 +615,11 @@ namespace FusionTweaker
         {
             string text = "";
             uint settings;
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 settings = Program.Ols.ReadPciConfig(0xC5, 0x164);
             }
-            else
+            else //Llano + Brazos
             {
                 settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
             } 

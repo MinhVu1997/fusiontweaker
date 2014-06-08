@@ -55,13 +55,7 @@ namespace FusionTweaker
             processBarSteps = numPstates + numBoostedPstates + 1;
             processBarPerc = 100 / processBarSteps;
 
-			//Brazos merge
-            /*if (family != 14)
-            {
-                MessageBox.Show("Your CPU/APU from AMD family: " + family + "h is not supported!");
-            }*/
-
-            if ((family != 12) && (family != 14) && (family != 16))
+			if ((family != 12) && (family != 14) && (family != 16))
             {
                 MessageBox.Show("Your CPU/APU from AMD family: " + family + "h is not supported!");
             }
@@ -107,25 +101,35 @@ namespace FusionTweaker
 			notifyIcon.ContextMenuStrip = new ContextMenuStrip();
 			notifyIcon.Visible = true;
 
-            if (family == 16) 
-                log_now();
+            if (family == 16)
+            {
+                //MessageBox.Show("Jetzt wird ein Log für den Editor erstellt!"); 
+                //log_now();
+            }
 			//Brazos merge next line was active in BT
 			//this.Width += p0StateControl.GetDeltaOptimalWidth();
             
 			//Brazos merge p3 trough p7 inactive in BT
 			//BT also provides integer value to Load for PState, which shouldn't be needed
-			p0StateControl.LoadFromHardware();
+
+            //MessageBox.Show("Jetzt werden die Register der GPU gelesen!");
+            nbp0StateControl.LoadFromHardware();
+            nbp1StateControl.LoadFromHardware();
+            //MessageBox.Show("Jetzt werden zusätzliche Register gelesen!");
+            statusinfo.LoadFromHardware();
+            
+            //MessageBox.Show("Jetzt werden die Register der CPU gelesen!");
+            p0StateControl.LoadFromHardware();
             p1StateControl.LoadFromHardware();
-			p2StateControl.LoadFromHardware();
+            p2StateControl.LoadFromHardware();
             p3StateControl.LoadFromHardware();
             p4StateControl.LoadFromHardware();
             p5StateControl.LoadFromHardware();
             p6StateControl.LoadFromHardware();
             p7StateControl.LoadFromHardware();
-            nbp0StateControl.LoadFromHardware();
-            nbp1StateControl.LoadFromHardware();
-            statusinfo.LoadFromHardware();
 
+            //MessageBox.Show("Alle Register gelesen!");
+            
             if (!_useWindowsPowerSchemes)
 			{
 				// use FusionTweaker's power schemes (via the registry)
@@ -404,8 +408,6 @@ namespace FusionTweaker
                 //K10Manager.ResetEffFreq();
                 int currentNbPState = K10Manager.GetNbPState();
                 nbBar.Value = (2 - currentNbPState) * 50;
-                //Brazos merge 
-				//nbPstateLabel.Text = currentNbPState.ToString() + " - " + freq[currentNbPState + 3].ToString() + "MHz";
                 nbPstateLabel.Text = currentNbPState.ToString() + " - " + freq[currentNbPState + 8].ToString() + "MHz";
                 
                 // get the current P-state of the first core
@@ -442,15 +444,16 @@ namespace FusionTweaker
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            K10Manager.ResetEffFreq();
-            ecread.SuspendLayout();
-            ecread.Text = statusinfo.GetECreadings();
-            ecread.ResumeLayout();
+            if (false)
+            {
+                ecread.SuspendLayout();
+                ecread.Text = statusinfo.GetECreadings();
+                ecread.ResumeLayout();
 
-            nbCfgTemp.SuspendLayout();
-            nbCfgTemp.Text = K10Manager.GetTemp().ToString() + "°C";
-            nbCfgTemp.ResumeLayout();
-
+                nbCfgTemp.SuspendLayout();
+                nbCfgTemp.Text = K10Manager.GetTemp().ToString() + "°C";
+                nbCfgTemp.ResumeLayout();
+            }
              
             //tabControl1.SuspendLayout();
             //statusinfo.LoadFromHardware();

@@ -55,7 +55,7 @@ namespace FusionTweaker
                 {
                     lower = Program.Ols.ReadPciConfig(0xC5, 0x160);
                 }
-                else
+                else //Llano + Brazos
                 {
                     // value of interest: F3xDC NbPstate0Register
                     lower = Program.Ols.ReadPciConfig(0xC3, 0xDC);
@@ -69,7 +69,7 @@ namespace FusionTweaker
                 {
                     lower = Program.Ols.ReadPciConfig(0xC5, 0x164);
                 }
-                else
+                else //Llano + Brazos
                 {
                     // value of interest: F6x90 NbPstate1Register
                     lower = Program.Ols.ReadPciConfig(0xC6, 0x90);
@@ -224,10 +224,10 @@ namespace FusionTweaker
             {
                 if (Form1.family == 16) //Kabini
                 {
-                    uint nbvidh = ((value >> 14) & 0x80);
+                    uint nbvidh = ((value >> 21) & 0x1);
                     //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
                     uint nbvidl = ((value >> 11) & 0x3F);
-                    uint nbvid = (nbvidh + nbvidl);
+                    uint nbvid = (nbvidh * 64 + nbvidl);
 
                     uint nbdid = ((value >> 7) & 0x1);
                     uint nbfid = ((value >> 1) & 0x3F);
@@ -266,10 +266,10 @@ namespace FusionTweaker
             {
                 if (Form1.family == 16) //Kabini
                 {
-                    uint nbvidh = ((value >> 14) & 0x80);
+                    uint nbvidh = ((value >> 21) & 0x1);
                     //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
                     uint nbvidl = ((value >> 11) & 0x3F);
-                    uint nbvid = (nbvidh + nbvidl);
+                    uint nbvid = (nbvidh * 64 + nbvidl);
 
                     uint nbdid = ((value >> 7) & 0x1);
                     uint nbfid = ((value >> 1) & 0x3F);
@@ -325,7 +325,7 @@ namespace FusionTweaker
 		{
             if (pstate < 8)
             {
-                if (Form1.family == 12)
+                if (Form1.family == 12) // Llano
                 {
                     if (CPUMultNBDivider < 4 || CPUMultNBDivider > 48) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                     if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
@@ -419,7 +419,9 @@ namespace FusionTweaker
                     uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
                     return (cpuVid << 9) | (cpuFid << 4) | cpuDid;
                 
-                } else {
+                } 
+                else if (Form1.family == 14) // Brazos
+                {
 
                     if (CPUMultNBDivider < 1 || CPUMultNBDivider > 31.5) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                     if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
@@ -433,6 +435,29 @@ namespace FusionTweaker
 
                     uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
                     return (cpuVid << 9) | (cpuDidMSD << 4) | cpuDidLSD;
+                } else { // Kabini
+
+                    if (CPUMultNBDivider < 4 || CPUMultNBDivider > 40) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
+                    if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
+
+                    uint cpuFid, cpuDid;
+                    if (CPUMultNBDivider >= 8)
+                    {
+                        cpuFid = (uint)Math.Abs(CPUMultNBDivider * 2 - 16);
+                        cpuDid = 1; //Div 2
+                    }
+                    else if (CPUMultNBDivider >= 4 && CPUMultNBDivider < 8) //PState 4
+                    {
+                        cpuFid = (uint)Math.Abs(CPUMultNBDivider * 8 - 16); 
+                        cpuDid = 3; //Div 8
+                    }
+                    else
+                    {
+                        cpuFid = 0;
+                        cpuDid = 0;
+                    }
+                    uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    return (cpuVid << 9) | (cpuDid << 6) | cpuFid;
                 }
                 
             }

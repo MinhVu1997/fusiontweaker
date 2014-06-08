@@ -84,20 +84,23 @@ namespace FusionTweaker
 					//Brazos merge next line added from BT
 					_maxPstate = -1;
 				}
-				else
+                else if (Form1.family == 14) //Brazos
 				{
-					//Brazos merge 
-					//ToDo check, why this is diff in BT
-					//_maxCOF = K10Manager.MaxCOF();
-					_maxCOF = K10Manager.MaxCOF() + 16;
-					
+					_maxCOF = K10Manager.MaxCOF() + 16; 
+                    
 					//Brazos merge next line added from BT
 					_maxPstate = K10Manager.GetHighestPState();
-                    //double _curDiv = K10Manager.CurrCOF();
-                    //uint MainDivEn = K10Manager.MainCofEn();
-					K10Manager.GetVidLimits(out _minVid, out _maxVid);
-				}
-			}
+                    K10Manager.GetVidLimits(out _minVid, out _maxVid);
+                }
+                else //Kabini
+                {
+                    _maxCOF = K10Manager.MaxCOF();
+
+                    //Brazos merge next line added from BT
+                    _maxPstate = K10Manager.GetHighestPState();
+                    K10Manager.GetVidLimits(out _minVid, out _maxVid);
+                }
+			} 
 
 			VidNumericUpDown.Minimum = (decimal)_minVid;
             VidNumericUpDown.Maximum = (decimal)_maxVid;
@@ -121,6 +124,12 @@ namespace FusionTweaker
                     control.Increment = (decimal)1;
                     control.Minimum = 4;
                 }
+                if (Form1.family == 16) //Kabini
+                {
+                    control.Increment = (decimal)0.5;
+                    control.Minimum = 4;
+                }
+
 
                 toolTip1.SetToolTip(control, "CPUMultNBDivider for core " + (i + 1) + ".\r\nReference clock (default: 100 MHz) times " + _maxCOF + " divided by the chosen value yields the core speed.");
 
@@ -195,9 +204,9 @@ namespace FusionTweaker
                     pllfreq.Text = "P" + _index + " Freq (CPU): ";
                     clockvalue.Text = K10Manager.GetBIOSBusSpeed() + "MHz"; 
                     freqvalue.Text = (int)_pState.Msrs[0].PLL + "MHz";
-                    if ((Form1.family == 12) || (Form1.family == 16)) {
+                    if ((Form1.family == 12) || (Form1.family == 16)) { //Llano + Kabini
                         Cofstate.Text = "Mult = ";
-                    } else {
+                    } else { //Brazos
                         Cofstate.Text = "Mult = " + (K10Manager.CurrCOF() + 16) + " divided by ->";
                     }
                     Form1.freq[_index] = (int)_pState.Msrs[0].PLL;
@@ -250,7 +259,8 @@ namespace FusionTweaker
             {
                 VidNumericUpDown.Value = 1;
             }
-                _modified = false;
+            
+            _modified = false;
         }
 
 		/// <summary>
@@ -290,7 +300,7 @@ namespace FusionTweaker
                     _pState.Msrs[i].Enabled = 1;
                     //MessageBox.Show("Check 0 - " + _pState.Msrs[i].Enabled);
                 }
-                _pState.Save(_index);
+                //_pState.Save(_index);
             }
             else
             {
@@ -299,7 +309,7 @@ namespace FusionTweaker
                     _pState.Msrs[i].Enabled = 0;
                     //MessageBox.Show("Check 1 - " + _pState.Msrs[i].Enabled);
                 }
-                _pState.Save(_index);
+                //_pState.Save(_index);
             }
         }
 	}
