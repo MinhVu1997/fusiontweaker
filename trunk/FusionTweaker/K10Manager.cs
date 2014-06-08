@@ -16,11 +16,11 @@ namespace FusionTweaker
 		/// </summary>
 		public static int GetCurrentPState(int coreIndex)
 		{
-            if (Form1.family == 14)
-            {
-                return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
-            }
-            else
+            //if (Form1.family == 14) //Brazos
+            //{
+            //    return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
+            //}
+            //else
             {
                 return (int)((Program.Ols.ReadMsr(0xC0010071u, coreIndex) >> 16) & 0x7);
             }
@@ -244,12 +244,12 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbPState()
         {
-            if (Form1.family == 16) 
+            if (Form1.family == 16) //Kabini
             {
                 //D18F5x174 Northbridge P-state Status 20:19 CurNbPstate
                 uint settings = Program.Ols.ReadPciConfig(0xC5, 0x174);
                 return (int)((settings >> 19) & 0x3);
-            } else {
+            } else { //Llano + Brazos
                 //D18 Device F0 -> C0
                 //D0 Device F0 -> 00
                 //10,20,30,40,50,60 -> no device
@@ -264,7 +264,7 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbVidPState0()
         {
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 //Kabini 16h
                 //Register Mapping for D18F5x16[C:0]
@@ -276,12 +276,14 @@ namespace FusionTweaker
                 //21 NbVid[7].
                 //16:10 NbVid[6:0]: Northbridge VID
                 uint settings = Program.Ols.ReadPciConfig(0xC5, 0x160);
-                uint nbvidh = ((settings >> 14) & 0x80);
-                uint nbvidl = ((settings >> 10) & 0x7F);
 
-                return (int)(nbvidh + nbvidl);
+                uint nbvidh = ((settings >> 21) & 0x1);
+                //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
+                uint nbvidl = ((settings >> 11) & 0x3F);
+                
+                return (int)(nbvidh * 64 + nbvidl);
             }
-            else
+            else //Llano + Brazos
             {
                 //D18 Device F0 -> C0
                 //D0 Device F0 -> 00
@@ -297,7 +299,7 @@ namespace FusionTweaker
         /// </summary>
         public static int GetNbVidPState1()
         {
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 //Kabini 16h
                 //Register Mapping for D18F5x16[C:0]
@@ -309,12 +311,13 @@ namespace FusionTweaker
                 //21 NbVid[7].
                 //16:10 NbVid[6:0]: Northbridge VID
                 uint settings = Program.Ols.ReadPciConfig(0xC5, 0x164);
-                uint nbvidh = ((settings >> 14) & 0x80);
-                uint nbvidl = ((settings >> 10) & 0x7F);
+                uint nbvidh = ((settings >> 21) & 0x1);
+                //uint nbvidl = ((value >> 10) & 0x7F); //SVI2 - 8bits
+                uint nbvidl = ((settings >> 11) & 0x3F);
 
-                return (int)(nbvidh + nbvidl);
+                return (int)(nbvidh * 64 + nbvidl);
             }
-            else
+            else //Llano + Brazos
             {
                 //D18 Device F0 -> C0
                 //D0 Device F0 -> 00
@@ -330,7 +333,7 @@ namespace FusionTweaker
         /// </summary>
         public static double GetNbDivPState0()
         {
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 //Kabini 16h
                 //Register Mapping for D18F5x16[C:0]
@@ -348,7 +351,7 @@ namespace FusionTweaker
                 double nclkdiv = (nbfid + 4) / (Math.Pow(2, nbdid));
                 return nclkdiv;
             }
-            else
+            else //Llano + Brazos
             {
                 //D18 Device F0 -> C0
                 //D0 Device F0 -> 00
@@ -371,7 +374,7 @@ namespace FusionTweaker
         /// </summary>
         public static double GetNbDivPState1()
         {
-            if (Form1.family == 16)
+            if (Form1.family == 16) //Kabini
             {
                 //Kabini 16h
                 //Register Mapping for D18F5x16[C:0]
@@ -390,7 +393,7 @@ namespace FusionTweaker
                 double nclkdiv = (nbfid + 4) / (Math.Pow(2,nbdid)) ;
                 return nclkdiv;
             }
-            else
+            else //Llano + Brazos
             {
                 //D18 Device F0 -> C0
                 //D0 Device F0 -> 00
@@ -535,13 +538,26 @@ namespace FusionTweaker
 		/// </summary>
 		public static void GetVidLimits(out double min, out double max)
 		{
-			ulong msr = Program.Ols.ReadMsr(0xC0010071u);
+            if (Form1.family == 16)
+            {
+                // value of interest: D18F5x17C
+                uint settings = Program.Ols.ReadPciConfig(0xC5, 0x17C);
+                uint minValue = (settings >> 10) & 0xFF;
+                uint maxValue = (settings >> 0) & 0xFF;
 
-			uint minValue = (uint)(msr >> 42) & 0x7F;
-			uint maxValue = (uint)(msr >> 35) & 0x7F;
+                min = (minValue == 0 ? 0.0125 : 1.55 - minValue * 0.0125);
+                max = (maxValue == 0 ? 1.55 : 1.55 - maxValue * 0.0125);
+            }
+            else
+            {
+                ulong msr = Program.Ols.ReadMsr(0xC0010071u);
 
-			min = (minValue == 0 ? 0.0125 : 1.55 - minValue * 0.0125);
-			max = (maxValue == 0 ? 1.55   : 1.55 - maxValue * 0.0125);
+                uint minValue = (uint)(msr >> 42) & 0x7F;
+                uint maxValue = (uint)(msr >> 35) & 0x7F;
+
+                min = (minValue == 0 ? 0.0125 : 1.55 - minValue * 0.0125);
+                max = (maxValue == 0 ? 1.55 : 1.55 - maxValue * 0.0125);
+            }
 		}
 
         /// <summary>
