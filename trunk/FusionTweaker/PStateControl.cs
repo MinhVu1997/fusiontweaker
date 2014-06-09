@@ -15,6 +15,7 @@ namespace FusionTweaker
         private static double _minVid, _maxVid;
 		//Brazos merge added next line from BT
 		private static int _maxPstate = -1;
+        private static int _family = -1;
 
 		private int _index = -1; // 0-7 CPU and 8,9 NB
 		private PState _pState;
@@ -63,72 +64,71 @@ namespace FusionTweaker
 		{
 			InitializeComponent();
 
-            
-			// check if the CPU's maximum multi is limited (non Black Edition CPUs)
+            // check if the CPU's maximum multi is limited (non Black Edition CPUs)
 			if (_maxCOF < 0)
 			{
 				// in DesignMode, Program.Ols is null
 				if (Program.Ols == null)
 				{
-                    if (Form1.family == 12) //Llano
-                    {
-                        _maxCOF = 48;
-                    }
-                    else
-                    {
-                        _maxCOF = 31.5;
-					}
-
+                    _maxCOF = 48;
                     _minVid = 0.0125;
 					_maxVid = 1.55;
 					//Brazos merge next line added from BT
 					_maxPstate = -1;
 				}
-                else if (Form1.family == 14) //Brazos
-				{
-					_maxCOF = K10Manager.MaxCOF() + 16; 
-                    
-					//Brazos merge next line added from BT
-					_maxPstate = K10Manager.GetHighestPState();
-                    K10Manager.GetVidLimits(out _minVid, out _maxVid);
-                }
-                else //Kabini
+                else
                 {
-                    _maxCOF = K10Manager.MaxCOF();
-
                     //Brazos merge next line added from BT
                     _maxPstate = K10Manager.GetHighestPState();
+                    _family = K10Manager.GetFamily();
+                    if (_family == 14)
+                    {
+                        _maxCOF = K10Manager.MaxCOF() + 16;
+                    }
+                    else
+                    {
+                        _maxCOF = K10Manager.MaxCOF();
+                    }
                     K10Manager.GetVidLimits(out _minVid, out _maxVid);
                 }
-			} 
+			}
 
-			VidNumericUpDown.Minimum = (decimal)_minVid;
+            VidNumericUpDown.Minimum = (decimal)_minVid;
             VidNumericUpDown.Maximum = (decimal)_maxVid;
  
 			// add as many NumericUpDown controls as there are CPU cores for the multis
 			for (int i = 0; i < _numCores; i++)
 			{
-				var control = new NumericUpDown()
+                double _incr = 0.25;
+                int _min = 1;
+               
+                if (_family == 12) //Llano
+                {
+                    _incr = 1;
+                    _min  = 4;
+                }
+                if (_family == 14) //Brazos
+                {
+                    _incr = 0.25;
+                    _min = 1;
+                }
+                else if (_family == 16) //Kabini
+                {
+                    _incr = 0.5;
+                    _min = 4;
+                }
+                
+                var control = new NumericUpDown()
 				{
 					AutoSize = true,
 					DecimalPlaces = 2,
-                    Increment = (decimal)0.25,
+                    Increment = (decimal)_incr,
 					Maximum = (decimal)_maxCOF,
-					Minimum = 1,
+					Minimum = _min,
                     TabIndex = i,
 					TextAlign = HorizontalAlignment.Center,
 					Value = 4,
 				};
-                if (Form1.family == 12) //Llano
-                {
-                    control.Increment = (decimal)1;
-                    control.Minimum = 4;
-                }
-                if (Form1.family == 16) //Kabini
-                {
-                    control.Increment = (decimal)0.5;
-                    control.Minimum = 4;
-                }
 
 
                 toolTip1.SetToolTip(control, "CPUMultNBDivider for core " + (i + 1) + ".\r\nReference clock (default: 100 MHz) times " + _maxCOF + " divided by the chosen value yields the core speed.");

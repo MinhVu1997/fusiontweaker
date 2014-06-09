@@ -463,7 +463,7 @@
         "cies based on current load.");
             this.monitorCheckBox.UseVisualStyleBackColor = true;
             this.monitorCheckBox.CheckedChanged += new System.EventHandler(this.monitorCheckBox_CheckedChanged);
-            this.monitorCheckBox.Checked = monitorPstates;
+            this.monitorCheckBox.Checked = true;
             // 
             // alwaysOnTopCheck
             // 
@@ -698,7 +698,7 @@
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(350, 200);
             this.Name = "Form1";
-            this.Text = "FusionTweaker V2.0.2";
+            this.Text = "FusionTweaker V2.0.3";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.tabControl1.ResumeLayout(false);
             this.tabPageP0.ResumeLayout(false);
