@@ -107,7 +107,7 @@ namespace FusionTweaker
                     _incr = 1;
                     _min  = 4;
                 }
-                if (_family == 14) //Brazos
+                else if (_family == 14) //Brazos
                 {
                     _incr = 0.25;
                     _min = 1;
