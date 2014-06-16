@@ -188,16 +188,15 @@ namespace FusionTweaker
                     {
                         uint cpuDid = (value >> 6) & 0x7;
                         uint cpuFid = value & 0x3F;
+                        
                         uint cpuVid = (value >> 10) & 0x7F; //this works for SVI only - 7bits
                         uint enabled = (value >> 63) & 0x1;
 
-                        if (cpuDid <= 4){
-                            cpuDid = (uint)(Math.Pow(2, cpuDid));
-                        } else {
+                        if (cpuDid > 4){
                             throw new NotSupportedException("This Divider is not supported");
                         }
 
-                        double CoreCOF = (cpuFid + 16) / cpuDid;
+                        double CoreCOF = (cpuFid + 16) / (Math.Pow(2, cpuDid));
                         var msr = new PStateMsr()
                         {
                             CPUMultNBDivider = CoreCOF,
