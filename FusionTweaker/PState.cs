@@ -61,9 +61,7 @@ namespace FusionTweaker
 			if (index < 0 || index > 9)
 				throw new ArgumentOutOfRangeException("index");
 
-            //Brazos merge next line from BT
-			//if (index < 3) //dealing with CPU P-States
-			if (index < 8) //dealing with CPU P-States
+            if (index < 8) //dealing with CPU P-States
             {
                 uint msrIndex = 0xC0010064u + (uint)index;
 
@@ -102,6 +100,8 @@ namespace FusionTweaker
                         if (Form1.family == 16) 
                         {
                             mask = 0xFE01FFFFu; //Kabini Bits 16 .. 0 Vid + Mult
+                            msr = (msr & ~mask) | (_msrs[i].Encode(index) & mask);
+                            Program.Ols.WriteMsr(msrIndex, msr, i);
                         }
                         else
                         {
