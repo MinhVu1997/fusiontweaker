@@ -698,7 +698,7 @@
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(350, 200);
             this.Name = "Form1";
-            this.Text = "FusionTweaker V2.0.4";
+            this.Text = "FusionTweaker V2.0.5";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.tabControl1.ResumeLayout(false);
             this.tabPageP0.ResumeLayout(false);
