@@ -120,8 +120,9 @@ namespace FusionTweaker
         /// </summary>
         public static int GetTemp()
         {
+            // value of interest: D18F3xA4[CurTmp]
             uint settings = Program.Ols.ReadPciConfig(0xC3, 0xA4);
-            return (int)(((settings >> 21) & 0x7FF) >> 3);
+            return (int)(((settings >> 21) & 0x7FF) >> 3); //value divided by 8
         }
 
         /// <summary>
