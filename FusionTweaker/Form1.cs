@@ -444,7 +444,7 @@ namespace FusionTweaker
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            if (false)
+            if (monitorPstates)
             {
                 ecread.SuspendLayout();
                 ecread.Text = statusinfo.GetECreadings();
