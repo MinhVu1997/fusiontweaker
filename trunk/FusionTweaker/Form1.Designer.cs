@@ -453,6 +453,8 @@
             // monitorCheckBox
             // 
             this.monitorCheckBox.AutoSize = true;
+            this.monitorCheckBox.Checked = true;
+            this.monitorCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             this.monitorCheckBox.Location = new System.Drawing.Point(7, 19);
             this.monitorCheckBox.Margin = new System.Windows.Forms.Padding(2);
             this.monitorCheckBox.Name = "monitorCheckBox";
@@ -463,7 +465,6 @@
         "cies based on current load.");
             this.monitorCheckBox.UseVisualStyleBackColor = true;
             this.monitorCheckBox.CheckedChanged += new System.EventHandler(this.monitorCheckBox_CheckedChanged);
-            this.monitorCheckBox.Checked = true;
             // 
             // alwaysOnTopCheck
             // 
@@ -496,9 +497,9 @@
             this.cfgTempLabel.AutoSize = true;
             this.cfgTempLabel.Location = new System.Drawing.Point(189, 69);
             this.cfgTempLabel.Name = "cfgTempLabel";
-            this.cfgTempLabel.Size = new System.Drawing.Size(79, 13);
+            this.cfgTempLabel.Size = new System.Drawing.Size(62, 13);
             this.cfgTempLabel.TabIndex = 24;
-            this.cfgTempLabel.Text = "NB CFG Temp:";
+            this.cfgTempLabel.Text = "CPU Temp:";
             this.toolTip1.SetToolTip(this.cfgTempLabel, "Shows the current APU temperature.");
             // 
             // RealFreqLabel
@@ -641,7 +642,7 @@
             // nbCfgTemp
             // 
             this.nbCfgTemp.AutoSize = true;
-            this.nbCfgTemp.Location = new System.Drawing.Point(268, 68);
+            this.nbCfgTemp.Location = new System.Drawing.Point(268, 69);
             this.nbCfgTemp.Name = "nbCfgTemp";
             this.nbCfgTemp.Size = new System.Drawing.Size(30, 13);
             this.nbCfgTemp.TabIndex = 25;
@@ -698,7 +699,7 @@
             this.MaximizeBox = false;
             this.MinimumSize = new System.Drawing.Size(350, 200);
             this.Name = "Form1";
-            this.Text = "FusionTweaker V2.0.5";
+            this.Text = "FusionTweaker V2.0.6";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.tabControl1.ResumeLayout(false);
             this.tabPageP0.ResumeLayout(false);

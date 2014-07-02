@@ -189,7 +189,7 @@ namespace FusionTweaker
                         uint cpuDid = (value >> 6) & 0x7;
                         uint cpuFid = value & 0x3F;
                         
-                        uint cpuVid = (value >> 10) & 0x7F; //this works for SVI only - 7bits
+                        uint cpuVid = (value >> 10) & 0x7F; //this works for SVI only - 7bits (CPUVid7:1 are used, CPUVid0 gets ignored)
                         uint enabled = (value >> 63) & 0x1;
 
                         if (cpuDid > 4){
@@ -434,7 +434,9 @@ namespace FusionTweaker
 
                     uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
                     return (cpuVid << 9) | (cpuDidMSD << 4) | cpuDidLSD;
-                } else { // Kabini
+                }
+                else
+                { // Kabini if (Form1.family == 16)
 
                     if (CPUMultNBDivider < 4 || CPUMultNBDivider > 40) throw new ArgumentOutOfRangeException("CPUMultNBDivider");
                     if (Vid <= 0 || Vid > 1.55) throw new ArgumentOutOfRangeException("Vid");
@@ -456,7 +458,8 @@ namespace FusionTweaker
                         cpuDid = 0;
                     }
                     uint cpuVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
-                    return (cpuVid << 9) | (cpuDid << 6) | cpuFid;
+                    //return (cpuVid << 9) | (cpuFid << 4) | cpuDid; - > Brazos
+                    return (cpuVid << 10) | (cpuDid << 6) | cpuFid; //this works for SVI only - 7bits (CPUVid7:1 are used, CPUVid0 gets ignored)
                 }
                 
             }
