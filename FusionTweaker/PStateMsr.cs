@@ -465,23 +465,43 @@ namespace FusionTweaker
             }
             else if (pstate == 8)
             {
-                //K10Manager.SetBIOSBusSpeed((uint)CLK);
-                uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
-                //CPUMultNBDivider
-                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-                uint nclk = (uint)Math.Round(CPUMultNBDivider * 4);
+                if (Form1.family == 16) // Kabini
+                {
+                    uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    uint nbvidh = ((nbVid >> 8) & 0x1);
+                    uint nbvidl = (nbVid & 0x3F);
+                    return (nbvidh << 21) | (nbvidl << 11);
+                }
+                else // Brazos + Llano
+                {
+                    //K10Manager.SetBIOSBusSpeed((uint)CLK);
+                    uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    //CPUMultNBDivider
+                    //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                    uint nclk = (uint)Math.Round(CPUMultNBDivider * 4);
 
-                return (nclk << 20) | (nbVid << 12);
+                    return (nclk << 20) | (nbVid << 12);
+                }
             }
             else if (pstate == 9)
             {
-                //K10Manager.SetBIOSBusSpeed((uint)CLK);
-                uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
-                //CPUMultNBDivider
-                //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
-                uint nclk = (uint)Math.Round(CPUMultNBDivider * 4);
+                if (Form1.family == 16) // Kabini
+                {
+                    uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    uint nbvidh = ((nbVid >> 8) & 0x1);
+                    uint nbvidl = (nbVid & 0x3F);
+                    return (nbvidh << 21) | (nbvidl << 11);
+                }
+                else // Brazos + Llano
+                {
+                    //K10Manager.SetBIOSBusSpeed((uint)CLK);
+                    uint nbVid = (uint)Math.Round((1.55 - Vid) / 0.0125);
+                    //CPUMultNBDivider
+                    //NCLK Div 2-16 ind 0.25 steps / Div 16-32 in 0.5 steps / Div 32-63 in 1.0 steps
+                    uint nclk = (uint)Math.Round(CPUMultNBDivider * 4);
 
-                return (nbVid << 8) | (nclk << 0);
+                    return (nbVid << 8) | (nclk << 0);
+                }
             }            
             else
             {

@@ -199,9 +199,10 @@ namespace FusionTweaker
         public static void EnableNBPstateSwitching()
         {
             //D18 Device F0 -> C0
+            //D18 Device F6 -> C6
             //D0 Device F0 -> 00
             //10,20,30,40,50,60 -> no device
-            // value of interest: D18F6x90[ClockRate]
+            // value of interest: D18F6x90 NB P-state Config Low [NbPsCtrlDis Bit30]
             uint settings = Program.Ols.ReadPciConfig(0xC6, 0x90);
             settings = settings | 0x40000000; //assert Bit30 NbPsCtrlDis - disable HW switching
             Program.Ols.WritePciConfig(0xC6, 0x90, settings); //write to register - enable SW NB Pstate switching
