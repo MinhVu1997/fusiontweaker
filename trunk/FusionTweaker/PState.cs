@@ -121,7 +121,69 @@ namespace FusionTweaker
             {
                 if (Form1.family == 16) //Kabini
                 {
+                    // switch temporarily to the highest thread priority
+                    // (we try not to interfere with any kind of C&Q)
+                    var previousPriority = Thread.CurrentThread.Priority;
+                    Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
+                    //check, if current NB P-State is the one, which is going to be modified
+                    //Brazos merge next line from BT
+                    index = index - 8;
+                    int curNbstate = K10Manager.GetNbPState();
+                    int maxPstate = K10Manager.GetCurHighestPState();
+                   
+                    if (index == 0) // NB P-state0
+                    {
+                        for (int i = 0; i < _numCores; i++)
+                        {
+                            K10Manager.SwitchToPState(maxPstate, i); //switches to slowest core pstate to get to slowest NB pstate
+                        }
+                        Thread.Sleep(3); // let transitions complete
+                   
+                        //Kabini 16h
+                        //D18F5x160 NB P-state 0
+                        //D18F5x164 NB P-state 1
+                        //21 NbVid[7].
+                        //16:10 NbVid[6:0]: Northbridge VID
+                        // save the new settings
+                        uint config = Program.Ols.ReadPciConfig(0xC5, 0x160);
+                        const uint mask = 0x0021F800; //enable overwrite of Vid only
+                        config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
+
+                        Program.Ols.WritePciConfig(0xC5, 0x160, config);
+
+                        for (int i = 0; i < _numCores; i++)
+                        {
+                            K10Manager.SwitchToPState(0, i); //switches to fastest core pstate to get to fastest NB pstate
+                        }
+                        Thread.Sleep(3); // let transitions complete
+
+                    }
+                    else if (index == 1)
+                    {
+                        for (int i = 0; i < _numCores; i++)
+                        {
+                            K10Manager.SwitchToPState(0, i); //switches to fastest core pstate to get to fastest NB pstate
+                        }
+                        Thread.Sleep(3); // let transitions complete
+
+                        // save the new settings
+                        uint config = Program.Ols.ReadPciConfig(0xC5, 0x164);
+                        const uint mask = 0x0021F800; //enable overwrite of Vid only
+                        config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
+
+                        Program.Ols.WritePciConfig(0xC5, 0x164, config);
+
+                        for (int i = 0; i < _numCores; i++)
+                        {
+                            K10Manager.SwitchToPState(maxPstate, i); //switches to slowest core pstate to get to slowest NB pstate
+                        }
+                        Thread.Sleep(3); // let transitions complete
+
+                    }
+
+                    //MessageBox.Show(message);
+                    Thread.CurrentThread.Priority = previousPriority;
                 }
                 else //Brazos + Llano
                 {
@@ -131,12 +193,10 @@ namespace FusionTweaker
                     Thread.CurrentThread.Priority = ThreadPriority.Highest;
 
                     //check, if current NB P-State is the one, which is going to be modified
-                    //Brazos merge next line from BT
-                    //index = index - 3;
                     index = index - 8;
                     int curNbstate = K10Manager.GetNbPState();
 
-                    string message = "Start: " + curNbstate;
+                    string message = "Start: " + curNbstate + "\n";
 
                     int changedNbstate = curNbstate;
                     bool applyImmediately = (curNbstate != index);
@@ -156,7 +216,7 @@ namespace FusionTweaker
                             changedNbstate = K10Manager.GetNbPState();
                             if (changedNbstate == index)
                             {
-                                message += " Time_init_switch: " + i;
+                                message += "Time_init_switch: " + i + "\n";
                                 i = 10;
                             }
                         }
@@ -166,25 +226,11 @@ namespace FusionTweaker
 
                     if (index == 0) // NB P-state0
                     {
-                        //DRAM needs to be set into SelfRefresh
-                        //K10Manager.DisDllShutDown();
-                        //K10Manager.EnterDramSelfRefresh(); //NB Pstate HW switching needs to be disabled before NbPsCtrDis
                         // save the new settings
                         uint config = Program.Ols.ReadPciConfig(0xC3, 0xDC);
-                        //const uint mask = 0x07F7F000; //enable overwrite of Vid and Div
                         const uint mask = 0x0007F000; //enable overwrite of Vid only
-                        //Brazos merge next line from BT
-                        //config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
                         config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                         uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
-                        //Brazos next 4 lines from BT
-                        //ToDo family dependent code
-                        /*
-                        //const uint maskvolt = 0x00007F00;
-                        const uint maskvolt = 0x7F7F7F00; //overwriting VIDSelect2 and 3 in addition
-                        uint check = _msrs[0].Encode(index + 3) >> 12 & 0x7F;
-                        voltage = (voltage & ~maskvolt) | ((check << 24) | (check << 16) | (check << 8) & maskvolt);
-                        */
                         const uint maskvolt = 0x00007F00;
                         uint check = _msrs[0].Encode(index + 8) >> 12 & 0x7F;
                         voltage = (voltage & ~maskvolt) | ((check << 8) & maskvolt);
@@ -195,24 +241,19 @@ namespace FusionTweaker
                     else if (index == 1)
                     {
                         // save the new settings
-                        //K10Manager.DisDllShutDown();
-                        //K10Manager.EnterDramSelfRefresh(); //NB Pstate HW switching needs to be disabled before NbPsCtrDis
                         uint config = Program.Ols.ReadPciConfig(0xC6, 0x90);
-                        //const uint mask = 0x00007F7F; //enable DID and VID modification
                         const uint mask = 0x00007F00; //enable VID modification only
-                        //Brazos merge next line from BT
-                        //config = (config & ~mask) | (_msrs[0].Encode(index + 3) & mask);
                         config = (config & ~mask) | (_msrs[0].Encode(index + 8) & mask);
                         uint voltage = Program.Ols.ReadPciConfig(0xC3, 0x15C);
                         const uint maskvolt = 0x0000007F;
-                        //Brazos merge next line from BT
-                        //uint check = _msrs[0].Encode(index + 3) >> 8;
                         uint check = _msrs[0].Encode(index + 8) >> 8;
                         voltage = (voltage & ~maskvolt) | (check & maskvolt);
 
                         Program.Ols.WritePciConfig(0xC6, 0x90, config);
                         Program.Ols.WritePciConfig(0xC3, 0x15C, voltage);
                     }
+
+                    curNbstate = K10Manager.GetNbPState();
 
                     if (curNbstate == 0)
                     {
@@ -224,7 +265,7 @@ namespace FusionTweaker
                             changedNbstate = K10Manager.GetNbPState();
                             if (changedNbstate == 1)
                             {
-                                message += " Time_P0_P1: " + i;
+                                message += "Time_P0_P1: " + i + "\n";
                                 i = 10;
                             }
                         }
@@ -236,7 +277,7 @@ namespace FusionTweaker
                             changedNbstate = K10Manager.GetNbPState();
                             if (changedNbstate == 0)
                             {
-                                message += " Time_P1_P0: " + i;
+                                message += "Time_P1_P0: " + i + "\n";
                                 i = 10;
                             }
                         }
@@ -251,7 +292,7 @@ namespace FusionTweaker
                             changedNbstate = K10Manager.GetNbPState();
                             if (changedNbstate == 0)
                             {
-                                message += " Time_P1_P0: " + i;
+                                message += "Time_P1_P0: " + i + "\n";
                                 i = 10;
                             }
                         }
@@ -263,7 +304,7 @@ namespace FusionTweaker
                             changedNbstate = K10Manager.GetNbPState();
                             if (changedNbstate == 1)
                             {
-                                message += " Time_P0_P1: " + i;
+                                message += "Time_P0_P1: " + i + "\n";
                                 i = 10;
                             }
                         }
