@@ -81,7 +81,7 @@ namespace FusionTweaker
                     //Brazos merge next line added from BT
                     _maxPstate = K10Manager.GetHighestPState();
                     _family = K10Manager.GetFamily();
-                    if (_family == 14)
+                    if (_family == 14 || _family == 12)
                     {
                         _maxCOF = K10Manager.MaxCOF() + 16;
                     }
